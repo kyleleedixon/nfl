@@ -17,7 +17,7 @@ D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
 BRAND = os.environ.get("BRAND", "Telegraphed")
 HANDLE = "@TelegraphedNFL"
-SITE = os.environ.get("SITE", "telegraphed.vercel.app")
+SITE = os.environ.get("SITE", "telegraphed.app")
 MIN_NEUTRAL = 60  # season-to-date neutral snaps needed to be ranked
 
 NICK = dict(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills", CAR="Panthers", CHI="Bears",
@@ -95,21 +95,16 @@ for r in wk.itertuples():
 
 top, bot = ytd.head(5), ytd.tail(5).iloc[::-1]
 wt, wb = wk.iloc[0], wk.iloc[-1]
+# one tweet with the card; the brand lives in the bio and on the card, not in every post
 tweets = [
-    f"Telegraphed: Week {week} Rankings 🧵\n\nEvery play caller has a tell. We predict pass or run before every NFL snap, "
-    f"and through week {week} we called {pct(league['acc'])} of them.\n\nWho's an Open Book, and who has a Poker Face? #NFL",
-    "📖 OPEN BOOK: most predictable offenses (neutral situations, season to date)\n\n"
-    + "\n".join(f"{r.rank}. {NICK[r.posteam]}: {pct(r.acc_neutral)}" for r in top.itertuples())
-    + "\n\n" + " ".join(TAG[t] for t in top.posteam),
-    "🃏 POKER FACE: least predictable\n\n"
-    + "\n".join(f"{r.rank}. {NICK[r.posteam]}: {pct(r.acc_neutral)}" for r in bot.itertuples())
-    + "\n\n" + " ".join(TAG[t] for t in bot.posteam),
-    f"Week {week} extremes:\n\n🔓 {NICK[wt.posteam]} vs {NICK[opp[wt.posteam]]}: we called {pct(wt.acc)} of their plays\n"
-    f"🔒 {NICK[wb.posteam]} vs {NICK[opp[wb.posteam]]}: just {pct(wb.acc)}\n\nFull rankings: {SITE}/weekly",
+    f"Week {week}: how predictable is your offense?\n\n"
+    "📖 Open Book\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)}" for r in top.head(3).itertuples())
+    + "\n\n🃏 Poker Face\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)}" for r in bot.head(3).itertuples())
+    + f"\n\nAll 32: {SITE}/weekly\n#NFL {TAG[top.posteam.iloc[0]]} {TAG[bot.posteam.iloc[0]]}",
 ]
 featured = list(dict.fromkeys(list(top.posteam) + list(bot.posteam) + [wt.posteam, wb.posteam]))
 tag_reply = "Calling out this week's Open Books and Poker Faces 👀\n\n" + " ".join(AT[t] for t in featured)
-L += ["", "## Draft thread", ""]
+L += ["", "## Draft tweet (posted with the card)", ""]
 for i, t in enumerate(tweets, 1):
     L += [f"**{i}/{len(tweets)}** ({len(t)} chars{' ⚠️ over 280' if len(t) > 280 else ''})", "", "```", t, "```", ""]
 

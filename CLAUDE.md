@@ -81,7 +81,7 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
 ## Status / next steps
 - Brand: **Telegraphed**, X account @TelegraphedNFL. Growth plan: weekly Tuesday rankings thread + card (Umpire
   Scorecards / Scorigami model); next: per-game cards, an "Open Book" callout (≥85% read). Never tweet tells/reasons.
-- Site live at https://telegraphed.vercel.app (Vercel project `nfl`, Git-connected to this repo, root directory `site/`,
+- Site live at https://telegraphed.app (www.telegraphed.app primary; also telegraphed.vercel.app; Vercel project `nfl`, Git-connected to this repo, root directory `site/`,
   so every push to main deploys). Never change the root directory: the repo root would publish the source. GitHub repo
   `kyleleedixon/nfl` is currently PUBLIC — Kyle will make it private.
 - End goal: real-time pre-snap estimator. Lag is fine for now; never drop data for lack of a live feed.
