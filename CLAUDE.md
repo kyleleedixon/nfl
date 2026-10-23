@@ -22,7 +22,8 @@ predictable; the model leans on human-decision patterns and personnel tells, not
 - `src/analyze.py` — v1 analysis (tells, coach table, EPA vs predictability). Reads v1 preds.
 - `src/showcase_data.py` → `site/results.json`; `src/pick_drive.py` → `site/drive.json`.
 - `src/weekly_report.py` — Tuesday "How predictable is your offense?" rankings (neutral-situation read rate by team,
-  team labels only), share card PNG, draft X thread (`data/reports/`), public page `site/weekly/`.
+  team labels only), share card PNG, draft X thread (`data/reports/`), and `site/weekly/weekly.json` for the public
+  page. `site/weekly/index.html` is a hand-written template sharing the main page's tokens and chart code.
 - `weekly.sh` — Tuesday refresh: new week → features → re-score current season → report → deploy → push. No-ops if
   no new week. `launchd/` holds the schedule (Tue 6/9/12); `tools/pyexit/` works around a pyarrow hang at exit.
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.

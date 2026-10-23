@@ -1,7 +1,7 @@
 """Weekly predictability report: which offenses were easiest / hardest to read before the snap.
 
 Usage: python src/weekly_report.py [season] [week]   (defaults: latest season and week in preds)
-Writes data/reports/{season}_wk{week:02d}.md (rankings + draft tweet thread) and _card.png (share image).
+Writes data/reports/{season}_wk{week:02d}.md (rankings + draft tweet thread) and _card.png (share image),\nand site/weekly/weekly.json + card PNGs for the public page (site/weekly/index.html is a hand-written template).
 Aggregate results only: no feature names or tells (same rule as site/).
 """
 import os
@@ -169,54 +169,25 @@ card(f"{out}_card.png")
 
 
 def page():
-    """Public site/weekly/: latest card + full table. Aggregate results only."""
-    import html
+    """Data for the public site/weekly/ page (a static template that fetches weekly.json), plus the share card.
+    Aggregate results only."""
+    import json
     import shutil
     os.makedirs("site/weekly", exist_ok=True)
     img = f"{season}_wk{week:02d}.png"
     shutil.copy(f"{out}_card.png", f"site/weekly/{img}")
-    rows = "".join(
-        f"<tr><td>{r.rank}</td><td class=mv>{'▲' + str(r.move) if r.move > 0 else ('▼' + str(-r.move) if r.move < 0 else '–')}</td>"
-        f"<td>{html.escape(NICK[r.posteam])}</td><td class=n>{pct(r.acc_neutral)}</td><td class=n>{pct(r.acc)}</td></tr>"
-        for r in ytd.itertuples())
-    title = f"How predictable is your offense? {season} week {week}"
-    open("site/weekly/index.html", "w").write(f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Predictability Rankings</title>
-<meta name="description" content="{title}: every NFL offense ranked by how often we called pass or run before the snap.">
-<meta property="og:title" content="{title}"><meta property="og:image" content="https://{SITE}/weekly/{img}">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://{SITE}/weekly/{img}">
-<link rel="icon" href="/favicon.png"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {{ --field:#1f6139; --field-2:#1b5734; --chalk:#f7f9f4; --chalk-2:#cfe0d4; --yellow:#ffd23f; --los:#7db7f0;
-  --grid:rgba(247,249,244,.14); color-scheme:dark; }}
-* {{ box-sizing:border-box; }}
-body {{ margin:0; background:var(--field); color:var(--chalk); font:1.0625rem/1.55 Barlow, system-ui, sans-serif; }}
-.wrap {{ max-width:44rem; margin:0 auto; padding:0 16px 3rem; }}
-header {{ display:flex; justify-content:space-between; align-items:baseline; padding:1.25rem 0; border-bottom:3px solid var(--yellow); }}
-header a {{ font:800 1.75rem "Barlow Condensed", sans-serif; letter-spacing:.01em; color:var(--chalk); text-decoration:none; }}
-h1 {{ font:800 clamp(2.2rem,8vw,3.6rem)/.95 "Barlow Condensed", sans-serif; text-transform:uppercase; margin:2rem 0 .75rem; text-wrap:balance; }}
-p {{ color:var(--chalk-2); margin:0 0 1.5rem; }}
-img {{ width:100%; height:auto; border-radius:8px; display:block; }}
-table {{ width:100%; border-collapse:collapse; margin-top:2rem; font-variant-numeric:tabular-nums; }}
-th, td {{ text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--grid); }}
-th {{ font-weight:500; color:var(--chalk-2); font-size:.9rem; }}
-td.n, th.n {{ text-align:right; }} td.mv {{ color:var(--chalk-2); font-size:.9rem; }}
-a {{ color:var(--yellow); }}\ntbody tr:nth-child(-n+5) td:nth-child(3)::after {{ content:" ●"; color:var(--yellow); }}\ntbody tr:nth-last-child(-n+5) td:nth-child(3)::after {{ content:" ○"; color:var(--chalk); }}
-</style></head><body><div class="wrap">
-<header><a href="/">{html.escape(BRAND.upper())}</a><span style="color:var(--chalk-2)">Week {week}</span></header>
-<h1>How predictable is your offense?</h1>
-<p>Share of pass/run calls our model predicted before the snap, {season} weeks 1–{week}. Neutral situations only
-(downs 1–3, close game, outside the last two minutes of each half), so garbage time and obvious downs don't count.
-League average: {pct(neutral_avg)}. ● Open Book = top five, ○ Poker Face = bottom five. New rankings every Tuesday.</p>
-<img src="{img}" alt="Bar chart ranking all NFL offenses by predictability; the table below has the same numbers." width="1200" height="1500">
-<table><thead><tr><th>#</th><th>Move</th><th>Offense</th><th class=n>Neutral</th><th class=n>All plays</th></tr></thead>
-<tbody>{rows}</tbody></table>
-<p style="margin-top:1.5rem"><a href="/">How the model works →</a> · Follow <a href="https://x.com/TelegraphedNFL">{HANDLE}</a></p>
-</div></body></html>
-""")
+    shutil.copy(f"{out}_card.png", "site/weekly/latest.png")  # stable URL for link previews
+    data = dict(
+        season=season, week=week, card=img,
+        league_acc=round(float(league["acc"]), 4), league_neutral=round(float(neutral_avg), 4),
+        teams=[dict(rank=int(r.rank), team=NICK[r.posteam], move=int(r.move), neutral=round(float(r.acc_neutral), 4),
+                    acc=round(float(r.acc), 4), snaps=int(r.neutral)) for r in ytd.itertuples()],
+        games=[dict(team=NICK[r.posteam], opp=NICK[opp[r.posteam]], acc=round(float(r.acc), 4), plays=int(r.plays))
+               for r in wk.itertuples()],
+    )
+    json.dump(data, open("site/weekly/weekly.json", "w"), indent=1)
 
 
 page()
-print(f"{out}.md\n{out}_card.png\nsite/weekly/index.html\n")
+print(f"{out}.md\n{out}_card.png\nsite/weekly/weekly.json\n")
 print("\n\n".join(tweets))

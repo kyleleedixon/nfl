@@ -1,36 +1,239 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Predictability Rankings</title>
-<meta name="description" content="How predictable is your offense? 2026 week 6: every NFL offense ranked by how often we called pass or run before the snap.">
-<meta property="og:title" content="How predictable is your offense? 2026 week 6"><meta property="og:image" content="https://telegraphed.vercel.app/weekly/2026_wk06.png">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://telegraphed.vercel.app/weekly/2026_wk06.png">
-<link rel="icon" href="/favicon.png"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Every play caller has a tell. Every NFL offense ranked by how often we called pass or run before the snap. New rankings every Tuesday.">
+<link rel="icon" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="How predictable is your offense? | Telegraphed">
+<meta property="og:description" content="Every NFL offense ranked by how often we called pass or run before the snap. New every Tuesday.">
+<meta property="og:image" content="https://telegraphed.vercel.app/weekly/latest.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@TelegraphedNFL">
+<meta name="twitter:image" content="https://telegraphed.vercel.app/weekly/latest.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
-:root { --field:#1f6139; --field-2:#1b5734; --chalk:#f7f9f4; --chalk-2:#cfe0d4; --yellow:#ffd23f; --los:#7db7f0;
-  --grid:rgba(247,249,244,.14); color-scheme:dark; }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--field); color:var(--chalk); font:1.0625rem/1.55 Barlow, system-ui, sans-serif; }
-.wrap { max-width:44rem; margin:0 auto; padding:0 16px 3rem; }
-header { display:flex; justify-content:space-between; align-items:baseline; padding:1.25rem 0; border-bottom:3px solid var(--yellow); }
-header a { font:800 1.75rem "Barlow Condensed", sans-serif; letter-spacing:.01em; color:var(--chalk); text-decoration:none; }
-h1 { font:800 clamp(2.2rem,8vw,3.6rem)/.95 "Barlow Condensed", sans-serif; text-transform:uppercase; margin:2rem 0 .75rem; text-wrap:balance; }
-p { color:var(--chalk-2); margin:0 0 1.5rem; }
-img { width:100%; height:auto; border-radius:8px; display:block; }
-table { width:100%; border-collapse:collapse; margin-top:2rem; font-variant-numeric:tabular-nums; }
-th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--grid); }
-th { font-weight:500; color:var(--chalk-2); font-size:.9rem; }
-td.n, th.n { text-align:right; } td.mv { color:var(--chalk-2); font-size:.9rem; }
-a { color:var(--yellow); }
-tbody tr:nth-child(-n+5) td:nth-child(3)::after { content:" ●"; color:var(--yellow); }
-tbody tr:nth-last-child(-n+5) td:nth-child(3)::after { content:" ○"; color:var(--chalk); }
-</style></head><body><div class="wrap">
-<header><a href="/">TELEGRAPHED</a><span style="color:var(--chalk-2)">Week 6</span></header>
-<h1>How predictable is your offense?</h1>
-<p>Share of pass/run calls our model predicted before the snap, 2026 weeks 1–6. Neutral situations only
-(downs 1–3, close game, outside the last two minutes of each half), so garbage time and obvious downs don't count.
-League average: 73%. ● Open Book = top five, ○ Poker Face = bottom five. New rankings every Tuesday.</p>
-<img src="2026_wk06.png" alt="Bar chart ranking all NFL offenses by predictability; the table below has the same numbers." width="1200" height="1500">
-<table><thead><tr><th>#</th><th>Move</th><th>Offense</th><th class=n>Neutral</th><th class=n>All plays</th></tr></thead>
-<tbody><tr><td>1</td><td class=mv>–</td><td>Falcons</td><td class=n>81%</td><td class=n>82%</td></tr><tr><td>2</td><td class=mv>–</td><td>Lions</td><td class=n>79%</td><td class=n>78%</td></tr><tr><td>3</td><td class=mv>–</td><td>Colts</td><td class=n>78%</td><td class=n>82%</td></tr><tr><td>4</td><td class=mv>▲2</td><td>Giants</td><td class=n>77%</td><td class=n>82%</td></tr><tr><td>5</td><td class=mv>▼1</td><td>Cowboys</td><td class=n>76%</td><td class=n>82%</td></tr><tr><td>6</td><td class=mv>▲6</td><td>Texans</td><td class=n>76%</td><td class=n>81%</td></tr><tr><td>7</td><td class=mv>▲14</td><td>Jaguars</td><td class=n>76%</td><td class=n>77%</td></tr><tr><td>8</td><td class=mv>▼3</td><td>Patriots</td><td class=n>75%</td><td class=n>81%</td></tr><tr><td>9</td><td class=mv>▼1</td><td>Rams</td><td class=n>75%</td><td class=n>79%</td></tr><tr><td>10</td><td class=mv>▲1</td><td>49ers</td><td class=n>74%</td><td class=n>76%</td></tr><tr><td>11</td><td class=mv>▼4</td><td>Jets</td><td class=n>74%</td><td class=n>80%</td></tr><tr><td>12</td><td class=mv>▲8</td><td>Steelers</td><td class=n>73%</td><td class=n>77%</td></tr><tr><td>13</td><td class=mv>▼4</td><td>Panthers</td><td class=n>73%</td><td class=n>79%</td></tr><tr><td>14</td><td class=mv>▲9</td><td>Buccaneers</td><td class=n>73%</td><td class=n>79%</td></tr><tr><td>15</td><td class=mv>–</td><td>Chargers</td><td class=n>73%</td><td class=n>78%</td></tr><tr><td>16</td><td class=mv>▲2</td><td>Bengals</td><td class=n>73%</td><td class=n>77%</td></tr><tr><td>17</td><td class=mv>▼3</td><td>Ravens</td><td class=n>73%</td><td class=n>81%</td></tr><tr><td>18</td><td class=mv>▼2</td><td>Eagles</td><td class=n>73%</td><td class=n>81%</td></tr><tr><td>19</td><td class=mv>▼2</td><td>Broncos</td><td class=n>73%</td><td class=n>77%</td></tr><tr><td>20</td><td class=mv>▼1</td><td>Titans</td><td class=n>72%</td><td class=n>78%</td></tr><tr><td>21</td><td class=mv>▲6</td><td>Packers</td><td class=n>72%</td><td class=n>80%</td></tr><tr><td>22</td><td class=mv>▲3</td><td>Bills</td><td class=n>72%</td><td class=n>75%</td></tr><tr><td>23</td><td class=mv>▼10</td><td>Cardinals</td><td class=n>72%</td><td class=n>81%</td></tr><tr><td>24</td><td class=mv>–</td><td>Vikings</td><td class=n>71%</td><td class=n>76%</td></tr><tr><td>25</td><td class=mv>▼3</td><td>Raiders</td><td class=n>71%</td><td class=n>77%</td></tr><tr><td>26</td><td class=mv>▼16</td><td>Saints</td><td class=n>71%</td><td class=n>79%</td></tr><tr><td>27</td><td class=mv>▼1</td><td>Commanders</td><td class=n>70%</td><td class=n>76%</td></tr><tr><td>28</td><td class=mv>–</td><td>Dolphins</td><td class=n>69%</td><td class=n>76%</td></tr><tr><td>29</td><td class=mv>–</td><td>Seahawks</td><td class=n>69%</td><td class=n>77%</td></tr><tr><td>30</td><td class=mv>▲1</td><td>Browns</td><td class=n>68%</td><td class=n>76%</td></tr><tr><td>31</td><td class=mv>▼1</td><td>Chiefs</td><td class=n>67%</td><td class=n>75%</td></tr><tr><td>32</td><td class=mv>–</td><td>Bears</td><td class=n>64%</td><td class=n>74%</td></tr></tbody></table>
-<p style="margin-top:1.5rem"><a href="/">How the model works →</a> · Follow <a href="https://x.com/TelegraphedNFL">@TelegraphedNFL</a></p>
-</div></body></html>
+/* tokens and base styles shared with /index.html: keep in sync */
+:root {
+  --board: #FAFBFA;
+  --ink: #1B1D22;
+  --ink-2: #5A606B;
+  --grid: #DCE0E5;
+  --pass: #1E5BC6;
+  --run: #C42B2B;
+  --hit: #2C7A3F;
+  --public: #9AA1AC;
+  --wash: #EEF2F7;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --text: "Barlow", system-ui, sans-serif;
+  --shadow: rgba(27, 29, 34, .12);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board: #15181D; --ink: #ECEEF1; --ink-2: #A3AAB5; --grid: #2C3139; --pass: #6C9CF2; --run: #F07070;
+    --hit: #5DBB76; --public: #6B7380; --wash: #1D2229; --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --board: #15181D; --ink: #ECEEF1; --ink-2: #A3AAB5; --grid: #2C3139; --pass: #6C9CF2; --run: #F07070;
+  --hit: #5DBB76; --public: #6B7380; --wash: #1D2229; --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--board); color: var(--ink); font-family: var(--text); font-size: 1.0625rem; line-height: 1.55; }
+.wrap { max-width: 68rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+@media (min-width: 720px) { .wrap { padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: max(32px, env(safe-area-inset-right, 0px)); } }
+a { color: var(--pass); }
+:focus-visible { outline: 3px solid var(--pass); outline-offset: 2px; }
+
+header.top { display: flex; justify-content: space-between; align-items: baseline; padding: 1.25rem 0; border-bottom: 2px solid var(--ink); }
+.mark { font-family: var(--display); font-weight: 800; font-size: 1.75rem; letter-spacing: .01em; color: var(--ink); text-decoration: none; }
+header.top .meta { color: var(--ink-2); font-size: .9rem; }
+
+.hero { padding: 3rem 0 2rem; }
+.hero h1, section.blk h2 { text-wrap: balance; }
+.hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.6rem, 8vw, 5.2rem); line-height: .95; margin: 0 0 1rem; max-width: 14ch; letter-spacing: -.005em; }
+.hero p { max-width: 36rem; color: var(--ink-2); margin: 0; font-size: 1.125rem; }
+
+section.blk { padding: 3rem 0 1rem; border-top: 1px solid var(--grid); margin-top: 2rem; }
+section.blk h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.05; margin: 0 0 .75rem; max-width: 22ch; }
+section.blk .say { max-width: 40rem; color: var(--ink-2); margin: 0 0 1.5rem; }
+.say b { color: var(--ink); font-weight: 600; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 1.5rem 2rem; margin: 1.5rem 0 2rem; }
+.num .v { font-family: var(--display); font-weight: 700; font-size: 3.2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.num .v.pub { color: var(--public); }
+.num .k { color: var(--ink-2); font-size: .95rem; margin-top: .35rem; max-width: 18rem; }
+.chart { position: relative; width: 100%; }
+svg text { font-family: var(--text); }
+.tk { fill: var(--ink-2); font-size: 12px; }
+.lb { fill: var(--ink); font-size: 13px; }
+.key { display: flex; gap: 1.25rem; font-size: .85rem; color: var(--ink-2); margin: .25rem 0 .5rem; flex-wrap: wrap; }
+.key span::before { content: ""; display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; background: var(--c); box-sizing: border-box; }
+.key span.hollow::before { background: transparent; border: 2px solid var(--pass); }
+.tip { position: absolute; pointer-events: none; background: var(--board); border: 1px solid var(--grid); border-radius: 8px; padding: .35rem .6rem; font-size: .82rem; box-shadow: 0 4px 14px var(--shadow); display: none; white-space: nowrap; z-index: 5; }
+.tip .t { color: var(--ink-2); }
+footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-top: 2px solid var(--ink); margin-top: 3rem; }
+
+/* this page */
+details.tbl { margin-top: 1.5rem; }
+details.tbl summary { cursor: pointer; color: var(--ink-2); font-size: .9rem; }
+table { width: 100%; border-collapse: collapse; margin-top: .75rem; font-variant-numeric: tabular-nums; font-size: .95rem; }
+th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--grid); }
+th { font-weight: 500; color: var(--ink-2); font-size: .85rem; }
+td.n, th.n { text-align: right; }
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: .75rem; }
+.game { border: 2px solid var(--grid); border-radius: 10px; padding: .75rem .9rem; }
+.game .dd { font-family: var(--display); font-weight: 600; font-size: 1.15rem; }
+.game .ctx { color: var(--ink-2); font-size: .85rem; }
+.game .call { display: flex; align-items: center; gap: .6rem; margin-top: .5rem; }
+.game .meter { flex: 1; height: 10px; border-radius: 5px; background: var(--wash); overflow: hidden; }
+.game .meter i { display: block; height: 100%; background: var(--pass); }
+.game .lab { font-family: var(--display); font-weight: 700; font-size: 1.1rem; min-width: 3rem; text-align: right; }
+.share { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+.share img { width: min(100%, 18rem); height: auto; border-radius: 10px; border: 2px solid var(--grid); }
+.share p { max-width: 28rem; color: var(--ink-2); margin: 0 0 1rem; }
+a.chip { display: inline-block; font: 500 .9rem var(--text); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; padding: .3rem .9rem; text-decoration: none; }
+a.chip:hover { background: var(--wash); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="/">TELEGRAPHED</a>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="hero">
+    <h1>How predictable is your offense?</h1>
+    <p id="hero-sub">Every play caller has a tell. Each Tuesday we rank every NFL offense by how often we called pass or run before the snap.</p>
+  </div>
+
+  <section class="blk" id="rank">
+    <h2>The rankings</h2>
+    <p class="say" id="rank-say"></p>
+    <div class="nums">
+      <div class="num"><div class="v" id="n-top">—</div><div class="k" id="k-top">Most predictable</div></div>
+      <div class="num"><div class="v" id="n-avg">—</div><div class="k">League average, neutral situations</div></div>
+      <div class="num"><div class="v pub" id="n-bot">—</div><div class="k" id="k-bot">Least predictable</div></div>
+    </div>
+    <div class="chart" id="c-rank"><div class="key"><span style="--c:var(--pass)">Open Book: above average</span><span class="hollow">Poker Face: below average</span><span style="--c:var(--ink-2)">League average</span></div></div>
+    <details class="tbl"><summary>Show as a table</summary>
+      <table><thead><tr><th>#</th><th>Move</th><th>Offense</th><th class="n">Neutral</th><th class="n">All plays</th><th class="n">Snaps</th></tr></thead><tbody id="tbl"></tbody></table>
+    </details>
+  </section>
+
+  <section class="blk" id="week">
+    <h2 id="week-h">This week</h2>
+    <p class="say">Every play, every game. One game is about 60 snaps, so single games swing more than the season rankings.</p>
+    <div class="games" id="games"></div>
+  </section>
+
+  <section class="blk" id="share">
+    <h2>Share it</h2>
+    <div class="share">
+      <img id="card" alt="This week's rankings as a shareable image" width="1200" height="1500">
+      <div><p>The same rankings as an image, sized for X and Instagram. Follow <a href="https://x.com/TelegraphedNFL">@TelegraphedNFL</a> for new rankings every Tuesday.</p>
+        <a class="chip" id="dl" download>Download image</a></div>
+    </div>
+  </section>
+
+  <footer><a href="/">How the model works</a> · Follow <a href="https://x.com/TelegraphedNFL">@TelegraphedNFL</a> on X.<br>Neutral situations: downs 1–3, win probability 20–80%, outside the last two minutes of each half. Play-by-play data: nflverse.</footer>
+</div>
+
+<script>
+const fmt0 = d3.format('.0%'), fmtP = d3.format('.1%'), fmtC = d3.format(',');
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const el = (id) => document.getElementById(id);
+
+function tipFor(box) {
+  let t = box.querySelector('.tip');
+  if (!t) { t = document.createElement('div'); t.className = 'tip'; box.appendChild(t); }
+  return {
+    show(ev, title, lines) {
+      t.replaceChildren();
+      const h = document.createElement('div'); h.className = 't'; h.textContent = title; t.appendChild(h);
+      lines.forEach((l) => { const d = document.createElement('div'); d.textContent = l; t.appendChild(d); });
+      t.style.display = 'block';
+      const r = box.getBoundingClientRect();
+      let x = ev.clientX - r.left + 12;
+      if (x + t.offsetWidth > r.width) x = Math.max(0, ev.clientX - r.left - t.offsetWidth - 12);
+      t.style.left = x + 'px'; t.style.top = (ev.clientY - r.top + 14) + 'px';
+    },
+    hide() { t.style.display = 'none'; },
+  };
+}
+const svgIn = (box, h) => { d3.select(box).select('svg').remove(); return d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${box.clientWidth} ${h}`); };
+const textW = (svg, arr, cls) => { const g = svg.append('g'); let w = 0; arr.forEach((s) => { w = Math.max(w, g.append('text').attr('class', cls).text(s).node().getComputedTextLength()); }); g.remove(); return w; };
+const moveTxt = (m) => (m > 0 ? `▲${m}` : m < 0 ? `▼${-m}` : '–');
+
+// each offense: a dot at its neutral read rate, joined to the league-average line
+function rankChart(rows, avg) {
+  const box = el('c-rank');
+  const W = box.clientWidth, h = 26, H = rows.length * h + 30;
+  const svg = svgIn(box, H);
+  const rw = textW(svg, ['32'], 'tk') + 10;
+  const lw = rw + textW(svg, rows.map((r) => r.team), 'lb') + 14;
+  const lo = d3.min(rows, (r) => r.neutral), hi = d3.max(rows, (r) => r.neutral);
+  const x = d3.scaleLinear([Math.floor((lo - .02) * 50) / 50, Math.ceil((hi + .02) * 50) / 50], [lw + 40, W - 48]);
+  const y = d3.scaleBand(rows.map((r) => r.team), [4, H - 26]).padding(.3);
+  const cy = (r) => y(r.team) + y.bandwidth() / 2;
+  const ticks = x.ticks(Math.max(2, Math.floor((W - lw) / 80)));
+  svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', 0).attr('y2', H - 24).attr('stroke', css('--grid'));
+  svg.append('g').selectAll('text').data(ticks).join('text').attr('class', 'tk').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(fmt0);
+  svg.append('line').attr('x1', x(avg)).attr('x2', x(avg)).attr('y1', 0).attr('y2', H - 24).attr('stroke', css('--ink-2')).attr('stroke-dasharray', '4 4');
+  svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'tk').attr('x', rw - 10).attr('y', cy).attr('dy', '.35em').attr('text-anchor', 'end').text((r) => r.rank);
+  svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lb').attr('x', rw).attr('y', cy).attr('dy', '.35em').text((r) => r.team);
+  const g = svg.append('g').selectAll('g').data(rows).join('g');
+  const up = (r) => r.neutral >= avg;
+  g.append('line').attr('x1', x(avg)).attr('x2', (r) => x(r.neutral)).attr('y1', cy).attr('y2', cy).attr('stroke', css('--pass')).attr('stroke-opacity', .35).attr('stroke-width', 4).attr('stroke-linecap', 'round');
+  g.append('circle').attr('cx', (r) => x(r.neutral)).attr('cy', cy).attr('r', 6.5)
+    .attr('fill', (r) => (up(r) ? css('--pass') : css('--board'))).attr('stroke', css('--pass')).attr('stroke-width', (r) => (up(r) ? 0 : 2.5));
+  g.append('text').attr('class', 'tk').attr('fill', css('--ink')).attr('y', cy).attr('dy', '.35em')
+    .attr('x', (r) => x(r.neutral) + (up(r) ? 12 : -12)).attr('text-anchor', (r) => (up(r) ? 'start' : 'end')).text((r) => fmt0(r.neutral));
+  const tip = tipFor(box);
+  g.append('rect').attr('x', 0).attr('width', W).attr('y', (r) => y(r.team)).attr('height', y.bandwidth()).attr('fill', 'transparent')
+    .on('mousemove', (ev, r) => tip.show(ev, `#${r.rank} ${r.team}`, [`${fmtP(r.neutral)} called, neutral situations`, `${fmtP(r.acc)} called, all plays`, `${fmtC(r.snaps)} neutral snaps`, `Last week: ${moveTxt(r.move)}`]))
+    .on('mouseleave', () => tip.hide());
+}
+
+function draw(D) {
+  const T = D.teams, top = T[0], bot = T[T.length - 1];
+  el('meta').textContent = `${D.season} · Week ${D.week}`;
+  el('hero-sub').textContent = `Every play caller has a tell. Through week ${D.week} of ${D.season}, we called ${fmt0(D.league_acc)} of all pass/run plays before the snap. Here's who gives it away most.`;
+  el('n-top').textContent = fmt0(top.neutral); el('k-top').textContent = `${top.team}, the most open book`;
+  el('n-avg').textContent = fmt0(D.league_neutral);
+  el('n-bot').textContent = fmt0(bot.neutral); el('k-bot').textContent = `${bot.team}, the best poker face`;
+  const s = el('rank-say'); s.replaceChildren();
+  s.append('Share of each offense\'s calls we predicted in ', Object.assign(document.createElement('b'), { textContent: 'neutral situations' }),
+    ', season to date. Garbage time and obvious downs are left out, so a team isn\'t predictable just because it was running out the clock.');
+  el('tbl').replaceChildren(...T.map((r) => {
+    const tr = document.createElement('tr');
+    [r.rank, moveTxt(r.move), r.team, fmt0(r.neutral), fmt0(r.acc), fmtC(r.snaps)].forEach((v, i) => {
+      const td = document.createElement('td'); td.textContent = v; if (i >= 3) td.className = 'n'; tr.appendChild(td);
+    });
+    return tr;
+  }));
+  el('week-h').textContent = `Week ${D.week}, game by game`;
+  el('games').replaceChildren(...D.games.map((g) => {
+    const d = document.createElement('div'); d.className = 'game';
+    d.innerHTML = '<div class="dd"></div><div class="ctx"></div><div class="call"><div class="meter"><i></i></div><div class="lab"></div></div>';
+    d.querySelector('.dd').textContent = g.team;
+    d.querySelector('.ctx').textContent = `vs ${g.opp} · ${g.plays} plays`;
+    d.querySelector('.meter i').style.width = `${g.acc * 100}%`;
+    d.querySelector('.lab').textContent = fmt0(g.acc);
+    return d;
+  }));
+  el('card').src = D.card; el('dl').href = D.card;
+  const render = () => rankChart(T, D.league_neutral);
+  render();
+  let rw; new ResizeObserver(() => { clearTimeout(rw); rw = setTimeout(render, 120); }).observe(document.querySelector('.wrap'));
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+}
+
+fetch('weekly.json').then((r) => r.json()).then(draw);
+</script>
+</body>
+</html>
