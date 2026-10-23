@@ -1,0 +1,1419 @@
+{
+ "overall": {
+  "base": {
+   "logloss": 0.6689,
+   "acc": 0.6097,
+   "auc": 0.5
+  },
+  "xpass": {
+   "logloss": 0.527,
+   "acc": 0.7116,
+   "auc": 0.7912
+  },
+  "A_situation": {
+   "logloss": 0.5251,
+   "acc": 0.7121,
+   "auc": 0.7924
+  },
+  "B_sit+cognitive": {
+   "logloss": 0.5092,
+   "acc": 0.7313,
+   "auc": 0.8103
+  },
+  "C_sit+personnel": {
+   "logloss": 0.4825,
+   "acc": 0.7578,
+   "auc": 0.8351
+  },
+  "D_all": {
+   "logloss": 0.4724,
+   "acc": 0.7642,
+   "auc": 0.8437
+  }
+ },
+ "neutral": {
+  "base": {
+   "logloss": 0.7099,
+   "acc": 0.5221,
+   "auc": 0.5
+  },
+  "xpass": {
+   "logloss": 0.646,
+   "acc": 0.6095,
+   "auc": 0.663
+  },
+  "A_situation": {
+   "logloss": 0.6448,
+   "acc": 0.6103,
+   "auc": 0.6647
+  },
+  "B_sit+cognitive": {
+   "logloss": 0.625,
+   "acc": 0.642,
+   "auc": 0.7013
+  },
+  "C_sit+personnel": {
+   "logloss": 0.5947,
+   "acc": 0.6803,
+   "auc": 0.7419
+  },
+  "D_all": {
+   "logloss": 0.5801,
+   "acc": 0.6899,
+   "auc": 0.7597
+  }
+ },
+ "by_down": {
+  "1": {
+   "base": {
+    "logloss": 0.7169,
+    "acc": 0.5071,
+    "auc": 0.5
+   },
+   "A_situation": {
+    "logloss": 0.6106,
+    "acc": 0.6298,
+    "auc": 0.6989
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.5964,
+    "acc": 0.6564,
+    "auc": 0.7277
+   },
+   "D_all": {
+    "logloss": 0.5566,
+    "acc": 0.7032,
+    "auc": 0.7788
+   }
+  },
+  "2": {
+   "base": {
+    "logloss": 0.6632,
+    "acc": 0.6219,
+    "auc": 0.5
+   },
+   "A_situation": {
+    "logloss": 0.5544,
+    "acc": 0.7116,
+    "auc": 0.7617
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.531,
+    "acc": 0.7318,
+    "auc": 0.7901
+   },
+   "D_all": {
+    "logloss": 0.4882,
+    "acc": 0.7625,
+    "auc": 0.8301
+   }
+  },
+  "3": {
+   "base": {
+    "logloss": 0.5775,
+    "acc": 0.8051,
+    "auc": 0.5
+   },
+   "A_situation": {
+    "logloss": 0.3103,
+    "acc": 0.8757,
+    "auc": 0.8877
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.3016,
+    "acc": 0.8798,
+    "auc": 0.8944
+   },
+   "D_all": {
+    "logloss": 0.283,
+    "acc": 0.888,
+    "auc": 0.9079
+   }
+  }
+ },
+ "by_season": {
+  "2019": {
+   "base": {
+    "logloss": 0.6648,
+    "acc": 0.6186,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5029,
+    "acc": 0.7274,
+    "auc": 0.8097
+   },
+   "A_situation": {
+    "logloss": 0.5154,
+    "acc": 0.7184,
+    "auc": 0.7982
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.501,
+    "acc": 0.7354,
+    "auc": 0.8149
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4698,
+    "acc": 0.7567,
+    "auc": 0.8403
+   },
+   "D_all": {
+    "logloss": 0.4598,
+    "acc": 0.7665,
+    "auc": 0.8493
+   }
+  },
+  "2020": {
+   "base": {
+    "logloss": 0.6662,
+    "acc": 0.6156,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.53,
+    "acc": 0.7082,
+    "auc": 0.7859
+   },
+   "A_situation": {
+    "logloss": 0.5296,
+    "acc": 0.7098,
+    "auc": 0.7865
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.512,
+    "acc": 0.7322,
+    "auc": 0.8073
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4856,
+    "acc": 0.749,
+    "auc": 0.8299
+   },
+   "D_all": {
+    "logloss": 0.4754,
+    "acc": 0.7578,
+    "auc": 0.8394
+   }
+  },
+  "2021": {
+   "base": {
+    "logloss": 0.6671,
+    "acc": 0.6137,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5248,
+    "acc": 0.7108,
+    "auc": 0.7916
+   },
+   "A_situation": {
+    "logloss": 0.5233,
+    "acc": 0.7116,
+    "auc": 0.7931
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.5064,
+    "acc": 0.7327,
+    "auc": 0.8116
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4725,
+    "acc": 0.7596,
+    "auc": 0.8408
+   },
+   "D_all": {
+    "logloss": 0.4622,
+    "acc": 0.7679,
+    "auc": 0.8498
+   }
+  },
+  "2022": {
+   "base": {
+    "logloss": 0.6725,
+    "acc": 0.6021,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5356,
+    "acc": 0.7075,
+    "auc": 0.7871
+   },
+   "A_situation": {
+    "logloss": 0.5291,
+    "acc": 0.7123,
+    "auc": 0.7915
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.5105,
+    "acc": 0.7316,
+    "auc": 0.8114
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4854,
+    "acc": 0.7523,
+    "auc": 0.8336
+   },
+   "D_all": {
+    "logloss": 0.4742,
+    "acc": 0.7596,
+    "auc": 0.8432
+   }
+  },
+  "2023": {
+   "base": {
+    "logloss": 0.6674,
+    "acc": 0.6129,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5285,
+    "acc": 0.7067,
+    "auc": 0.7879
+   },
+   "A_situation": {
+    "logloss": 0.5248,
+    "acc": 0.7086,
+    "auc": 0.7915
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.5121,
+    "acc": 0.7265,
+    "auc": 0.8064
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4995,
+    "acc": 0.7521,
+    "auc": 0.8258
+   },
+   "D_all": {
+    "logloss": 0.4891,
+    "acc": 0.7543,
+    "auc": 0.8347
+   }
+  },
+  "2024": {
+   "base": {
+    "logloss": 0.6722,
+    "acc": 0.6026,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5309,
+    "acc": 0.7108,
+    "auc": 0.7906
+   },
+   "A_situation": {
+    "logloss": 0.5258,
+    "acc": 0.7129,
+    "auc": 0.7942
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.5094,
+    "acc": 0.7313,
+    "auc": 0.8119
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4757,
+    "acc": 0.7736,
+    "auc": 0.8455
+   },
+   "D_all": {
+    "logloss": 0.468,
+    "acc": 0.7762,
+    "auc": 0.8517
+   }
+  },
+  "2025": {
+   "base": {
+    "logloss": 0.6722,
+    "acc": 0.6026,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5357,
+    "acc": 0.7104,
+    "auc": 0.7869
+   },
+   "A_situation": {
+    "logloss": 0.5273,
+    "acc": 0.7114,
+    "auc": 0.7926
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.5124,
+    "acc": 0.7293,
+    "auc": 0.8093
+   },
+   "C_sit+personnel": {
+    "logloss": 0.4882,
+    "acc": 0.7613,
+    "auc": 0.8341
+   },
+   "D_all": {
+    "logloss": 0.478,
+    "acc": 0.7671,
+    "auc": 0.8423
+   }
+  },
+  "2026": {
+   "base": {
+    "logloss": 0.6674,
+    "acc": 0.6129,
+    "auc": 0.5
+   },
+   "xpass": {
+    "logloss": 0.5247,
+    "acc": 0.7129,
+    "auc": 0.793
+   },
+   "A_situation": {
+    "logloss": 0.5192,
+    "acc": 0.7173,
+    "auc": 0.7978
+   },
+   "B_sit+cognitive": {
+    "logloss": 0.501,
+    "acc": 0.7355,
+    "auc": 0.8173
+   }
+  }
+ },
+ "n_plays": 243285,
+ "pass_rate": 0.6097,
+ "calibration": [
+  {
+   "pred": 0.0646,
+   "actual": 0.0733,
+   "n": 6590
+  },
+  {
+   "pred": 0.1552,
+   "actual": 0.1715,
+   "n": 18345
+  },
+  {
+   "pred": 0.2507,
+   "actual": 0.2607,
+   "n": 25169
+  },
+  {
+   "pred": 0.3491,
+   "actual": 0.3619,
+   "n": 24613
+  },
+  {
+   "pred": 0.45,
+   "actual": 0.4753,
+   "n": 21724
+  },
+  {
+   "pred": 0.5506,
+   "actual": 0.565,
+   "n": 22536
+  },
+  {
+   "pred": 0.6489,
+   "actual": 0.6546,
+   "n": 21406
+  },
+  {
+   "pred": 0.7509,
+   "actual": 0.7566,
+   "n": 20382
+  },
+  {
+   "pred": 0.8518,
+   "actual": 0.8546,
+   "n": 25401
+  },
+  {
+   "pred": 0.9596,
+   "actual": 0.9633,
+   "n": 57119
+  }
+ ],
+ "after_result": {
+  "comp_15plus": {
+   "proe": -0.0225,
+   "se": 0.0033,
+   "n": 18959,
+   "actual": 0.4944,
+   "expected": 0.5169
+  },
+  "comp_5_14": {
+   "proe": -0.0076,
+   "se": 0.0021,
+   "n": 41288,
+   "actual": 0.5584,
+   "expected": 0.5659
+  },
+  "comp_lt5": {
+   "proe": -0.0219,
+   "se": 0.0031,
+   "n": 16031,
+   "actual": 0.6957,
+   "expected": 0.7176
+  },
+  "incomplete": {
+   "proe": -0.009,
+   "se": 0.002,
+   "n": 37926,
+   "actual": 0.7101,
+   "expected": 0.719
+  },
+  "none": {
+   "proe": 0.0223,
+   "se": 0.008,
+   "n": 3772,
+   "actual": 0.4645,
+   "expected": 0.4422
+  },
+  "pen_def": {
+   "proe": -0.0195,
+   "se": 0.0055,
+   "n": 6642,
+   "actual": 0.5021,
+   "expected": 0.5216
+  },
+  "pen_off": {
+   "proe": 0.0226,
+   "se": 0.004,
+   "n": 9481,
+   "actual": 0.7672,
+   "expected": 0.7446
+  },
+  "run_10plus": {
+   "proe": -0.0443,
+   "se": 0.0048,
+   "n": 9305,
+   "actual": 0.4018,
+   "expected": 0.4461
+  },
+  "run_1_3": {
+   "proe": 0.0379,
+   "se": 0.0024,
+   "n": 31694,
+   "actual": 0.6679,
+   "expected": 0.63
+  },
+  "run_4_9": {
+   "proe": 0.0042,
+   "se": 0.0026,
+   "n": 29670,
+   "actual": 0.4949,
+   "expected": 0.4907
+  },
+  "run_stuffed": {
+   "proe": 0.0718,
+   "se": 0.0032,
+   "n": 15229,
+   "actual": 0.7505,
+   "expected": 0.6787
+  },
+  "sack": {
+   "proe": -0.0122,
+   "se": 0.0045,
+   "n": 7593,
+   "actual": 0.7059,
+   "expected": 0.7181
+  },
+  "scramble": {
+   "proe": -0.0474,
+   "se": 0.0054,
+   "n": 6152,
+   "actual": 0.5567,
+   "expected": 0.6041
+  },
+  "turnover": {
+   "proe": -0.0601,
+   "se": 0.0072,
+   "n": 4060,
+   "actual": 0.5015,
+   "expected": 0.5616
+  }
+ },
+ "after_result_neutral": {
+  "comp_15plus": {
+   "proe": -0.0313,
+   "se": 0.0048,
+   "n": 10341,
+   "actual": 0.4238,
+   "expected": 0.455
+  },
+  "comp_5_14": {
+   "proe": -0.0165,
+   "se": 0.0036,
+   "n": 17979,
+   "actual": 0.4281,
+   "expected": 0.4446
+  },
+  "comp_lt5": {
+   "proe": -0.0501,
+   "se": 0.0062,
+   "n": 5759,
+   "actual": 0.5437,
+   "expected": 0.5938
+  },
+  "incomplete": {
+   "proe": -0.0152,
+   "se": 0.0043,
+   "n": 12853,
+   "actual": 0.5189,
+   "expected": 0.5341
+  },
+  "none": {
+   "proe": 0.0222,
+   "se": 0.008,
+   "n": 3770,
+   "actual": 0.4645,
+   "expected": 0.4422
+  },
+  "pen_def": {
+   "proe": -0.0263,
+   "se": 0.0084,
+   "n": 3329,
+   "actual": 0.4148,
+   "expected": 0.4411
+  },
+  "pen_off": {
+   "proe": 0.0273,
+   "se": 0.0069,
+   "n": 4155,
+   "actual": 0.7083,
+   "expected": 0.681
+  },
+  "run_10plus": {
+   "proe": -0.0371,
+   "se": 0.0067,
+   "n": 5335,
+   "actual": 0.4112,
+   "expected": 0.4483
+  },
+  "run_1_3": {
+   "proe": 0.0726,
+   "se": 0.0039,
+   "n": 14155,
+   "actual": 0.6902,
+   "expected": 0.6176
+  },
+  "run_4_9": {
+   "proe": 0.0356,
+   "se": 0.0039,
+   "n": 14836,
+   "actual": 0.4887,
+   "expected": 0.4531
+  },
+  "run_stuffed": {
+   "proe": 0.1291,
+   "se": 0.0058,
+   "n": 6000,
+   "actual": 0.7637,
+   "expected": 0.6346
+  },
+  "sack": {
+   "proe": -0.0124,
+   "se": 0.0087,
+   "n": 2795,
+   "actual": 0.5689,
+   "expected": 0.5813
+  },
+  "scramble": {
+   "proe": -0.0647,
+   "se": 0.0091,
+   "n": 2794,
+   "actual": 0.4248,
+   "expected": 0.4896
+  }
+ },
+ "moments": {
+  "after_off_timeout": {
+   "proe": 0.008,
+   "se": 0.0045,
+   "n": 6344,
+   "actual": 0.7393,
+   "expected": 0.7313
+  },
+  "after_def_timeout": {
+   "proe": -0.011,
+   "se": 0.0051,
+   "n": 5736,
+   "actual": 0.5425,
+   "expected": 0.5536
+  },
+  "scripted": {
+   "proe": 0.0111,
+   "se": 0.0019,
+   "n": 55184,
+   "actual": 0.573,
+   "expected": 0.5619
+  },
+  "first_of_drive": {
+   "proe": 0.0001,
+   "se": 0.0023,
+   "n": 39237,
+   "actual": 0.4936,
+   "expected": 0.4936
+  },
+  "opp_just_scored_td": {
+   "proe": 0.0024,
+   "se": 0.0018,
+   "n": 55340,
+   "actual": 0.6423,
+   "expected": 0.6399
+  },
+  "after_own_turnover": {
+   "proe": -0.0153,
+   "se": 0.0025,
+   "n": 26135,
+   "actual": 0.6473,
+   "expected": 0.6625
+  },
+  "after_takeaway": {
+   "proe": -0.0125,
+   "se": 0.003,
+   "n": 20319,
+   "actual": 0.5419,
+   "expected": 0.5544
+  },
+  "after_own_3out_punt": {
+   "proe": 0.0003,
+   "se": 0.0015,
+   "n": 81934,
+   "actual": 0.6113,
+   "expected": 0.611
+  },
+  "first_snap_after_2min": {
+   "proe": -0.0313,
+   "se": 0.0048,
+   "n": 5521,
+   "actual": 0.6857,
+   "expected": 0.717
+  },
+  "first_snap_2nd_half": {
+   "proe": -0.0155,
+   "se": 0.008,
+   "n": 3751,
+   "actual": 0.4114,
+   "expected": 0.4268
+  },
+  "no_huddle": {
+   "proe": 0.0389,
+   "se": 0.0026,
+   "n": 24296,
+   "actual": 0.7075,
+   "expected": 0.6686
+  }
+ },
+ "hot_hand": {
+  "(-9.0, -0.5]": {
+   "proe": -0.0485,
+   "se": 0.006,
+   "n": 6317,
+   "actual": 0.4561,
+   "expected": 0.5045
+  },
+  "(-0.5, -0.2]": {
+   "proe": -0.0211,
+   "se": 0.0041,
+   "n": 13641,
+   "actual": 0.4929,
+   "expected": 0.514
+  },
+  "(-0.2, 0.2]": {
+   "proe": 0.0072,
+   "se": 0.0023,
+   "n": 42877,
+   "actual": 0.5206,
+   "expected": 0.5135
+  },
+  "(0.2, 0.5]": {
+   "proe": 0.018,
+   "se": 0.003,
+   "n": 25825,
+   "actual": 0.5371,
+   "expected": 0.5191
+  },
+  "(0.5, 9.0]": {
+   "proe": 0.038,
+   "se": 0.0036,
+   "n": 17378,
+   "actual": 0.5502,
+   "expected": 0.5122
+  }
+ },
+ "streak": {
+  "-4": {
+   "proe": 0.0102,
+   "se": 0.0102,
+   "n": 2158,
+   "actual": 0.532,
+   "expected": 0.5218
+  },
+  "-3": {
+   "proe": 0.0588,
+   "se": 0.0083,
+   "n": 3291,
+   "actual": 0.5801,
+   "expected": 0.5213
+  },
+  "-2": {
+   "proe": 0.067,
+   "se": 0.0054,
+   "n": 7836,
+   "actual": 0.5883,
+   "expected": 0.5213
+  },
+  "-1": {
+   "proe": 0.0533,
+   "se": 0.0028,
+   "n": 28622,
+   "actual": 0.6022,
+   "expected": 0.5488
+  },
+  "0": {
+   "proe": 0.0128,
+   "se": 0.006,
+   "n": 6378,
+   "actual": 0.5158,
+   "expected": 0.503
+  },
+  "1": {
+   "proe": -0.0084,
+   "se": 0.0031,
+   "n": 23519,
+   "actual": 0.4814,
+   "expected": 0.4898
+  },
+  "2": {
+   "proe": -0.0269,
+   "se": 0.0038,
+   "n": 16468,
+   "actual": 0.4641,
+   "expected": 0.491
+  },
+  "3": {
+   "proe": -0.063,
+   "se": 0.0053,
+   "n": 8163,
+   "actual": 0.4449,
+   "expected": 0.5079
+  },
+  "4": {
+   "proe": -0.037,
+   "se": 0.0049,
+   "n": 9603,
+   "actual": 0.476,
+   "expected": 0.513
+  }
+ },
+ "coaches": [
+  {
+   "coach": "Doug Pederson",
+   "n": 2080,
+   "acc_D": 0.8014,
+   "ll_A": 0.4838,
+   "ll_B": 0.4757,
+   "ll_C": 0.4447,
+   "ll_D": 0.439,
+   "neutral_pass": 0.6303,
+   "cog_lift_pct": 1.6643,
+   "cog_over_personnel_pct": 1.2853
+  },
+  {
+   "coach": "Raheem Morris",
+   "n": 2101,
+   "acc_D": 0.7987,
+   "ll_A": 0.5029,
+   "ll_B": 0.4844,
+   "ll_C": 0.4299,
+   "ll_D": 0.4316,
+   "neutral_pass": 0.5602,
+   "cog_lift_pct": 3.6793,
+   "cog_over_personnel_pct": -0.3943
+  },
+  {
+   "coach": "Dennis Allen",
+   "n": 2120,
+   "acc_D": 0.7868,
+   "ll_A": 0.511,
+   "ll_B": 0.4849,
+   "ll_C": 0.4666,
+   "ll_D": 0.4422,
+   "neutral_pass": 0.5976,
+   "cog_lift_pct": 5.1079,
+   "cog_over_personnel_pct": 5.2187
+  },
+  {
+   "coach": "Sean Payton",
+   "n": 3271,
+   "acc_D": 0.7866,
+   "ll_A": 0.5143,
+   "ll_B": 0.5035,
+   "ll_C": 0.4611,
+   "ll_D": 0.454,
+   "neutral_pass": 0.6203,
+   "cog_lift_pct": 2.0902,
+   "cog_over_personnel_pct": 1.5358
+  },
+  {
+   "coach": "Jim Harbaugh",
+   "n": 2185,
+   "acc_D": 0.7858,
+   "ll_A": 0.4858,
+   "ll_B": 0.4723,
+   "ll_C": 0.4548,
+   "ll_D": 0.4417,
+   "neutral_pass": 0.6156,
+   "cog_lift_pct": 2.7833,
+   "cog_over_personnel_pct": 2.8839
+  },
+  {
+   "coach": "Todd Bowles",
+   "n": 3336,
+   "acc_D": 0.7848,
+   "ll_A": 0.5047,
+   "ll_B": 0.4946,
+   "ll_C": 0.4608,
+   "ll_D": 0.4504,
+   "neutral_pass": 0.6115,
+   "cog_lift_pct": 2.0026,
+   "cog_over_personnel_pct": 2.2671
+  },
+  {
+   "coach": "Sean McDermott",
+   "n": 3626,
+   "acc_D": 0.7824,
+   "ll_A": 0.5133,
+   "ll_B": 0.4948,
+   "ll_C": 0.4722,
+   "ll_D": 0.4589,
+   "neutral_pass": 0.57,
+   "cog_lift_pct": 3.5943,
+   "cog_over_personnel_pct": 2.8161
+  },
+  {
+   "coach": "DeMeco Ryans",
+   "n": 3545,
+   "acc_D": 0.7814,
+   "ll_A": 0.5076,
+   "ll_B": 0.4968,
+   "ll_C": 0.466,
+   "ll_D": 0.4603,
+   "neutral_pass": 0.6169,
+   "cog_lift_pct": 2.1231,
+   "cog_over_personnel_pct": 1.2236
+  },
+  {
+   "coach": "John Harbaugh",
+   "n": 3301,
+   "acc_D": 0.7813,
+   "ll_A": 0.5126,
+   "ll_B": 0.4912,
+   "ll_C": 0.4677,
+   "ll_D": 0.4567,
+   "neutral_pass": 0.5401,
+   "cog_lift_pct": 4.1817,
+   "cog_over_personnel_pct": 2.3457
+  },
+  {
+   "coach": "Mike McDaniel",
+   "n": 3103,
+   "acc_D": 0.7805,
+   "ll_A": 0.5362,
+   "ll_B": 0.5222,
+   "ll_C": 0.4736,
+   "ll_D": 0.4634,
+   "neutral_pass": 0.593,
+   "cog_lift_pct": 2.6252,
+   "cog_over_personnel_pct": 2.1343
+  },
+  {
+   "coach": "Mike Vrabel",
+   "n": 2247,
+   "acc_D": 0.7788,
+   "ll_A": 0.5153,
+   "ll_B": 0.5152,
+   "ll_C": 0.4788,
+   "ll_D": 0.4707,
+   "neutral_pass": 0.5977,
+   "cog_lift_pct": 0.0242,
+   "cog_over_personnel_pct": 1.6974
+  },
+  {
+   "coach": "Andy Reid",
+   "n": 3589,
+   "acc_D": 0.7788,
+   "ll_A": 0.5011,
+   "ll_B": 0.4778,
+   "ll_C": 0.4616,
+   "ll_D": 0.455,
+   "neutral_pass": 0.6559,
+   "cog_lift_pct": 4.6498,
+   "cog_over_personnel_pct": 1.4211
+  },
+  {
+   "coach": "Antonio Pierce",
+   "n": 1588,
+   "acc_D": 0.7783,
+   "ll_A": 0.5129,
+   "ll_B": 0.5048,
+   "ll_C": 0.4682,
+   "ll_D": 0.4633,
+   "neutral_pass": 0.6379,
+   "cog_lift_pct": 1.5798,
+   "cog_over_personnel_pct": 1.0532
+  },
+  {
+   "coach": "Kevin O'Connell",
+   "n": 3099,
+   "acc_D": 0.7777,
+   "ll_A": 0.4981,
+   "ll_B": 0.4703,
+   "ll_C": 0.4883,
+   "ll_D": 0.4651,
+   "neutral_pass": 0.6305,
+   "cog_lift_pct": 5.584,
+   "cog_over_personnel_pct": 4.7648
+  },
+  {
+   "coach": "Dave Canales",
+   "n": 2038,
+   "acc_D": 0.7772,
+   "ll_A": 0.5476,
+   "ll_B": 0.5376,
+   "ll_C": 0.4927,
+   "ll_D": 0.4848,
+   "neutral_pass": 0.6143,
+   "cog_lift_pct": 1.8117,
+   "cog_over_personnel_pct": 1.6023
+  },
+  {
+   "coach": "Kyle Shanahan",
+   "n": 3379,
+   "acc_D": 0.7754,
+   "ll_A": 0.5143,
+   "ll_B": 0.5031,
+   "ll_C": 0.4747,
+   "ll_D": 0.4685,
+   "neutral_pass": 0.5827,
+   "cog_lift_pct": 2.1801,
+   "cog_over_personnel_pct": 1.3109
+  },
+  {
+   "coach": "Brian Callahan",
+   "n": 2021,
+   "acc_D": 0.7734,
+   "ll_A": 0.5079,
+   "ll_B": 0.4988,
+   "ll_C": 0.4748,
+   "ll_D": 0.4709,
+   "neutral_pass": 0.6225,
+   "cog_lift_pct": 1.7865,
+   "cog_over_personnel_pct": 0.8219
+  },
+  {
+   "coach": "Robert Saleh",
+   "n": 2050,
+   "acc_D": 0.7722,
+   "ll_A": 0.5045,
+   "ll_B": 0.4852,
+   "ll_C": 0.4706,
+   "ll_D": 0.4622,
+   "neutral_pass": 0.6624,
+   "cog_lift_pct": 3.8152,
+   "cog_over_personnel_pct": 1.7923
+  },
+  {
+   "coach": "Mike Tomlin",
+   "n": 3204,
+   "acc_D": 0.7694,
+   "ll_A": 0.5244,
+   "ll_B": 0.5102,
+   "ll_C": 0.4794,
+   "ll_D": 0.4703,
+   "neutral_pass": 0.5787,
+   "cog_lift_pct": 2.7102,
+   "cog_over_personnel_pct": 1.8965
+  },
+  {
+   "coach": "Kevin Stefanski",
+   "n": 3379,
+   "acc_D": 0.7689,
+   "ll_A": 0.5144,
+   "ll_B": 0.5008,
+   "ll_C": 0.4903,
+   "ll_D": 0.4803,
+   "neutral_pass": 0.6354,
+   "cog_lift_pct": 2.6474,
+   "cog_over_personnel_pct": 2.053
+  },
+  {
+   "coach": "Zac Taylor",
+   "n": 3141,
+   "acc_D": 0.7666,
+   "ll_A": 0.524,
+   "ll_B": 0.5005,
+   "ll_C": 0.4848,
+   "ll_D": 0.4792,
+   "neutral_pass": 0.6692,
+   "cog_lift_pct": 4.4788,
+   "cog_over_personnel_pct": 1.1504
+  },
+  {
+   "coach": "Pete Carroll",
+   "n": 1920,
+   "acc_D": 0.7635,
+   "ll_A": 0.5133,
+   "ll_B": 0.5004,
+   "ll_C": 0.4856,
+   "ll_D": 0.4743,
+   "neutral_pass": 0.6411,
+   "cog_lift_pct": 2.5066,
+   "cog_over_personnel_pct": 2.3226
+  },
+  {
+   "coach": "Mike Macdonald",
+   "n": 2197,
+   "acc_D": 0.761,
+   "ll_A": 0.55,
+   "ll_B": 0.5275,
+   "ll_C": 0.5012,
+   "ll_D": 0.4857,
+   "neutral_pass": 0.5858,
+   "cog_lift_pct": 4.0963,
+   "cog_over_personnel_pct": 3.0976
+  },
+  {
+   "coach": "Dan Quinn",
+   "n": 2272,
+   "acc_D": 0.7597,
+   "ll_A": 0.5299,
+   "ll_B": 0.5203,
+   "ll_C": 0.4994,
+   "ll_D": 0.4929,
+   "neutral_pass": 0.592,
+   "cog_lift_pct": 1.8177,
+   "cog_over_personnel_pct": 1.3178
+  },
+  {
+   "coach": "Matt Eberflus",
+   "n": 2134,
+   "acc_D": 0.7577,
+   "ll_A": 0.5301,
+   "ll_B": 0.5214,
+   "ll_C": 0.4935,
+   "ll_D": 0.4806,
+   "neutral_pass": 0.6082,
+   "cog_lift_pct": 1.6415,
+   "cog_over_personnel_pct": 2.6226
+  },
+  {
+   "coach": "Brian Daboll",
+   "n": 3164,
+   "acc_D": 0.7516,
+   "ll_A": 0.5377,
+   "ll_B": 0.523,
+   "ll_C": 0.5096,
+   "ll_D": 0.4972,
+   "neutral_pass": 0.6169,
+   "cog_lift_pct": 2.7303,
+   "cog_over_personnel_pct": 2.4323
+  },
+  {
+   "coach": "Shane Steichen",
+   "n": 3115,
+   "acc_D": 0.7512,
+   "ll_A": 0.5411,
+   "ll_B": 0.5258,
+   "ll_C": 0.5005,
+   "ll_D": 0.4958,
+   "neutral_pass": 0.5807,
+   "cog_lift_pct": 2.8301,
+   "cog_over_personnel_pct": 0.9354
+  },
+  {
+   "coach": "Jonathan Gannon",
+   "n": 3155,
+   "acc_D": 0.749,
+   "ll_A": 0.5463,
+   "ll_B": 0.5265,
+   "ll_C": 0.5066,
+   "ll_D": 0.4939,
+   "neutral_pass": 0.6298,
+   "cog_lift_pct": 3.6311,
+   "cog_over_personnel_pct": 2.5088
+  },
+  {
+   "coach": "Mike McCarthy",
+   "n": 2280,
+   "acc_D": 0.7443,
+   "ll_A": 0.5548,
+   "ll_B": 0.5471,
+   "ll_C": 0.5177,
+   "ll_D": 0.5167,
+   "neutral_pass": 0.6294,
+   "cog_lift_pct": 1.3736,
+   "cog_over_personnel_pct": 0.205
+  },
+  {
+   "coach": "Nick Sirianni",
+   "n": 3553,
+   "acc_D": 0.7402,
+   "ll_A": 0.5648,
+   "ll_B": 0.5507,
+   "ll_C": 0.5173,
+   "ll_D": 0.5139,
+   "neutral_pass": 0.5488,
+   "cog_lift_pct": 2.4938,
+   "cog_over_personnel_pct": 0.652
+  },
+  {
+   "coach": "Sean McVay",
+   "n": 3543,
+   "acc_D": 0.7316,
+   "ll_A": 0.5444,
+   "ll_B": 0.531,
+   "ll_C": 0.519,
+   "ll_D": 0.5073,
+   "neutral_pass": 0.5913,
+   "cog_lift_pct": 2.4602,
+   "cog_over_personnel_pct": 2.2493
+  },
+  {
+   "coach": "Matt LaFleur",
+   "n": 3286,
+   "acc_D": 0.7273,
+   "ll_A": 0.5439,
+   "ll_B": 0.5292,
+   "ll_C": 0.5349,
+   "ll_D": 0.5247,
+   "neutral_pass": 0.5618,
+   "cog_lift_pct": 2.7035,
+   "cog_over_personnel_pct": 1.9205
+  },
+  {
+   "coach": "Dan Campbell",
+   "n": 3515,
+   "acc_D": 0.7084,
+   "ll_A": 0.5994,
+   "ll_B": 0.594,
+   "ll_C": 0.566,
+   "ll_D": 0.5621,
+   "neutral_pass": 0.5752,
+   "cog_lift_pct": 0.8986,
+   "cog_over_personnel_pct": 0.6935
+  }
+ ],
+ "exploit": [
+  {
+   "pbin": "(0.0, 0.2]",
+   "y": 0,
+   "epa": -0.0648,
+   "n": 7015
+  },
+  {
+   "pbin": "(0.0, 0.2]",
+   "y": 1,
+   "epa": 0.1257,
+   "n": 1483
+  },
+  {
+   "pbin": "(0.2, 0.4]",
+   "y": 0,
+   "epa": -0.0724,
+   "n": 21444
+  },
+  {
+   "pbin": "(0.2, 0.4]",
+   "y": 1,
+   "epa": 0.1062,
+   "n": 9844
+  },
+  {
+   "pbin": "(0.4, 0.6]",
+   "y": 0,
+   "epa": -0.074,
+   "n": 14009
+  },
+  {
+   "pbin": "(0.4, 0.6]",
+   "y": 1,
+   "epa": 0.0916,
+   "n": 15567
+  },
+  {
+   "pbin": "(0.6, 0.8]",
+   "y": 0,
+   "epa": -0.0705,
+   "n": 6938
+  },
+  {
+   "pbin": "(0.6, 0.8]",
+   "y": 1,
+   "epa": 0.0766,
+   "n": 16805
+  },
+  {
+   "pbin": "(0.8, 1.0]",
+   "y": 0,
+   "epa": -0.0835,
+   "n": 1272
+  },
+  {
+   "pbin": "(0.8, 1.0]",
+   "y": 1,
+   "epa": 0.0737,
+   "n": 11661
+  }
+ ],
+ "importance_groups": {
+  "Situation": 0.2916,
+  "Human/cognitive": 0.1858,
+  "Personnel/formation": 0.5226
+ },
+ "importance_top": [
+  {
+   "f": "formation",
+   "share": 0.4407
+  },
+  {
+   "f": "ydstogo",
+   "share": 0.0653
+  },
+  {
+   "f": "down",
+   "share": 0.0526
+  },
+  {
+   "f": "wp",
+   "share": 0.0484
+  },
+  {
+   "f": "shotgun",
+   "share": 0.0407
+  },
+  {
+   "f": "half_seconds_remaining",
+   "share": 0.0374
+  },
+  {
+   "f": "prev_result",
+   "share": 0.0311
+  },
+  {
+   "f": "game_seconds_remaining",
+   "share": 0.0304
+  },
+  {
+   "f": "prev_epa",
+   "share": 0.0252
+  },
+  {
+   "f": "yardline_100",
+   "share": 0.0209
+  },
+  {
+   "f": "secs_since_prev_snap",
+   "share": 0.0165
+  },
+  {
+   "f": "streak_signed",
+   "share": 0.01
+  },
+  {
+   "f": "tell_min",
+   "share": 0.0097
+  },
+  {
+   "f": "vegas_wp",
+   "share": 0.0096
+  },
+  {
+   "f": "coach_proe_after_run",
+   "share": 0.0084
+  },
+  {
+   "f": "ingame_pass_rate",
+   "share": 0.0077
+  },
+  {
+   "f": "tell_max",
+   "share": 0.0073
+  },
+  {
+   "f": "coach_switch_rate",
+   "share": 0.0072
+  },
+  {
+   "f": "n_wr",
+   "share": 0.0058
+  },
+  {
+   "f": "coach_proe_after_fail",
+   "share": 0.0057
+  }
+ ],
+ "importance_cog_top": [
+  {
+   "f": "prev_epa",
+   "share": 0.0682
+  },
+  {
+   "f": "prev_result",
+   "share": 0.053
+  },
+  {
+   "f": "secs_since_prev_snap",
+   "share": 0.0327
+  },
+  {
+   "f": "streak_signed",
+   "share": 0.0192
+  },
+  {
+   "f": "ingame_pass_rate",
+   "share": 0.0167
+  },
+  {
+   "f": "team_proe_l8",
+   "share": 0.0131
+  },
+  {
+   "f": "coach_proe_after_run",
+   "share": 0.0096
+  },
+  {
+   "f": "last5_pass_rate",
+   "share": 0.0092
+  },
+  {
+   "f": "snap_no",
+   "share": 0.0091
+  },
+  {
+   "f": "first_of_drive",
+   "share": 0.0088
+  },
+  {
+   "f": "no_huddle",
+   "share": 0.0085
+  },
+  {
+   "f": "coach_proe_after_fail",
+   "share": 0.0077
+  },
+  {
+   "f": "team_neutral_pass_l8",
+   "share": 0.0074
+  },
+  {
+   "f": "coach_switch_rate",
+   "share": 0.0068
+  },
+  {
+   "f": "prev_yards",
+   "share": 0.0065
+  }
+ ]
+}

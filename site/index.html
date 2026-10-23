@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pre-Snap Read</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Pass or run, called before the snap. Out-of-sample results on every NFL play since 2019.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root {
+  --board: #FAFBFA;
+  --ink: #1B1D22;
+  --ink-2: #5A606B;
+  --grid: #DCE0E5;
+  --pass: #1E5BC6;      /* blue dry-erase */
+  --run: #C42B2B;       /* red dry-erase */
+  --hit: #2C7A3F;       /* green: called it */
+  --public: #9AA1AC;    /* the benchmark, deliberately quiet */
+  --wash: #EEF2F7;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --text: "Barlow", system-ui, sans-serif;
+  --shadow: rgba(27, 29, 34, .12);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board: #15181D; --ink: #ECEEF1; --ink-2: #A3AAB5; --grid: #2C3139; --pass: #6C9CF2; --run: #F07070;
+    --hit: #5DBB76; --public: #6B7380; --wash: #1D2229; --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --board: #15181D; --ink: #ECEEF1; --ink-2: #A3AAB5; --grid: #2C3139; --pass: #6C9CF2; --run: #F07070;
+  --hit: #5DBB76; --public: #6B7380; --wash: #1D2229; --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--board); color: var(--ink); font-family: var(--text); font-size: 1.0625rem; line-height: 1.55; }
+.wrap { max-width: 68rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+@media (min-width: 720px) { .wrap { padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: max(32px, env(safe-area-inset-right, 0px)); } }
+a { color: var(--pass); }
+:focus-visible { outline: 3px solid var(--pass); outline-offset: 2px; }
+
+header.top { display: flex; justify-content: space-between; align-items: baseline; padding: 1.25rem 0; border-bottom: 2px solid var(--ink); }
+.mark { font-family: var(--display); font-weight: 700; font-size: 1.5rem; letter-spacing: .01em; }
+.mark span { color: var(--pass); }
+header.top .meta { color: var(--ink-2); font-size: .9rem; }
+
+.hero { padding: 3rem 0 2rem; }
+.hero h1, section.blk h2 { text-wrap: balance; }
+.hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.6rem, 8vw, 5.2rem); line-height: .95; margin: 0 0 1rem; max-width: 14ch; letter-spacing: -.005em; }
+.hero p { max-width: 36rem; color: var(--ink-2); margin: 0; font-size: 1.125rem; }
+
+/* the drive: the one bold element */
+.drive { margin: 2.5rem 0 1rem; }
+.drive-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; }
+.drive-head h2 { font-family: var(--display); font-weight: 600; font-size: 1.5rem; margin: 0; }
+.drive-head .ctl { display: flex; gap: .5rem; }
+button.chip { font: 500 .9rem var(--text); color: var(--ink); background: transparent; border: 2px solid var(--ink); border-radius: 999px; padding: .3rem .9rem; cursor: pointer; }
+button.chip:hover { background: var(--wash); }
+.snaps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: .75rem; }
+.snap { border: 2px solid var(--grid); border-radius: 10px; padding: .75rem .9rem; background: var(--board); position: relative; transition: border-color .25s; }
+.snap .dd { font-family: var(--display); font-weight: 600; font-size: 1.15rem; }
+.snap .ctx { color: var(--ink-2); font-size: .85rem; }
+.snap .call { display: flex; align-items: center; gap: .6rem; margin-top: .6rem; }
+.snap .meter { flex: 1; height: 10px; border-radius: 5px; background: var(--run); overflow: hidden; }
+.snap .meter i { display: block; height: 100%; background: var(--pass); }
+.snap .lab { font-family: var(--display); font-weight: 700; font-size: 1.1rem; min-width: 4.2rem; }
+.snap .actual { margin-top: .5rem; font-size: .9rem; color: var(--ink-2); min-height: 1.4em; }
+.snap .actual b { font-weight: 600; }
+.snap.hidden-result .actual { visibility: hidden; }
+.snap.right { border-color: var(--hit); }
+.snap.wrong { border-color: var(--grid); }
+.snap .tag { position: absolute; top: .55rem; right: .7rem; font-weight: 600; font-size: .8rem; }
+.snap.right .tag { color: var(--hit); }
+.snap.wrong .tag { color: var(--ink-2); }
+.legend { display: flex; gap: 1.25rem; color: var(--ink-2); font-size: .85rem; margin-top: .75rem; flex-wrap: wrap; }
+.legend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; vertical-align: -1px; margin-right: .35rem; }
+
+section.blk { padding: 3rem 0 1rem; border-top: 1px solid var(--grid); margin-top: 2rem; }
+section.blk h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4.5vw, 2.6rem); line-height: 1.05; margin: 0 0 .75rem; max-width: 22ch; }
+section.blk .say { max-width: 40rem; color: var(--ink-2); margin: 0 0 1.5rem; }
+.say b { color: var(--ink); font-weight: 600; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 1.5rem 2rem; margin: 1.5rem 0 2rem; }
+.num .v { font-family: var(--display); font-weight: 700; font-size: 3.2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.num .v.pub { color: var(--public); }
+.num .k { color: var(--ink-2); font-size: .95rem; margin-top: .35rem; max-width: 18rem; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: 2rem 3rem; }
+.chart { position: relative; width: 100%; }
+.chart h3 { font-family: var(--display); font-weight: 600; font-size: 1.25rem; margin: 0 0 .25rem; }
+.chart .note { color: var(--ink-2); font-size: .9rem; margin: 0 0 .75rem; }
+svg text { font-family: var(--text); }
+.tk { fill: var(--ink-2); font-size: 12px; }
+.lb { fill: var(--ink); font-size: 13px; }
+.key { display: flex; gap: 1.25rem; font-size: .85rem; color: var(--ink-2); margin: .25rem 0 .5rem; flex-wrap: wrap; }
+.key span::before { content: ""; display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; background: var(--c); }
+.tip { position: absolute; pointer-events: none; background: var(--board); border: 1px solid var(--grid); border-radius: 8px; padding: .35rem .6rem; font-size: .82rem; box-shadow: 0 4px 14px var(--shadow); display: none; white-space: nowrap; z-index: 5; }
+.tip .t { color: var(--ink-2); }
+
+.method { max-width: 44rem; }
+.method p { margin: 0 0 1rem; }
+footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-top: 2px solid var(--ink); margin-top: 3rem; }
+@media (prefers-reduced-motion: reduce) { .snap { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark">Pre-Snap <span>Read</span></div>
+    <div class="meta" id="meta-plays"></div>
+  </header>
+
+  <div class="hero">
+    <h1>We call the play before the snap.</h1>
+    <p id="hero-sub">Pass or run, predicted from what can be known before the ball moves — then checked against what actually happened, on seasons the model never trained on.</p>
+  </div>
+
+  <div class="drive" id="drive">
+    <div class="drive-head">
+      <h2 id="drive-title">One real drive</h2>
+      <div class="ctl">
+        <button class="chip" id="reveal">Reveal the plays</button>
+      </div>
+    </div>
+    <div class="snaps" id="snaps"></div>
+    <div class="legend"><span><i style="background:var(--pass)"></i>Chance of pass</span><span><i style="background:var(--run)"></i>Chance of run</span><span><i style="background:var(--hit)"></i>Called correctly</span></div>
+  </div>
+
+  <section class="blk" id="benchmark">
+    <h2>Right more often than the best public model</h2>
+    <p class="say" id="bench-say"></p>
+    <div class="nums">
+      <div class="num"><div class="v" id="n-acc">—</div><div class="k">Calls correct, all plays</div></div>
+      <div class="num"><div class="v pub" id="n-pub">—</div><div class="k">Public benchmark (nflfastR), same plays</div></div>
+      <div class="num"><div class="v" id="n-miss">—</div><div class="k">Of the benchmark's misses, the share we get right instead</div></div>
+    </div>
+    <div class="two">
+      <div class="chart" id="c-season"><h3>Every season, out of sample</h3><p class="note">Each season is predicted by a model trained only on the seasons before it.</p>
+        <div class="key"><span style="--c:var(--pass)">Pre-Snap Read</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+      <div class="chart" id="c-sit"><h3>Where the calls are hardest</h3><p class="note">Neutral game state: 1st and 2nd down, neither team running away with it.</p>
+        <div class="key"><span style="--c:var(--pass)">Pre-Snap Read</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+    </div>
+  </section>
+
+  <section class="blk" id="confidence">
+    <h2>When it's sure, it's almost never wrong</h2>
+    <p class="say" id="conf-say"></p>
+    <div class="two">
+      <div class="chart" id="c-conf"><h3>Hit rate by confidence</h3><p class="note">Bar length is the share of all plays that fall in each band.</p></div>
+      <div class="chart" id="c-cal"><h3>Probabilities you can price</h3><p class="note">When it says 70% pass, teams pass about 70% of the time.</p></div>
+    </div>
+  </section>
+
+  <section class="blk" id="live">
+    <h2>2026, as it happens</h2>
+    <p class="say" id="live-say"></p>
+    <div class="chart" id="c-live"><div class="key"><span style="--c:var(--pass)">Pre-Snap Read, live</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+  </section>
+
+  <section class="blk" id="teams">
+    <h2>Every offense has a tell</h2>
+    <p class="say">How often each offense's play call was predicted correctly in 2025, against the public benchmark.</p>
+    <div class="chart" id="c-teams"><div class="key"><span style="--c:var(--pass)">Pre-Snap Read</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+  </section>
+
+  <section class="blk" id="method">
+    <h2>How it's tested</h2>
+    <div class="method">
+      <p>Every number on this page is out of sample. For each season, the model is trained only on earlier seasons, then asked to call every snap of the new one. Nothing about a play is used unless it is knowable before the snap.</p>
+      <p>Pass includes dropbacks that end in a sack or scramble. Kneel-downs, spikes and two-point tries are left out. The public benchmark is nflfastR's expected pass model, the standard open-source reference.</p>
+      <p>The live 2026 model runs on data available during the season; the historical model uses additional pre-snap data that is published after each season.</p>
+    </div>
+  </section>
+
+  <footer>Play-by-play data: nflverse. Results updated <span id="updated"></span>.</footer>
+</div>
+
+<script>
+const fmtP = d3.format('.1%'), fmt0 = d3.format('.0%'), fmtC = d3.format(',');
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function tipFor(box) {
+  let t = box.querySelector('.tip');
+  if (!t) { t = document.createElement('div'); t.className = 'tip'; box.appendChild(t); }
+  return {
+    show(ev, title, lines) {
+      t.replaceChildren();
+      const h = document.createElement('div'); h.className = 't'; h.textContent = title; t.appendChild(h);
+      lines.forEach((l) => { const d = document.createElement('div'); d.textContent = l; t.appendChild(d); });
+      t.style.display = 'block';
+      const r = box.getBoundingClientRect();
+      let x = ev.clientX - r.left + 12;
+      if (x + t.offsetWidth > r.width) x = Math.max(0, ev.clientX - r.left - t.offsetWidth - 12);
+      t.style.left = x + 'px'; t.style.top = (ev.clientY - r.top + 14) + 'px';
+    },
+    hide() { t.style.display = 'none'; },
+  };
+}
+const svgIn = (box, h) => { d3.select(box).select('svg').remove(); return d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${box.clientWidth} ${h}`); };
+const textW = (svg, arr, cls) => { const g = svg.append('g'); let w = 0; arr.forEach((s) => { w = Math.max(w, g.append('text').attr('class', cls).text(s).node().getComputedTextLength()); }); g.remove(); return w; };
+
+// paired dot chart: rows of {label, a (ours), b (public)}
+function dumbbell(box, rows, { domain, h = 30, extra } = {}) {
+  const W = box.clientWidth, H = rows.length * h + 30;
+  const svg = svgIn(box, H);
+  const lw = textW(svg, rows.map((r) => r.label), 'lb') + 14;
+  const x = d3.scaleLinear(domain, [lw, W - 52]);
+  const y = d3.scaleBand(rows.map((r) => r.label), [4, H - 26]).padding(.3);
+  const ticks = x.ticks(Math.max(2, Math.floor((W - lw) / 80)));
+  svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', 0).attr('y2', H - 24).attr('stroke', css('--grid'));
+  svg.append('g').selectAll('text').data(ticks).join('text').attr('class', 'tk').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(fmt0);
+  svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lb').attr('x', lw - 12).attr('y', (r) => y(r.label) + y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').text((r) => r.label);
+  const cy = (r) => y(r.label) + y.bandwidth() / 2;
+  const g = svg.append('g').selectAll('g').data(rows).join('g');
+  g.append('line').attr('x1', (r) => x(r.b)).attr('x2', (r) => x(r.a)).attr('y1', cy).attr('y2', cy).attr('stroke', css('--pass')).attr('stroke-opacity', .35).attr('stroke-width', 4).attr('stroke-linecap', 'round');
+  g.append('circle').attr('cx', (r) => x(r.b)).attr('cy', cy).attr('r', 5.5).attr('fill', css('--public'));
+  g.append('circle').attr('cx', (r) => x(r.a)).attr('cy', cy).attr('r', 6.5).attr('fill', css('--pass'));
+  g.append('text').attr('class', 'tk').attr('x', (r) => x(r.a) + 10).attr('y', cy).attr('dy', '.35em').attr('fill', css('--ink')).text((r) => fmtP(r.a));
+  const tip = tipFor(box);
+  g.append('rect').attr('x', lw).attr('width', W - lw).attr('y', (r) => y(r.label)).attr('height', y.bandwidth()).attr('fill', 'transparent')
+    .on('mousemove', (ev, r) => tip.show(ev, r.label, [`Pre-Snap Read ${fmtP(r.a)}`, `Public benchmark ${fmtP(r.b)}`, `${fmtC(r.n)} plays`]))
+    .on('mouseleave', () => tip.hide());
+}
+
+function drawAll(R, drive) {
+  const H = R.headline;
+  document.getElementById('meta-plays').textContent = `${fmtC(R.n_plays)} plays tested`;
+  document.getElementById('hero-sub').textContent = `Pass or run, predicted from what can be known before the ball moves — then checked against what actually happened on ${fmtC(R.n_plays)} plays from ${R.seasons}, seasons the model never trained on.`;
+  document.getElementById('n-acc').textContent = fmtP(H.acc);
+  document.getElementById('n-pub').textContent = fmtP(H.acc_public);
+  document.getElementById('n-miss').textContent = fmt0(H.miss_reduction);
+  document.getElementById('bench-say').innerHTML = '';
+  const s = document.getElementById('bench-say');
+  s.append('On the hardest snaps — neutral 1st and 2nd downs — it is right ', Object.assign(document.createElement('b'), { textContent: fmtP(H.acc_neutral) }),
+    ' of the time, where the public model manages ', Object.assign(document.createElement('b'), { textContent: fmtP(H.acc_neutral_public) }), '.');
+  const hc = R.confidence.filter((c) => c.tier === '90%+' || c.tier === '80–90%');
+  const cs = document.getElementById('conf-say');
+  cs.append('On ', Object.assign(document.createElement('b'), { textContent: fmt0(H.hi_conf_share) }),
+    ' of all snaps the model is at least 80% sure. On those, it is right ', Object.assign(document.createElement('b'), { textContent: fmtP(H.hi_conf_hit) }),
+    ` of the time. The public model reaches that confidence on ${fmt0(H.hi_conf_share_public)} of snaps.`);
+  const L = R.live_2026;
+  const ls = document.getElementById('live-say');
+  ls.append(`Through week ${L.through_week}, the in-season model has called `, Object.assign(document.createElement('b'), { textContent: fmtP(L.acc) }),
+    ` of ${fmtC(L.plays)} plays correctly, against ${fmtP(L.acc_public)} for the public benchmark. Updated every week.`);
+  document.getElementById('updated').textContent = `through 2026 week ${L.through_week}`;
+
+  const render = () => {
+    dumbbell(document.getElementById('c-season'), R.by_season.map((r) => ({ label: String(r.season), a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.65, 0.85] });
+    dumbbell(document.getElementById('c-sit'), R.by_situation.map((r) => ({ label: r.situation, a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.55, 0.95] });
+    dumbbell(document.getElementById('c-teams'), R.teams_2025.map((r) => ({ label: r.team, a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.6, 0.9], h: 24 });
+    confChart(R.confidence); calChart(R.calibration); liveChart(L.weeks);
+  };
+  render();
+  let rw; new ResizeObserver(() => { clearTimeout(rw); rw = setTimeout(render, 120); }).observe(document.querySelector('.wrap'));
+  if (drive) driveRender(drive);
+}
+
+function confChart(rows) {
+  const box = document.getElementById('c-conf');
+  const W = box.clientWidth, rh = 42, H = rows.length * rh + 10;
+  const svg = svgIn(box, H);
+  const lw = textW(svg, rows.map((r) => r.tier + ' sure'), 'lb') + 14;
+  const x = d3.scaleLinear([0, d3.max(rows, (r) => r.share)], [lw, W - 120]);
+  const y = d3.scaleBand(rows.map((r) => r.tier), [4, H - 4]).padding(.28);
+  const g = svg.append('g').selectAll('g').data(rows).join('g');
+  g.append('text').attr('class', 'lb').attr('x', lw - 12).attr('y', (r) => y(r.tier) + y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').text((r) => r.tier + ' sure');
+  g.append('rect').attr('x', lw).attr('y', (r) => y(r.tier)).attr('height', y.bandwidth()).attr('rx', 5).attr('width', (r) => Math.max(2, x(r.share) - lw))
+    .attr('fill', (r, i) => (i < 2 ? css('--hit') : css('--public')));
+  g.append('text').attr('class', 'lb').attr('x', (r) => x(r.share) + 8).attr('y', (r) => y(r.tier) + y.bandwidth() / 2).attr('dy', '.35em')
+    .text((r) => `${fmtP(r.hit)} right`).attr('font-weight', 600);
+  const tip = tipFor(box);
+  g.append('rect').attr('x', 0).attr('width', W).attr('y', (r) => y(r.tier)).attr('height', y.bandwidth()).attr('fill', 'transparent')
+    .on('mousemove', (ev, r) => tip.show(ev, `${r.tier} confident`, [`${fmtP(r.share)} of plays`, `${fmtP(r.hit)} called correctly`, `${fmtC(r.plays)} plays`]))
+    .on('mouseleave', () => tip.hide());
+}
+
+function calChart(rows) {
+  const box = document.getElementById('c-cal');
+  const W = box.clientWidth, H = Math.min(300, W * .75);
+  const svg = svgIn(box, H);
+  const x = d3.scaleLinear([0, 1], [40, W - 12]), y = d3.scaleLinear([0, 1], [H - 28, 8]);
+  const t = [0, .25, .5, .75, 1];
+  svg.append('g').selectAll('line').data(t).join('line').attr('x1', 40).attr('x2', W - 12).attr('y1', y).attr('y2', y).attr('stroke', css('--grid'));
+  svg.append('g').selectAll('text').data(t).join('text').attr('class', 'tk').attr('x', 34).attr('y', y).attr('dy', '.35em').attr('text-anchor', 'end').text(fmt0);
+  svg.append('g').selectAll('text').data(t).join('text').attr('class', 'tk').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(fmt0);
+  svg.append('line').attr('x1', x(0)).attr('y1', y(0)).attr('x2', x(1)).attr('y2', y(1)).attr('stroke', css('--public')).attr('stroke-dasharray', '4 4');
+  svg.append('path').attr('d', d3.line().x((d) => x(d.pred)).y((d) => y(d.actual))(rows)).attr('fill', 'none').attr('stroke', css('--pass')).attr('stroke-width', 2.5).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+  const tip = tipFor(box);
+  svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (d) => x(d.pred)).attr('cy', (d) => y(d.actual)).attr('r', 5).attr('fill', css('--pass'))
+    .on('mousemove', (ev, d) => tip.show(ev, `Model said ${fmt0(d.pred)} pass`, [`Teams passed ${fmtP(d.actual)}`, `${fmtC(d.plays)} plays`]))
+    .on('mouseleave', () => tip.hide());
+}
+
+function liveChart(weeks) {
+  const box = document.getElementById('c-live');
+  const W = box.clientWidth, H = 230;
+  const svg = svgIn(box, H);
+  const x = d3.scaleBand(weeks.map((w) => w.week), [44, W - 10]).padding(.35);
+  const lo = Math.floor(d3.min(weeks, (w) => Math.min(w.acc, w.acc_public)) * 20) / 20;
+  const y = d3.scaleLinear([lo, Math.ceil(d3.max(weeks, (w) => w.acc) * 20) / 20], [H - 28, 8]);
+  svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', 44).attr('x2', W - 10).attr('y1', y).attr('y2', y).attr('stroke', css('--grid'));
+  svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('class', 'tk').attr('x', 38).attr('y', y).attr('dy', '.35em').attr('text-anchor', 'end').text(fmt0);
+  svg.append('g').selectAll('text').data(weeks).join('text').attr('class', 'tk').attr('x', (w) => x(w.week) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle').text((w) => 'Wk ' + w.week);
+  const bw = x.bandwidth() / 2;
+  const tip = tipFor(box);
+  const g = svg.append('g').selectAll('g').data(weeks).join('g');
+  g.append('rect').attr('x', (w) => x(w.week)).attr('width', bw - 2).attr('y', (w) => y(w.acc_public)).attr('height', (w) => y(lo) - y(w.acc_public)).attr('rx', 4).attr('fill', css('--public'));
+  g.append('rect').attr('x', (w) => x(w.week) + bw).attr('width', bw - 2).attr('y', (w) => y(w.acc)).attr('height', (w) => y(lo) - y(w.acc)).attr('rx', 4).attr('fill', css('--pass'));
+  g.append('rect').attr('x', (w) => x(w.week)).attr('width', x.bandwidth()).attr('y', 0).attr('height', H - 28).attr('fill', 'transparent')
+    .on('mousemove', (ev, w) => tip.show(ev, `Week ${w.week}`, [`Pre-Snap Read ${fmtP(w.acc)}`, `Public benchmark ${fmtP(w.acc_public)}`, `${fmtC(w.plays)} plays`]))
+    .on('mouseleave', () => tip.hide());
+}
+
+function driveRender(dv) {
+  document.getElementById('drive-title').textContent = dv.title;
+  const box = document.getElementById('snaps');
+  box.replaceChildren();
+  const cards = dv.snaps.map((s) => {
+    const c = document.createElement('div'); c.className = 'snap hidden-result';
+    const dd = document.createElement('div'); dd.className = 'dd'; dd.textContent = s.situation;
+    const ctx = document.createElement('div'); ctx.className = 'ctx'; ctx.textContent = s.context;
+    const call = document.createElement('div'); call.className = 'call';
+    const lab = document.createElement('div'); lab.className = 'lab'; const isPass = s.p_pass >= .5;
+    lab.textContent = isPass ? 'Pass' : 'Run'; lab.style.color = isPass ? 'var(--pass)' : 'var(--run)';
+    const meter = document.createElement('div'); meter.className = 'meter'; meter.setAttribute('role', 'img'); meter.setAttribute('aria-label', `${fmt0(s.p_pass)} chance of pass`);
+    const fill = document.createElement('i'); fill.style.width = (s.p_pass * 100) + '%'; meter.appendChild(fill);
+    const pct = document.createElement('div'); pct.className = 'ctx'; pct.textContent = fmt0(isPass ? s.p_pass : 1 - s.p_pass);
+    call.append(lab, meter, pct);
+    const act = document.createElement('div'); act.className = 'actual';
+    const b = document.createElement('b'); b.textContent = s.actual === 'pass' ? 'Pass' : 'Run'; act.append('Actual: ', b, ' — ' + s.result);
+    const tag = document.createElement('div'); tag.className = 'tag';
+    c.append(tag, dd, ctx, call, act);
+    box.appendChild(c);
+    return { c, s, tag, right: (s.p_pass >= .5) === (s.actual === 'pass') };
+  });
+  const btn = document.getElementById('reveal');
+  btn.onclick = () => {
+    const shown = btn.dataset.shown === '1';
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    cards.forEach((k, i) => {
+      const apply = () => {
+        k.c.classList.toggle('hidden-result', shown);
+        k.c.classList.toggle('right', !shown && k.right);
+        k.c.classList.toggle('wrong', !shown && !k.right);
+        k.tag.textContent = shown ? '' : (k.right ? 'Called it' : 'Missed');
+      };
+      if (reduce || shown) apply(); else setTimeout(apply, i * 180);
+    });
+    btn.dataset.shown = shown ? '0' : '1';
+    btn.textContent = shown ? 'Reveal the plays' : 'Hide the plays';
+  };
+}
+
+Promise.all([fetch('results.json').then((r) => r.json()), fetch('drive.json').then((r) => r.json()).catch(() => null)])
+  .then(([R, drive]) => drawAll(R, drive))
+  .catch(() => { document.getElementById('hero-sub').textContent = 'Results could not be loaded. Refresh the page to try again.'; });
+</script>
+</body>
+</html>
