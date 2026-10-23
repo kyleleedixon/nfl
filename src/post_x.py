@@ -1,4 +1,4 @@
-"""Post the weekly thread to X (@TelegraphedNFL): card image on the first tweet, the rest as replies.
+"""Post the weekly tweet to X (@TelegraphedNFL) with the card image (any further tweets in the file go as replies).
 
 Usage: python src/post_x.py [--dry-run] [season week]   (default: newest report not yet posted)
 Reads data/reports/{season}_wk{week:02d}_thread.json (written by weekly_report.py).
@@ -82,6 +82,6 @@ for i, text in enumerate(T["tweets"]):
     print(f"posted {i + 1}/{len(T['tweets'])}")
 rec["complete"] = True
 save()
-print(f"thread live: https://x.com/TelegraphedNFL/status/{rec['ids'][0]}")
+print(f"live: https://x.com/TelegraphedNFL/status/{rec['ids'][0]}")
 if T.get("tag_reply"):
-    print("\nNow reply to the thread from the X app with (manual tags are allowed, automated ones aren't):\n\n" + T["tag_reply"])
+    print("\nNow reply to it from the X app with (manual tags are allowed, automated ones aren't):\n\n" + T["tag_reply"])

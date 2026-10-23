@@ -102,7 +102,7 @@ tweets = [
     + "\n\n🃏 Poker Face\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)}" for r in bot.head(3).itertuples())
     + f"\n\nAll 32: {SITE}/weekly\n#NFL {TAG[top.posteam.iloc[0]]} {TAG[bot.posteam.iloc[0]]}",
 ]
-featured = list(dict.fromkeys(list(top.posteam) + list(bot.posteam) + [wt.posteam, wb.posteam]))
+featured = list(top.posteam[:3]) + list(bot.posteam[:3])  # the teams named in the tweet
 tag_reply = "Calling out this week's Open Books and Poker Faces 👀\n\n" + " ".join(AT[t] for t in featured)
 L += ["", "## Draft tweet (posted with the card)", ""]
 for i, t in enumerate(tweets, 1):
