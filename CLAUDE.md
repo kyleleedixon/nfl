@@ -1,4 +1,4 @@
-# NFL play-call predictor ("Pre-Snap Read")
+# NFL play-call predictor ("Telegraphed", X: @TelegraphedNFL)
 
 Predicts pass vs. run before the snap. Kyle's thesis: play-callers are human and therefore
 predictable; the model leans on human-decision patterns and personnel tells, not just game state.
@@ -21,6 +21,10 @@ predictable; the model leans on human-decision patterns and personnel tells, not
 - `overnight.sh` — unattended v3 pipeline through deploy + push (log `data/overnight.log`).
 - `src/analyze.py` — v1 analysis (tells, coach table, EPA vs predictability). Reads v1 preds.
 - `src/showcase_data.py` → `site/results.json`; `src/pick_drive.py` → `site/drive.json`.
+- `src/weekly_report.py` — Tuesday "How predictable is your offense?" rankings (neutral-situation read rate by team,
+  team labels only), share card PNG, draft X thread (`data/reports/`), public page `site/weekly/`.
+- `weekly.sh` — Tuesday refresh: new week → features → re-score current season → report → deploy → push. No-ops if
+  no new week. `launchd/` holds the schedule (Tue 6/9/12); `tools/pyexit/` works around a pyarrow hang at exit.
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.
 - `run_all.sh` — rebuilds everything end to end (`TUNE=1 ./run_all.sh` to re-tune).
 
@@ -71,6 +75,8 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
 - Recency weighting (half-life 3 seasons) hurt on the 2024 holdout; not used.
 
 ## Status / next steps
+- Brand: **Telegraphed**, X account @TelegraphedNFL. Growth plan: weekly Tuesday rankings thread + card (Umpire
+  Scorecards / Scorigami model); next: per-game cards, an "Open Book" callout (≥85% read). Never tweet tells/reasons.
 - Site live at https://pre-snap-read.vercel.app (Vercel project `pre-snap-read`, `site/` only). GitHub repo
   `kyleleedixon/nfl` is currently PUBLIC — Kyle will make it private.
 - End goal: real-time pre-snap estimator. Lag is fine for now; never drop data for lack of a live feed.

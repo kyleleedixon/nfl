@@ -3,12 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pre-Snap Read</title>
+<title>Telegraphed</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Pass or run, called before the snap. Out-of-sample results on every NFL play since 2019.">
+<meta name="description" content="Every play caller has a tell. Pass or run, called before the snap: out-of-sample results on every NFL play since 2019.">
+<link rel="icon" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Telegraphed"><meta property="og:description" content="Every play caller has a tell. Weekly rankings of the NFL's most and least predictable.">
+<meta property="og:image" content="https://pre-snap-read.vercel.app/og-banner.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@TelegraphedNFL">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
 :root {
@@ -44,7 +48,7 @@ a { color: var(--pass); }
 :focus-visible { outline: 3px solid var(--pass); outline-offset: 2px; }
 
 header.top { display: flex; justify-content: space-between; align-items: baseline; padding: 1.25rem 0; border-bottom: 2px solid var(--ink); }
-.mark { font-family: var(--display); font-weight: 700; font-size: 1.5rem; letter-spacing: .01em; }
+.mark { font-family: var(--display); font-weight: 800; font-size: 1.75rem; letter-spacing: .01em; }
 .mark span { color: var(--pass); }
 header.top .meta { color: var(--ink-2); font-size: .9rem; }
 
@@ -108,7 +112,7 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="mark">Pre-Snap <span>Read</span></div>
+    <div class="mark">TELEGRAPHED</div>
     <div class="meta" id="meta-plays"></div>
   </header>
 
@@ -138,9 +142,9 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
     </div>
     <div class="two">
       <div class="chart" id="c-season"><h3>Every season, out of sample</h3><p class="note">Each season is predicted by a model trained only on the seasons before it.</p>
-        <div class="key"><span style="--c:var(--pass)">Pre-Snap Read</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+        <div class="key"><span style="--c:var(--pass)">Telegraphed</span><span style="--c:var(--public)">Public benchmark</span></div></div>
       <div class="chart" id="c-sit"><h3>Where the calls are hardest</h3><p class="note">Neutral game state: 1st and 2nd down, neither team running away with it.</p>
-        <div class="key"><span style="--c:var(--pass)">Pre-Snap Read</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+        <div class="key"><span style="--c:var(--pass)">Telegraphed</span><span style="--c:var(--public)">Public benchmark</span></div></div>
     </div>
   </section>
 
@@ -156,13 +160,13 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
   <section class="blk" id="live">
     <h2>2026, as it happens</h2>
     <p class="say" id="live-say"></p>
-    <div class="chart" id="c-live"><div class="key"><span style="--c:var(--pass)">Pre-Snap Read, live</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+    <div class="chart" id="c-live"><div class="key"><span style="--c:var(--pass)">Telegraphed, live</span><span style="--c:var(--public)">Public benchmark</span></div></div>
   </section>
 
   <section class="blk" id="teams">
     <h2>Every offense has a tell</h2>
     <p class="say">How often each offense's play call was predicted correctly in 2025, against the public benchmark.</p>
-    <div class="chart" id="c-teams"><div class="key"><span style="--c:var(--pass)">Pre-Snap Read</span><span style="--c:var(--public)">Public benchmark</span></div></div>
+    <div class="chart" id="c-teams"><div class="key"><span style="--c:var(--pass)">Telegraphed</span><span style="--c:var(--public)">Public benchmark</span></div></div>
   </section>
 
   <section class="blk" id="method">
@@ -174,7 +178,7 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
     </div>
   </section>
 
-  <footer>Play-by-play data: nflverse. Results updated <span id="updated"></span>.</footer>
+  <footer>Weekly rankings: <a href="/weekly/">How predictable is your offense?</a> · Follow <a href="https://x.com/TelegraphedNFL">@TelegraphedNFL</a> on X.<br>Play-by-play data: nflverse. Results updated <span id="updated"></span>.</footer>
 </div>
 
 <script>
@@ -220,7 +224,7 @@ function dumbbell(box, rows, { domain, h = 30, extra } = {}) {
   g.append('text').attr('class', 'tk').attr('x', (r) => x(r.a) + 10).attr('y', cy).attr('dy', '.35em').attr('fill', css('--ink')).text((r) => fmtP(r.a));
   const tip = tipFor(box);
   g.append('rect').attr('x', lw).attr('width', W - lw).attr('y', (r) => y(r.label)).attr('height', y.bandwidth()).attr('fill', 'transparent')
-    .on('mousemove', (ev, r) => tip.show(ev, r.label, [`Pre-Snap Read ${fmtP(r.a)}`, `Public benchmark ${fmtP(r.b)}`, `${fmtC(r.n)} plays`]))
+    .on('mousemove', (ev, r) => tip.show(ev, r.label, [`Telegraphed ${fmtP(r.a)}`, `Public benchmark ${fmtP(r.b)}`, `${fmtC(r.n)} plays`]))
     .on('mouseleave', () => tip.hide());
 }
 
@@ -309,7 +313,7 @@ function liveChart(weeks) {
   g.append('rect').attr('x', (w) => x(w.week)).attr('width', bw - 2).attr('y', (w) => y(w.acc_public)).attr('height', (w) => y(lo) - y(w.acc_public)).attr('rx', 4).attr('fill', css('--public'));
   g.append('rect').attr('x', (w) => x(w.week) + bw).attr('width', bw - 2).attr('y', (w) => y(w.acc)).attr('height', (w) => y(lo) - y(w.acc)).attr('rx', 4).attr('fill', css('--pass'));
   g.append('rect').attr('x', (w) => x(w.week)).attr('width', x.bandwidth()).attr('y', 0).attr('height', H - 28).attr('fill', 'transparent')
-    .on('mousemove', (ev, w) => tip.show(ev, `Week ${w.week}`, [`Pre-Snap Read ${fmtP(w.acc)}`, `Public benchmark ${fmtP(w.acc_public)}`, `${fmtC(w.plays)} plays`]))
+    .on('mousemove', (ev, w) => tip.show(ev, `Week ${w.week}`, [`Telegraphed ${fmtP(w.acc)}`, `Public benchmark ${fmtP(w.acc_public)}`, `${fmtC(w.plays)} plays`]))
     .on('mouseleave', () => tip.hide());
 }
 
