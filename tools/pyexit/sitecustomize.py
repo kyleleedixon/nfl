@@ -1,4 +1,4 @@
-"""Loaded via PYTHONPATH by weekly.sh. pyarrow's thread pool can deadlock in its C++ destructor at process
+"""Loaded via PYTHONPATH by refresh.sh. pyarrow's thread pool can deadlock in its C++ destructor at process
 exit on this Mac (seen in arrow::internal::ThreadPool::Shutdown), hanging an unattended run forever.
 After Python's own cleanup, flush and hard-exit with the real exit code instead of running native finalizers."""
 import atexit

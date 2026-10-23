@@ -10,5 +10,71 @@
    "2113680028806316456"
   ],
   "complete": true
+ },
+ "2026_06_HOU_JAX": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_DAL_GB": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_ARI_LA": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_CHI_ATL": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_BAL_CLE": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_CAR_PHI": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_NYJ_NE": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_TEN_IND": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_LAC_KC": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_NO_NYG": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_BUF_LV": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_PIT_TB": {
+  "ids": [],
+  "complete": true,
+  "skipped": "before game cards launched"
+ },
+ "2026_06_WAS_SF": {
+  "ids": [
+   "2113760913140367527"
+  ],
+  "complete": true
  }
 }

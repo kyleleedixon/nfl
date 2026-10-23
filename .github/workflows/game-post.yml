@@ -1,0 +1,46 @@
+# Every 30 min, 8am-10pm CT: post the oldest queued game card (state/games/, written by refresh.sh), one per run so a
+# batch of games is spaced out. Same safety rails as the weekly post (state/x_paused, resumable, stale cards skipped).
+name: Game post
+on:
+  schedule:
+    - cron: "5,35 13-23 * 9-12,1-2 *"
+    - cron: "5,35 0-3 * 9-12,1-2 *"
+  workflow_dispatch:
+    inputs:
+      dry_run: { description: "Preview only: show the next game tweet, don't post", type: boolean, default: true }
+permissions: { contents: write }
+concurrency: { group: x-post, cancel-in-progress: false }
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Anything queued?
+        id: q
+        run: |
+          out=$(python3 src/post_x.py games --dry-run)
+          echo "$out"
+          grep -q "no game cards queued" <<<"$out" && echo "empty=1" >> "$GITHUB_OUTPUT" || true
+      - run: pip install "requests-oauthlib>=2.0"
+        if: steps.q.outputs.empty != '1'
+      - name: Post
+        if: steps.q.outputs.empty != '1'
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          python src/post_x.py --check
+          python src/post_x.py games ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+      - name: Save posting record
+        if: always() && steps.q.outputs.empty != '1'
+        run: |
+          git config user.name "Kyle Dixon"
+          git config user.email "kyleleedixon@gmail.com"
+          git add state
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Posted game tweet [skip ci]"
+          git pull -q --rebase origin main
+          git push origin main

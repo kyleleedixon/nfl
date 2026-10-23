@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Tuesday refresh: new nflverse week -> features -> re-train current season's live model -> report + card -> push.
-# Runs in GitHub Actions (.github/workflows/weekly-refresh.yml) or locally. Vercel deploys site/ on push.
-# Exits quietly if there's no new week yet, so it can be scheduled more than once on Tuesday.
-# WEEK=n overrides the week, FORCE=1 reruns a week already reported, NODEPLOY=1 stops before commit/push.
+# In-season refresh, run every few hours (GitHub Actions: .github/workflows/refresh.yml) or locally.
+# Waits for FTN charting (the live model needs it; nflverse publishes it ~1-2 days after a game), then:
+# features -> re-train current season's live model -> a card for each newly charted game -> the weekly rankings once
+# FTN covers every game of a week -> push (Vercel deploys site/; the post workflows tweet from state/).
+# Exits early when nothing new is charted. WEEK=n FORCE=1 re-runs a week's rankings; NODEPLOY=1 stops before push.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PY:-.venv/bin/python}
@@ -10,11 +11,11 @@ export PYTHONPATH="$PWD/tools/pyexit"   # avoids a pyarrow hang at interpreter e
 SEASON=${SEASON:-2026}
 mkdir -p data/raw data/ref data/preds_v3
 if [[ -z "${CI:-}" ]]; then
-  exec >>data/weekly.log 2>&1
+  exec >>data/refresh.log 2>&1
   caffeinate -dimsu -w $$ &
 fi
 notify() { command -v osascript >/dev/null && osascript -e "display notification \"$1\" with title \"Telegraphed\"" || true; }
-trap 'echo "=== $(date "+%F %T") FAILED (line $LINENO)"; notify "Weekly refresh failed"' ERR
+trap 'echo "=== $(date "+%F %T") FAILED (line $LINENO)"; notify "Refresh failed"' ERR
 step() { echo; echo "=== $(date '+%F %T') $*"; }
 
 step "inputs"
@@ -32,13 +33,32 @@ done
 mkdir -p data/raw/new   # current season: always fresh
 curl -sfL -o data/raw/new/pbp_$SEASON.parquet $REL/pbp/play_by_play_$SEASON.parquet
 curl -sfL -o data/raw/new/part_$SEASON.parquet $REL/pbp_participation/pbp_participation_$SEASON.parquet || rm -f data/raw/new/part_$SEASON.parquet
-curl -sfL -o data/raw/new/ftn_$SEASON.parquet $REL/ftn_charting/ftn_charting_$SEASON.parquet || rm -f data/raw/new/ftn_$SEASON.parquet
+curl -sfL -o data/raw/new/ftn_$SEASON.parquet $REL/ftn_charting/ftn_charting_$SEASON.parquet
+curl -sfL -o data/raw/schedule.csv https://github.com/nflverse/nfldata/raw/master/data/games.csv
 
-NEW=$($PY -c "import pandas as pd,sys; print(int(pd.read_parquet(sys.argv[1], columns=['week']).week.max()))" data/raw/new/pbp_$SEASON.parquet)
+# what's new: charted games (in play-by-play and FTN) from the last 6 days without a card, and the latest week
+# whose every scheduled game is charted
+read -r NEWG WEEKDONE <<<"$($PY - "$SEASON" <<'EOF'
+import json, os, sys
+import pandas as pd
+S = int(sys.argv[1])
+pbp = set(pd.read_parquet(f"data/raw/new/pbp_{S}.parquet", columns=["game_id"]).game_id)
+ftn = set(pd.read_parquet(f"data/raw/new/ftn_{S}.parquet", columns=["nflverse_game_id"]).nflverse_game_id)
+sch = pd.read_csv("data/raw/schedule.csv")
+sch = sch[(sch.season == S) & (sch.game_type == "REG")]
+charted = pbp & ftn
+recent = set(sch.game_id[pd.to_datetime(sch.gameday) >= pd.Timestamp.now().normalize() - pd.Timedelta(days=6)])
+new = [g for g in charted & recent if not os.path.exists(f"state/games/{g}.json")]
+full = [w for w, g in sch.groupby("week") if set(g.game_id) <= charted]
+print(len(new), max(full) if full else 0)
+EOF
+)"
 DONE=$($PY -c "import json,sys; w=json.load(open('site/weekly/weekly.json')); print(w['week'] if w['season']==int(sys.argv[1]) else 0)" $SEASON 2>/dev/null || echo 0)
-WEEK=${WEEK:-$NEW}
-echo "latest week in data: $NEW, last report: $DONE, reporting week: $WEEK"
-if [[ "$WEEK" -le "$DONE" && -z "${FORCE:-}" ]]; then echo "no new week, nothing to do"; exit 0; fi
+WEEK=${WEEK:-$WEEKDONE}
+echo "new charted games: $NEWG; latest fully charted week: $WEEKDONE; last rankings: week $DONE"
+RANK=""
+if [[ "$WEEK" -gt "$DONE" || -n "${FORCE:-}" ]] && [[ "$WEEK" -gt 0 ]]; then RANK=1; fi
+if [[ "$NEWG" -eq 0 && -z "$RANK" ]]; then echo "nothing new charted, nothing to do"; exit 0; fi
 mv data/raw/new/*.parquet data/raw/
 
 step "features"
@@ -46,11 +66,15 @@ $PY src/features.py data/raw data/features.parquet
 $PY src/features_v2.py data/raw data/features.parquet data/features_v2.parquet
 $PY src/features_v3.py data/raw data/features_v2.parquet data/features_v3.parquet
 
-step "re-train $SEASON live model (trained on seasons < $SEASON; only this week's plays are new)"
+step "re-train $SEASON live model (trained on seasons < $SEASON; only new plays change)"
 $PY src/backtest_v3.py live "$SEASON"
 
-step "report"
-$PY src/weekly_report.py "$SEASON" "$WEEK"
+step "game cards"
+$PY src/game_cards.py "$SEASON"
+if [[ -n "$RANK" ]]; then
+  step "weekly rankings: week $WEEK"
+  $PY src/weekly_report.py "$SEASON" "$WEEK"
+fi
 $PY src/showcase_data.py >/dev/null
 $PY - <<'EOF'
 import json
@@ -61,11 +85,11 @@ EOF
 
 if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping commit and push"; exit 0; fi
 step "commit + push (Vercel deploys site/ from GitHub on push)"
-git add site/results.json site/weekly state
-git commit -q -m "Weekly refresh: $SEASON week $WEEK
+git add site/results.json site/weekly site/games state
+git commit -q -m "Refresh: $SEASON, $NEWG new game card(s)${RANK:+, week $WEEK rankings}
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || echo "nothing to commit"
 git pull -q --rebase origin main
 git push origin main
-notify "Week $WEEK rankings are live"
+notify "Refresh done: $NEWG game card(s)${RANK:+, week $WEEK rankings}"
 step "done"

@@ -1,0 +1,68 @@
+# Every 3 hours in season: when nflverse has charted new games (FTN, ~1-2 days after kickoff) -> features -> live model
+# -> a card per new game + the weekly rankings once a whole week is charted -> push (Vercel deploys). See refresh.sh.
+name: Refresh
+on:
+  schedule:
+    - cron: "17 */3 * 9-12,1-2 *"
+  workflow_dispatch:
+    inputs:
+      week: { description: "Rankings week to (re)build (blank = latest fully charted)", required: false }
+      force: { description: "Rebuild that week's rankings even if already done", type: boolean, default: false }
+      nodeploy: { description: "Dry run: build everything, don't commit or push", type: boolean, default: false }
+permissions: { contents: write }
+concurrency: { group: refresh, cancel-in-progress: false }
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      # cheap check first: skip the whole run if nflverse hasn't touched this season's play-by-play or FTN files
+      # since the last successful run (the stamp lives in the Actions cache, not the repo)
+      - name: Data stamp
+        id: stamp
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          s=""
+          for t in pbp ftn_charting; do
+            s="$s$(curl -sf -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/nflverse/nflverse-data/releases/tags/$t \
+              | python3 -c "import json,sys; print(''.join(a['updated_at'] for a in json.load(sys.stdin)['assets'] if a['name'].endswith('_2026.parquet')))")"
+          done
+          echo "key=nflverse-stamp-$(echo "$s" | sha1sum | cut -c1-16)-$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v4
+        id: seen
+        with: { path: .stamp, key: "${{ steps.stamp.outputs.key }}", lookup-only: true }
+      - name: Nothing new
+        if: steps.seen.outputs.cache-hit == 'true' && github.event_name == 'schedule'
+        run: echo "nflverse data unchanged since the last run today"
+      - uses: actions/checkout@v4
+        if: steps.seen.outputs.cache-hit != 'true' || github.event_name != 'schedule'
+      - uses: actions/setup-python@v5
+        if: steps.seen.outputs.cache-hit != 'true' || github.event_name != 'schedule'
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+        if: steps.seen.outputs.cache-hit != 'true' || github.event_name != 'schedule'
+      - uses: actions/cache@v4   # past seasons' nflverse files never change mid-season
+        if: steps.seen.outputs.cache-hit != 'true' || github.event_name != 'schedule'
+        with:
+          path: data/raw
+          key: nflverse-raw-${{ github.run_id }}
+          restore-keys: nflverse-raw-
+      - name: Refresh
+        if: steps.seen.outputs.cache-hit != 'true' || github.event_name != 'schedule'
+        env:
+          PY: python
+          THREADS: "4"
+          WEEK: ${{ inputs.week }}
+          FORCE: ${{ inputs.force && '1' || '' }}
+          NODEPLOY: ${{ inputs.nodeploy && '1' || '' }}
+        run: |
+          # commits must carry Kyle's identity: Vercel Hobby only deploys commits by the account owner
+          git config user.name "Kyle Dixon"
+          git config user.email "kyleleedixon@gmail.com"
+          ./refresh.sh
+      - name: Remember data stamp
+        if: success() && steps.seen.outputs.cache-hit != 'true'
+        run: mkdir -p .stamp && touch .stamp/ok
+      - uses: actions/cache/save@v4
+        if: success() && steps.seen.outputs.cache-hit != 'true'
+        with: { path: .stamp, key: "${{ steps.stamp.outputs.key }}" }

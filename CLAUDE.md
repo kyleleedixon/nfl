@@ -26,16 +26,21 @@ predictable; the model leans on human-decision patterns and personnel tells, not
 - `overnight.sh` — unattended v3 pipeline through deploy + push (log `data/overnight.log`).
 - `src/analyze.py` — v1 analysis (tells, coach table, EPA vs predictability). Reads v1 preds.
 - `src/showcase_data.py` → `site/results.json`; `src/pick_drive.py` → `site/drive.json`.
-- `src/weekly_report.py` — Tuesday "How predictable is your offense?" rankings (neutral-situation read rate by team,
+- `src/weekly_report.py` — Wednesday "How predictable is your offense?" rankings (neutral-situation read rate by team,
   team labels only), share card PNG, draft X thread (`data/reports/`), and `site/weekly/weekly.json` for the public
   page. `site/weekly/index.html` is a hand-written template sharing the main page's tokens and chart code.
-- `weekly.sh` — Tuesday refresh: new week → features → `backtest_v3.py live` (re-train current season's live model only)
-  → report → push (Vercel deploys). No-ops if no new week (last reported week = `site/weekly/weekly.json`).
-- `src/post_x.py` — posts the weekly tweet + card to X (@TelegraphedNFL). Creds from env (GitHub secrets) or
+- `src/game_cards.py` — per-game card (Umpire Scorecards style): each offense's read rate vs NFL average, play-by-play
+  dot chart (expected-pass/run zones), "Biggest surprise" banner (the model's most confident miss). Writes
+  `site/games/{game_id}.png` + `state/games/{game_id}.json`. Results only, never features/tells. Shared brand in `src/brand.py`.
+- `refresh.sh` — in-season refresh (replaces weekly.sh): waits for FTN charting (~1-2 days after a game; without FTN the
+  live model loses 2–4 pts, so we never post before it) → features → `backtest_v3.py live` → cards for newly charted games
+  → weekly rankings once FTN covers every game of a week (schedule: nflverse games.csv) → push. No-ops if nothing new.
+- `src/post_x.py` — posts the weekly tweet + card (default) or the oldest queued game card (`post_x.py games`) to X (@TelegraphedNFL). Creds from env (GitHub secrets) or
   `~/.config/telegraphed/x.env`, never the repo. Resumable via `state/x_posted.json`; a file `state/x_paused` stops it;
   refuses drafts >2 days old. `--dry-run` previews.
-- Automation runs on **GitHub Actions**, not the laptop: `.github/workflows/weekly-refresh.yml` (Tue 11/14/16 UTC) and
-  `weekly-post.yml` (Tue 17/19 UTC = 11am CT). Both can be run by hand from the Actions tab. A fresh checkout needs
+- Automation runs on **GitHub Actions**, not the laptop: `.github/workflows/refresh.yml` (every 3 h Sep–Feb; first step
+  skips the run if nflverse's 2026 pbp/FTN files are unchanged), `game-post.yml` (every 30 min 8am–10pm CT, one game card
+  per run), `weekly-post.yml` (Wed 17/19/22 UTC + Thu 17 UTC = ~11am CT). All can be run by hand from the Actions tab. A fresh checkout needs
   `artifacts/` (cached 2019–2025 preds, ablation decision, players table; see its README) and `state/` (tweet drafts,
   posting record). Refresh `artifacts/preds_v3/` after re-running `backtest_v3.py run`. `tools/pyexit/` works around
   a pyarrow hang at interpreter exit on macOS.
@@ -104,8 +109,8 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
 - Recency weighting (half-life 3 seasons) hurt on the 2024 holdout; not used.
 
 ## Status / next steps
-- Brand: **Telegraphed**, X account @TelegraphedNFL. Growth plan: weekly Tuesday rankings thread + card (Umpire
-  Scorecards / Scorigami model); next: per-game cards, an "Open Book" callout (≥85% read). Never tweet tells/reasons.
+- Brand: **Telegraphed**, X account @TelegraphedNFL. Growth plan: game cards after FTN charts each game + Wednesday rankings card (Umpire
+  Scorecards / Scorigami model); game cards live from week 7 (week 6 cards made but marked skipped in state/x_posted.json). Never tweet tells/reasons.
 - Site live at https://telegraphed.app (www.telegraphed.app primary; also telegraphed.vercel.app; Vercel project `nfl`, Git-connected to this repo, root directory `site/`,
   so every push to main deploys). Never change the root directory: the repo root would publish the source. GitHub repo
   `kyleleedixon/nfl` is currently PUBLIC — Kyle will make it private.

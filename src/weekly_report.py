@@ -14,35 +14,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct
 
 D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
-BRAND = os.environ.get("BRAND", "Telegraphed")
-HANDLE = "@TelegraphedNFL"
-SITE = os.environ.get("SITE", "telegraphed.app")
 MIN_NEUTRAL = 60  # season-to-date neutral snaps needed to be ranked
-
-NICK = dict(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills", CAR="Panthers", CHI="Bears",
-            CIN="Bengals", CLE="Browns", DAL="Cowboys", DEN="Broncos", DET="Lions", GB="Packers",
-            HOU="Texans", IND="Colts", JAX="Jaguars", KC="Chiefs", LA="Rams", LAC="Chargers", LV="Raiders",
-            MIA="Dolphins", MIN="Vikings", NE="Patriots", NO="Saints", NYG="Giants", NYJ="Jets",
-            PHI="Eagles", PIT="Steelers", SF="49ers", SEA="Seahawks", TB="Buccaneers", TEN="Titans",
-            WAS="Commanders")
-
-# fan hashtags go in the bot's tweets (allowed); official @handles go only in a reply Kyle posts by hand, because
-# X's automation rules forbid unsolicited automated @mentions
-TAG = dict(ARI="#BirdCityFootball", ATL="#DirtyBirds", BAL="#RavensFlock", BUF="#BillsMafia", CAR="#KeepPounding",
-           CHI="#DaBears", CIN="#RuleTheJungle", CLE="#DawgPound", DAL="#DallasCowboys", DEN="#BroncosCountry",
-           DET="#OnePride", GB="#GoPackGo", HOU="#WeAreTexans", IND="#ForTheShoe", JAX="#DUUUVAL", KC="#ChiefsKingdom",
-           LA="#RamsHouse", LAC="#BoltUp", LV="#RaiderNation", MIA="#FinsUp", MIN="#Skol", NE="#ForeverNE", NO="#Saints",
-           NYG="#TogetherBlue", NYJ="#JetUp", PHI="#FlyEaglesFly", PIT="#HereWeGo", SF="#FTTB", SEA="#GoHawks",
-           TB="#GoBucs", TEN="#TitanUp", WAS="#HTTC")
-AT = dict(ARI="@AZCardinals", ATL="@AtlantaFalcons", BAL="@Ravens", BUF="@BuffaloBills", CAR="@Panthers",
-          CHI="@ChicagoBears", CIN="@Bengals", CLE="@Browns", DAL="@dallascowboys", DEN="@Broncos", DET="@Lions",
-          GB="@packers", HOU="@HoustonTexans", IND="@Colts", JAX="@Jaguars", KC="@Chiefs", LA="@RamsNFL",
-          LAC="@chargers", LV="@Raiders", MIA="@MiamiDolphins", MIN="@Vikings", NE="@Patriots", NO="@Saints",
-          NYG="@Giants", NYJ="@nyjets", PHI="@Eagles", PIT="@steelers", SF="@49ers", SEA="@Seahawks",
-          TB="@Buccaneers", TEN="@Titans", WAS="@Commanders")
 
 season = int(sys.argv[1]) if len(sys.argv) > 1 else int(P.season.max())
 S = P[P.season == season].copy()
@@ -75,10 +52,6 @@ neutral_avg = S[S.neutral == 1].hit.mean()
 wk = table(S[S.week == week]).sort_values("acc", ascending=False).reset_index(drop=True)
 opp = S[S.week == week].groupby("posteam").defteam.first()
 league = dict(acc=S.hit.mean(), pub=S.hit_pub.mean(), plays=len(S))
-
-
-def pct(x):
-    return f"{100 * x:.0f}%"
 
 
 L = [f"# Predictability report: {season} week {week}", "",
@@ -121,19 +94,10 @@ json.dump(dict(season=season, week=week, card=f"site/weekly/{season}_wk{week:02d
           open(f"state/threads/{season}_wk{week:02d}.json", "w"), indent=1)
 
 
-# site tokens (site/index.html, light mode): the card must look like the site
-BOARD, INK, INK2, GRID, PASS = "#FAFBFA", "#1B1D22", "#5A606B", "#DCE0E5", "#1E5BC6"
-FONTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "fonts")
-
-
 def card(path):
     """Share image (1200x1500), a still of the /weekly page: header, headline tiles, and the ranked dot chart.
     Open Book (above average) = solid dot, Poker Face (below) = hollow dot, dashed line = league average."""
-    from matplotlib import font_manager
-    for f in os.listdir(FONTS):
-        if f.endswith(".ttf"):
-            font_manager.fontManager.addfont(os.path.join(FONTS, f))
-    plt.rcParams["font.family"] = ["Barlow"]
+    use_fonts()
     disp = dict(family="Barlow Condensed")
     fig = plt.figure(figsize=(8, 10), dpi=150, facecolor=BOARD)
     line = lambda y, lw, c=INK: fig.lines.append(plt.Line2D([0.06, 0.94], [y, y], transform=fig.transFigure, color=c, lw=lw))

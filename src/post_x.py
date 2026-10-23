@@ -1,8 +1,9 @@
 """Post the weekly tweet to X (@TelegraphedNFL) with the card image (any further tweets in the file go as replies).
 
-Usage: python src/post_x.py [--dry-run] [season week]   (default: newest report not yet posted)
+Usage: python src/post_x.py [--dry-run] [season week]   (default: newest weekly report not yet posted)
+       python src/post_x.py games [--dry-run]            (oldest queued game card; one per run so they're spaced out)
        python src/post_x.py --check                      (verify credentials only; posts nothing)
-Reads state/threads/{season}_wk{week:02d}.json (written by weekly_report.py).
+Reads state/threads/{season}_wk{week:02d}.json (weekly_report.py) or state/games/{game_id}.json (game_cards.py).
 Credentials: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET from the environment (GitHub Actions secrets)
 or ~/.config/telegraphed/x.env locally; never in the repo.
 Safe to re-run: every posted tweet is recorded in state/x_posted.json (committed), so a retry finishes a partial thread
@@ -20,6 +21,12 @@ LOG = f"{ST}/x_posted.json"
 KEYS = ["X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_SECRET"]
 API = "https://api.x.com/2"
 
+
+
+def pd_ts(day):
+    """'2026-10-22' -> epoch seconds (no pandas needed in the posting job)."""
+    import calendar
+    return calendar.timegm(time.strptime(day, "%Y-%m-%d"))
 
 
 def fail(msg):
@@ -51,8 +58,18 @@ if "--check" in sys.argv:
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 dry = "--dry-run" in sys.argv
 posted = json.load(open(LOG)) if os.path.exists(LOG) else {}
+games = bool(args) and args[0] == "games"
+DIR = f"{ST}/games" if games else f"{ST}/threads"
 
-if args:
+if games:
+    done = {k for k, v in posted.items() if v.get("complete")}
+    q = [json.load(open(p)) for p in glob.glob(f"{DIR}/*.json")]
+    fresh = lambda g: time.time() - pd_ts(g["kickoff"]) < 6 * 86400   # a game card a week late isn't worth posting
+    q = sorted((g for g in q if g["game_id"] not in done and fresh(g)), key=lambda g: (g["kickoff"], g["game_id"]))
+    if not q:
+        sys.exit(print("no game cards queued") or 0)
+    key = q[0]["game_id"]
+elif args:
     key = f"{int(args[0])}_wk{int(args[1]):02d}"
 else:
     done = {k for k, v in posted.items() if v.get("complete")}
@@ -61,9 +78,9 @@ else:
     if not todo:
         sys.exit(print("nothing new to post") or 0)
     key = todo[-1]
-T = json.load(open(f"{ST}/threads/{key}.json"))
+T = json.load(open(f"{DIR}/{key}.json"))
 if not args and not dry and time.time() - T.get("created", 0) > 2 * 86400:
-    fail(f"newest report {key} is over 2 days old (did the Tuesday refresh fail?), not posting a stale thread")
+    fail(f"newest report {key} is over 2 days old (did the refresh fail?), not posting a stale thread")
 rec = posted.setdefault(key, {"ids": []})
 if rec.get("complete"):
     sys.exit(print(f"{key} already posted: https://x.com/TelegraphedNFL/status/{rec['ids'][0]}") or 0)
