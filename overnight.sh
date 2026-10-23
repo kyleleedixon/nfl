@@ -46,10 +46,7 @@ assert 0.7 < a < 0.95 and R["n_plays"] > 200000 and R["live_2026"]["plays"] > 0,
 print("site data ok: acc", a, "plays", R["n_plays"])
 EOF
 
-step "deploy"
-(cd site && vercel deploy --prod --yes)
-
-step "commit + push"
+step "commit + push (Vercel deploys site/ on push)"
 git add -A src site/index.html site/results.json site/drive.json run_all.sh overnight.sh requirements.txt CLAUDE.md .gitignore
 git commit -q -m "v3: coach decision-bias and pre-snap alignment features, tuned ensemble, published results
 

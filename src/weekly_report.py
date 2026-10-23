@@ -15,7 +15,7 @@ D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
 BRAND = os.environ.get("BRAND", "Telegraphed")
 HANDLE = "@TelegraphedNFL"
-SITE = os.environ.get("SITE", "pre-snap-read.vercel.app")
+SITE = os.environ.get("SITE", "telegraphed.vercel.app")
 MIN_NEUTRAL = 60  # season-to-date neutral snaps needed to be ranked
 
 NICK = dict(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills", CAR="Panthers", CHI="Bears",

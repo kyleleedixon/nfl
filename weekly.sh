@@ -2,7 +2,7 @@
 # Tuesday refresh: new nflverse week -> features -> re-score current season -> weekly report + card -> deploy site.
 # Exits quietly if there's no new week yet (so it can be scheduled more than once on Tuesday).
 # Tweet drafts land in data/reports/; nothing is posted. Log: data/weekly.log.
-# WEEK=n overrides the week, FORCE=1 reruns a week already reported, NODEPLOY=1 stops before deploy/push.
+# WEEK=n overrides the week, FORCE=1 reruns a week already reported, NODEPLOY=1 stops before commit/push (which deploys).
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PY:-.venv/bin/python}
@@ -46,9 +46,8 @@ assert 0.7 < R["headline"]["acc"] < 0.95 and R["live_2026"]["plays"] > 0, R["hea
 print("site data ok")
 EOF
 
-if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping deploy and push"; exit 0; fi
-step "deploy"
-(cd site && vercel deploy --prod --yes)
+if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping commit and push"; exit 0; fi
+step "commit + push (Vercel deploys site/ from GitHub on push)"
 git add site/results.json site/weekly
 git commit -q -m "Weekly refresh: $SEASON week $WEEK
 
