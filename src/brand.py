@@ -1,4 +1,5 @@
 """Shared brand constants for the weekly report and game cards: names, hashtags, site color tokens, fonts."""
+import json
 import os
 
 BRAND = os.environ.get("BRAND", "Telegraphed")
@@ -14,12 +15,16 @@ NICK = dict(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills", CAR="Pant
 
 # fan hashtags go in the bot's tweets (allowed); official @handles go only in a reply Kyle posts by hand, because
 # X's automation rules forbid unsolicited automated @mentions
-TAG = dict(ARI="#BirdCityFootball", ATL="#DirtyBirds", BAL="#RavensFlock", BUF="#BillsMafia", CAR="#KeepPounding",
-           CHI="#DaBears", CIN="#RuleTheJungle", CLE="#DawgPound", DAL="#DallasCowboys", DEN="#BroncosCountry",
-           DET="#OnePride", GB="#GoPackGo", HOU="#WeAreTexans", IND="#ForTheShoe", JAX="#DUUUVAL", KC="#ChiefsKingdom",
-           LA="#RamsHouse", LAC="#BoltUp", LV="#RaiderNation", MIA="#FinsUp", MIN="#Skol", NE="#ForeverNE", NO="#Saints",
-           NYG="#TogetherBlue", NYJ="#JetUp", PHI="#FlyEaglesFly", PIT="#HereWeGo", SF="#FTTB", SEA="#GoHawks",
-           TB="#GoBucs", TEN="#TitanUp", WAS="#HTTC")
+TAG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hashtags.json")
+TAGS = json.load(open(TAG_FILE))["teams"]
+TAG = {t: v["tag"] for t, v in TAGS.items()}
+
+
+def unchecked_tags(season):
+    """Teams whose hashtag nobody has confirmed for this season."""
+    return [t for t, v in TAGS.items() if (v["checked"] or 0) < season]
+
+
 AT = dict(ARI="@AZCardinals", ATL="@AtlantaFalcons", BAL="@Ravens", BUF="@BuffaloBills", CAR="@Panthers",
           CHI="@ChicagoBears", CIN="@Bengals", CLE="@Browns", DAL="@dallascowboys", DEN="@Broncos", DET="@Lions",
           GB="@packers", HOU="@HoustonTexans", IND="@Colts", JAX="@Jaguars", KC="@Chiefs", LA="@RamsNFL",

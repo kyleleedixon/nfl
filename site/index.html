@@ -95,6 +95,22 @@ button.chip:hover { background: var(--wash); }
 .snap .tag { position: absolute; top: .55rem; right: .7rem; font-weight: 600; font-size: .8rem; }
 .snap.right .tag { color: var(--hit); }
 .snap.wrong .tag { color: var(--ink-2); }
+/* phones: each play is one compact row (situation | call), result appears under it on reveal */
+@media (max-width: 560px) {
+  .snaps { display: block; border-top: 1px solid var(--grid); }
+  .snap { display: grid; grid-template-columns: 8.4rem 1fr; column-gap: .6rem; align-items: center; border: 0;
+          border-bottom: 1px solid var(--grid); border-radius: 0; padding: .5rem .25rem .5rem .6rem; box-shadow: inset 3px 0 0 transparent; }
+  .snap .dd { grid-column: 1; grid-row: 1; font-size: 1rem; line-height: 1.2; }
+  .snap > .ctx { grid-column: 1; grid-row: 2; font-size: .75rem; line-height: 1.25; }
+  .snap .call { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; gap: .45rem; }
+  .snap .lab { font-size: .95rem; min-width: 2.6rem; }
+  .snap .meter { height: 8px; }
+  .snap .actual { grid-column: 1 / -1; grid-row: 3; margin-top: .2rem; font-size: .8rem; min-height: 0; padding-right: 4.5rem; }
+  .snap.hidden-result .actual { display: none; }
+  .snap .tag { top: auto; bottom: .5rem; right: .25rem; font-size: .75rem; }
+  .snap.right { box-shadow: inset 3px 0 0 var(--hit); }
+  .snap.wrong { box-shadow: inset 3px 0 0 var(--ink-2); }
+}
 .legend { display: flex; gap: 1.25rem; color: var(--ink-2); font-size: .85rem; margin-top: .75rem; flex-wrap: wrap; }
 .legend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; vertical-align: -1px; margin-right: .35rem; }
 

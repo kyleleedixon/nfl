@@ -1,0 +1,133 @@
+{
+ "_note": "Fan hashtags the bot puts in tweets. 'checked' = the season someone confirmed the team is using it (look at the team's own X posts). Teams change them (WAS: #HTTC -> #RaiseHail in 2026); refresh warns and an August issue reminds when a team hasn't been checked for the current season.",
+ "teams": {
+  "ARI": {
+   "tag": "#BirdCityFootball",
+   "checked": null
+  },
+  "ATL": {
+   "tag": "#DirtyBirds",
+   "checked": null
+  },
+  "BAL": {
+   "tag": "#RavensFlock",
+   "checked": null
+  },
+  "BUF": {
+   "tag": "#BillsMafia",
+   "checked": null
+  },
+  "CAR": {
+   "tag": "#KeepPounding",
+   "checked": null
+  },
+  "CHI": {
+   "tag": "#DaBears",
+   "checked": null
+  },
+  "CIN": {
+   "tag": "#RuleTheJungle",
+   "checked": null
+  },
+  "CLE": {
+   "tag": "#DawgPound",
+   "checked": null
+  },
+  "DAL": {
+   "tag": "#DallasCowboys",
+   "checked": null
+  },
+  "DEN": {
+   "tag": "#BroncosCountry",
+   "checked": null
+  },
+  "DET": {
+   "tag": "#OnePride",
+   "checked": null
+  },
+  "GB": {
+   "tag": "#GoPackGo",
+   "checked": null
+  },
+  "HOU": {
+   "tag": "#WeAreTexans",
+   "checked": null
+  },
+  "IND": {
+   "tag": "#ForTheShoe",
+   "checked": null
+  },
+  "JAX": {
+   "tag": "#DUUUVAL",
+   "checked": null
+  },
+  "KC": {
+   "tag": "#ChiefsKingdom",
+   "checked": null
+  },
+  "LA": {
+   "tag": "#RamsHouse",
+   "checked": null
+  },
+  "LAC": {
+   "tag": "#BoltUp",
+   "checked": null
+  },
+  "LV": {
+   "tag": "#RaiderNation",
+   "checked": null
+  },
+  "MIA": {
+   "tag": "#FinsUp",
+   "checked": null
+  },
+  "MIN": {
+   "tag": "#Skol",
+   "checked": null
+  },
+  "NE": {
+   "tag": "#ForeverNE",
+   "checked": null
+  },
+  "NO": {
+   "tag": "#Saints",
+   "checked": null
+  },
+  "NYG": {
+   "tag": "#TogetherBlue",
+   "checked": null
+  },
+  "NYJ": {
+   "tag": "#JetUp",
+   "checked": null
+  },
+  "PHI": {
+   "tag": "#FlyEaglesFly",
+   "checked": null
+  },
+  "PIT": {
+   "tag": "#HereWeGo",
+   "checked": null
+  },
+  "SEA": {
+   "tag": "#GoHawks",
+   "checked": null
+  },
+  "SF": {
+   "tag": "#FTTB",
+   "checked": null
+  },
+  "TB": {
+   "tag": "#GoBucs",
+   "checked": null
+  },
+  "TEN": {
+   "tag": "#TitanUp",
+   "checked": null
+  },
+  "WAS": {
+   "tag": "#RaiseHail",
+   "checked": 2026
+  }
+ }
+}

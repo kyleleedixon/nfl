@@ -75,6 +75,9 @@ if [[ -n "$RANK" ]]; then
   step "weekly rankings: week $WEEK"
   $PY src/weekly_report.py "$SEASON" "$WEEK"
 fi
+# hashtags nobody has confirmed for this season (src/hashtags.json): a warning on the Actions run, not a failure
+$PY -c "import os,sys; sys.path.insert(0,'src'); from brand import unchecked_tags; u=unchecked_tags($SEASON)
+if u: print(('::warning::' if os.environ.get('GITHUB_ACTIONS') else '') + f'hashtags not checked for $SEASON: {\", \".join(u)} (src/hashtags.json)')"
 $PY src/showcase_data.py >/dev/null
 $PY - <<'EOF'
 import json
