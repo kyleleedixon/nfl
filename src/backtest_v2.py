@@ -4,6 +4,7 @@ usage: backtest_v2.py tune            -> param search: train <=2022, early-stop 
        backtest_v2.py run             -> walk-forward 2019..2026, writes preds_v2.parquet
 """
 import json
+import os
 import sys
 import numpy as np
 import pandas as pd
@@ -25,7 +26,7 @@ CATS = ["prev1_type", "prev2_type", "prev_result", "personnel_grp", "formation",
 FULL = SIT + COG + NEW_COG + PER + NEW_PER + ["dd_bucket"]
 LIVE = SIT + COG + NEW_COG + ["shotgun", "dd_bucket"]  # only what play-by-play carries in-season (no participation data)
 
-BASEP = dict(objective="binary", verbose=-1, bagging_freq=1, num_threads=6)
+BASEP = dict(objective="binary", verbose=-1, bagging_freq=1, num_threads=int(os.environ.get("THREADS", 6)))
 
 
 def load():

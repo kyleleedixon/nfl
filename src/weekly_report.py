@@ -1,12 +1,14 @@
 """Weekly predictability report: which offenses were easiest / hardest to read before the snap.
 
 Usage: python src/weekly_report.py [season] [week]   (defaults: latest season and week in preds)
-Writes data/reports/{season}_wk{week:02d}.md (rankings + draft tweet thread) and _card.png (share image),\nand site/weekly/weekly.json + card PNGs for the public page (site/weekly/index.html is a hand-written template).
+Writes data/reports/{season}_wk{week:02d}.md (rankings + draft tweet) and _card.png (share image),
+state/threads/{season}_wk{week:02d}.json (what post_x.py posts),\nand site/weekly/weekly.json + card PNGs for the public page (site/weekly/index.html is a hand-written template).
 Aggregate results only: no feature names or tells (same rule as site/).
 """
 import json
 import os
 import sys
+import time
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -112,8 +114,11 @@ L += ["## Your manual reply (post from the X app, not the bot)", "", "```", tag_
 os.makedirs(f"{D}/reports", exist_ok=True)
 out = f"{D}/reports/{season}_wk{week:02d}"
 open(f"{out}.md", "w").write("\n".join(L) + "\n")
-json.dump(dict(season=season, week=week, card=f"{out}_card.png", tweets=tweets, tag_reply=tag_reply),
-          open(f"{out}_thread.json", "w"), indent=1)
+# committed (state/) so the posting job, which runs separately (GitHub Actions), finds it; card is the site copy
+os.makedirs("state/threads", exist_ok=True)
+json.dump(dict(season=season, week=week, card=f"site/weekly/{season}_wk{week:02d}.png", tweets=tweets,
+               tag_reply=tag_reply, created=int(time.time())),
+          open(f"state/threads/{season}_wk{week:02d}.json", "w"), indent=1)
 
 
 # site tokens (site/index.html, light mode): the card must look like the site

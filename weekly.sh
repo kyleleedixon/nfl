@@ -1,27 +1,41 @@
 #!/usr/bin/env bash
-# Tuesday refresh: new nflverse week -> features -> re-score current season -> weekly report + card -> deploy site.
-# Exits quietly if there's no new week yet (so it can be scheduled more than once on Tuesday).
-# Tweet drafts land in data/reports/; nothing is posted. Log: data/weekly.log.
-# WEEK=n overrides the week, FORCE=1 reruns a week already reported, NODEPLOY=1 stops before commit/push (which deploys).
+# Tuesday refresh: new nflverse week -> features -> re-train current season's live model -> report + card -> push.
+# Runs in GitHub Actions (.github/workflows/weekly-refresh.yml) or locally. Vercel deploys site/ on push.
+# Exits quietly if there's no new week yet, so it can be scheduled more than once on Tuesday.
+# WEEK=n overrides the week, FORCE=1 reruns a week already reported, NODEPLOY=1 stops before commit/push.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PY:-.venv/bin/python}
 export PYTHONPATH="$PWD/tools/pyexit"   # avoids a pyarrow hang at interpreter exit
 SEASON=${SEASON:-2026}
-exec >>data/weekly.log 2>&1
-caffeinate -dimsu -w $$ &
-trap 'echo "=== $(date "+%F %T") FAILED (line $LINENO)"; osascript -e "display notification \"Weekly refresh failed, see data/weekly.log\" with title \"NFL weekly\"" || true' ERR
+mkdir -p data/raw data/ref data/preds_v3
+if [[ -z "${CI:-}" ]]; then
+  exec >>data/weekly.log 2>&1
+  caffeinate -dimsu -w $$ &
+fi
+notify() { command -v osascript >/dev/null && osascript -e "display notification \"$1\" with title \"Telegraphed\"" || true; }
+trap 'echo "=== $(date "+%F %T") FAILED (line $LINENO)"; notify "Weekly refresh failed"' ERR
 step() { echo; echo "=== $(date '+%F %T') $*"; }
 
-step "download $SEASON"
+step "inputs"
+# committed inputs a fresh checkout needs (see artifacts/README.md); never overwrite local copies
+cp -n artifacts/preds_v3/*.parquet data/preds_v3/ 2>/dev/null || true
+[[ -f data/ablate_v3.json ]] || cp artifacts/ablate_v3.json data/
+[[ -f data/ref/players.parquet ]] || cp artifacts/players.parquet data/ref/
 REL=https://github.com/nflverse/nflverse-data/releases/download
-mkdir -p data/raw/new
+get() { [[ -f "data/raw/$2" ]] || curl -sfL -o "data/raw/$2" "$REL/$1" || rm -f "data/raw/$2"; }
+for y in $(seq 2016 $((SEASON - 1))); do   # past seasons: download once
+  get pbp/play_by_play_$y.parquet pbp_$y.parquet
+  get pbp_participation/pbp_participation_$y.parquet part_$y.parquet
+  if [[ $y -ge 2022 ]]; then get ftn_charting/ftn_charting_$y.parquet ftn_$y.parquet; fi
+done
+mkdir -p data/raw/new   # current season: always fresh
 curl -sfL -o data/raw/new/pbp_$SEASON.parquet $REL/pbp/play_by_play_$SEASON.parquet
 curl -sfL -o data/raw/new/part_$SEASON.parquet $REL/pbp_participation/pbp_participation_$SEASON.parquet || rm -f data/raw/new/part_$SEASON.parquet
 curl -sfL -o data/raw/new/ftn_$SEASON.parquet $REL/ftn_charting/ftn_charting_$SEASON.parquet || rm -f data/raw/new/ftn_$SEASON.parquet
-week_of() { $PY -c "import pandas as pd,sys; print(int(pd.read_parquet(sys.argv[1], columns=['week']).week.max()))" "$1"; }
-NEW=$(week_of data/raw/new/pbp_$SEASON.parquet)
-DONE=$(cat data/weekly.week 2>/dev/null || echo 0)
+
+NEW=$($PY -c "import pandas as pd,sys; print(int(pd.read_parquet(sys.argv[1], columns=['week']).week.max()))" data/raw/new/pbp_$SEASON.parquet)
+DONE=$($PY -c "import json,sys; w=json.load(open('site/weekly/weekly.json')); print(w['week'] if w['season']==int(sys.argv[1]) else 0)" $SEASON 2>/dev/null || echo 0)
 WEEK=${WEEK:-$NEW}
 echo "latest week in data: $NEW, last report: $DONE, reporting week: $WEEK"
 if [[ "$WEEK" -le "$DONE" && -z "${FORCE:-}" ]]; then echo "no new week, nothing to do"; exit 0; fi
@@ -32,9 +46,8 @@ $PY src/features.py data/raw data/features.parquet
 $PY src/features_v2.py data/raw data/features.parquet data/features_v2.parquet
 $PY src/features_v3.py data/raw data/features_v2.parquet data/features_v3.parquet
 
-step "re-score $SEASON (models are trained on seasons < $SEASON, so only predictions change)"
-rm -f data/preds_v3/${SEASON}_*.parquet
-$PY src/backtest_v3.py run
+step "re-train $SEASON live model (trained on seasons < $SEASON; only this week's plays are new)"
+$PY src/backtest_v3.py live "$SEASON"
 
 step "report"
 $PY src/weekly_report.py "$SEASON" "$WEEK"
@@ -48,12 +61,11 @@ EOF
 
 if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping commit and push"; exit 0; fi
 step "commit + push (Vercel deploys site/ from GitHub on push)"
-git add site/results.json site/weekly
+git add site/results.json site/weekly state
 git commit -q -m "Weekly refresh: $SEASON week $WEEK
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || echo "nothing to commit"
+git pull -q --rebase origin main
 git push origin main
-
-echo "$WEEK" > data/weekly.week
-osascript -e "display notification \"Week $WEEK report ready: data/reports\" with title \"NFL weekly\"" || true
+notify "Week $WEEK rankings are live"
 step "done"

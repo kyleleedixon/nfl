@@ -5,6 +5,7 @@ Every modelling decision uses seasons <= 2023 only, so 2024+ is a clean holdout.
 usage: backtest_v3.py ablate          -> feature-group / model ablation on the 2023 walk-forward step
        backtest_v3.py tune [trials]   -> Optuna LightGBM search: train <=2021, early-stop on 2022
        backtest_v3.py run             -> walk-forward 2019..2026, writes data/preds_v3.parquet
+       backtest_v3.py live [season]   -> re-train only that season's live_v3 model (weekly refresh), rewrite preds
 """
 import json
 import os
@@ -54,7 +55,7 @@ def cat_fit_predict(tr, va, te, cols, seed=0):
     from catboost import CatBoostClassifier
     cats = [c for c in cols if c in CATS]
     prep = lambda x: x[cols].assign(**{c: x[c].astype(str) for c in cats})
-    kw = dict(loss_function="Logloss", learning_rate=0.08, depth=8, l2_leaf_reg=5, thread_count=6,
+    kw = dict(loss_function="Logloss", learning_rate=0.08, depth=8, l2_leaf_reg=5, thread_count=int(os.environ.get("THREADS", 6)),
               random_seed=seed, verbose=False, one_hot_max_size=4)
     m = CatBoostClassifier(iterations=5000, od_type="Iter", od_wait=100, **kw)
     m.fit(prep(tr), tr.y, cat_features=cats, eval_set=(prep(va), va.y))
@@ -183,6 +184,26 @@ def run():
             p = (p + cat_fit_predict(tr, va, te, cols)) / 2
         te[["game_id", "play_id"]].assign(**{name: p}).to_parquet(path, index=False)
         print(S, name, *score(te.y, p), f"{time.time() - t0:.0f}s", flush=True)
+    merge(d)
+
+
+def live(S):
+    """Weekly in-season refresh: the season-S live model trains on seasons < S, so re-fitting it only adds this
+    week's plays to the predictions. Other seasons' cached predictions are reused as they are."""
+    d = load()
+    _, LIVE3, use_cat = chosen()
+    tr, va, te = split(d, S)
+    t0 = time.time()
+    p = lgb_ens(tr, va, te, LIVE3, params())
+    if use_cat:
+        p = (p + cat_fit_predict(tr, va, te, LIVE3)) / 2
+    os.makedirs(f"{D}/preds_v3", exist_ok=True)
+    te[["game_id", "play_id"]].assign(live_v3=p).to_parquet(f"{D}/preds_v3/{S}_live_v3.parquet", index=False)
+    print(S, "live_v3", *score(te.y, p), f"{time.time() - t0:.0f}s", flush=True)
+    merge(d)
+
+
+def merge(d):
     out = d.loc[d.season >= 2019, OUTCOLS].copy()
     for name in ["full_v3", "full_v2", "live_v3", "live_v2"]:
         fs = [pd.read_parquet(f"{D}/preds_v3/{f}") for f in sorted(os.listdir(f"{D}/preds_v3")) if f.endswith(f"_{name}.parquet")]
@@ -196,5 +217,7 @@ if __name__ == "__main__":
         ablate()
     elif cmd == "tune":
         tune(int(sys.argv[2]) if len(sys.argv) > 2 else 40)
+    elif cmd == "live":
+        live(int(sys.argv[2]) if len(sys.argv) > 2 else 2026)
     else:
         run()

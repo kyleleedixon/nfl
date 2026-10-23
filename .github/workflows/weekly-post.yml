@@ -1,0 +1,38 @@
+# Tuesday midday: post the newest unposted weekly tweet + card to @TelegraphedNFL, then commit the posting record.
+# Skips anything already posted, paused (state/x_paused), or older than 2 days (refresh failed).
+name: Weekly post
+on:
+  schedule:
+    - cron: "0 17 * * 2"   # 11am CT / noon ET (noon CT / 1pm ET until DST ends Nov 1)
+    - cron: "0 19 * * 2"
+  workflow_dispatch:
+    inputs:
+      dry_run: { description: "Preview only, don't post", type: boolean, default: true }
+permissions: { contents: write }
+concurrency: { group: weekly, cancel-in-progress: false }
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install "requests-oauthlib>=2.0"
+      - name: Post
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: python src/post_x.py ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+      - name: Save posting record
+        if: always()
+        run: |
+          git config user.name "Kyle Dixon"
+          git config user.email "kyleleedixon@gmail.com"
+          git add state
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Posted weekly tweet [skip ci]"
+          git pull -q --rebase origin main
+          git push origin main
