@@ -26,6 +26,9 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   page. `site/weekly/index.html` is a hand-written template sharing the main page's tokens and chart code.
 - `weekly.sh` — Tuesday refresh: new week → features → re-score current season → report → deploy → push. No-ops if
   no new week. `launchd/` holds the schedule (Tue 6/9/12); `tools/pyexit/` works around a pyarrow hang at exit.
+- `src/post_x.py` — posts the weekly thread + card to X (@TelegraphedNFL), Tue 11am/1pm via `launchd/com.kyledixon.nfl-post.plist`.
+  Creds in `~/.config/telegraphed/x.env` (never the repo). Resumable via `data/x_posted.json`; `touch data/x_paused` stops it;
+  refuses reports >2 days old. `--dry-run` previews.
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.
 - `run_all.sh` — rebuilds everything end to end (`TUNE=1 ./run_all.sh` to re-tune).
 

@@ -4,6 +4,7 @@ Usage: python src/weekly_report.py [season] [week]   (defaults: latest season an
 Writes data/reports/{season}_wk{week:02d}.md (rankings + draft tweet thread) and _card.png (share image),\nand site/weekly/weekly.json + card PNGs for the public page (site/weekly/index.html is a hand-written template).
 Aggregate results only: no feature names or tells (same rule as site/).
 """
+import json
 import os
 import sys
 import matplotlib
@@ -96,6 +97,7 @@ for i, t in enumerate(tweets, 1):
 os.makedirs(f"{D}/reports", exist_ok=True)
 out = f"{D}/reports/{season}_wk{week:02d}"
 open(f"{out}.md", "w").write("\n".join(L) + "\n")
+json.dump(dict(season=season, week=week, card=f"{out}_card.png", tweets=tweets), open(f"{out}_thread.json", "w"), indent=1)
 
 
 # site tokens (site/index.html, light mode): the card must look like the site
