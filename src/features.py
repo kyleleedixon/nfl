@@ -288,7 +288,13 @@ def main():
     snaps["personnel_grp"] = np.where(snaps["has_personnel"] == 1,
                                       snaps["n_rb"].fillna(0).astype(int).astype(str) + snaps["n_te"].fillna(0).astype(int).astype(str),
                                       "na")
-    snaps["formation"] = snaps["offense_formation"].fillna("na")
+    # nflverse switched formation labels in 2023 (EMPTY/I_FORM/SINGLEBACK/JUMBO/WILDCAT -> SHOTGUN/UNDER CENTER/PISTOL);
+    # map every season onto the new set so models trained on old seasons read new ones
+    f = snaps["offense_formation"]
+    sg = snaps["shotgun"] == 1
+    snaps["formation"] = np.where(f.isna(), "na", np.where(f.eq("PISTOL"), "PISTOL",
+                                  np.where(f.isin(["SHOTGUN", "EMPTY", "WILDCAT", "UNDER CENTER"]) & sg, "SHOTGUN",
+                                           np.where(f.eq("SHOTGUN"), "SHOTGUN", "UNDER CENTER"))))
 
     # per-player tells: each skill player's prior residual pass rate when on the field
     sk = snaps.loc[(snaps["has_personnel"] == 1) & snaps["_tgt"], ["game_id", "play_id", "posteam", "season",

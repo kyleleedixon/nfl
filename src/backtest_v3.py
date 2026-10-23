@@ -208,6 +208,13 @@ def merge(d):
     for name in ["full_v3", "full_v2", "live_v3", "live_v2"]:
         fs = [pd.read_parquet(f"{D}/preds_v3/{f}") for f in sorted(os.listdir(f"{D}/preds_v3")) if f.endswith(f"_{name}.parquet")]
         out = out.merge(pd.concat(fs), on=["game_id", "play_id"], how="left")
+    # stage 2 (src/stage2.py, frozen coefficients fit on 2020-22): correct v3 by how wrong it has been about this
+    # team this season (prior games) and today (prior snaps); raw model output kept as *_raw
+    from stage2 import apply
+    for name in ["full_v3", "live_v3"]:
+        out[name + "_raw"] = out[name]
+        has = out[name].notna()
+        out.loc[has, name] = apply(out[has], name)
     out.to_parquet(f"{D}/preds_v3.parquet", index=False)
 
 

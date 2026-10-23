@@ -18,6 +18,11 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   defensive alignment (box count, defensive personnel), FTN charting pre-snap fields (2022+, published in-season).
 - `src/backtest_v3.py` — `ablate` (2023 step; writes `data/ablate_v3.json`), `tune` (Optuna, train <=2021,
   early-stop 2022; resumable sqlite), `run` (resumable walk-forward, v2 baselines on holdout). Current model.
+- `src/stage2.py` — stage-2 correction applied in `backtest_v3.merge`: nudges v3 by the team's season-to-date residual
+  (prior games) and in-game residual (prior snaps). Frozen coefficients in `src/stage2.json` (fit on full_v3 2020–22).
+  `preds_v3.parquet` holds corrected `full_v3`/`live_v3` plus raw `*_raw`.
+- `src/features_v4.py` + `src/screen.py` — experiment bench: QB-at-snap (play-by-play only) and fast team-tendency
+  features, screened with one LightGBM config on 2021–2023 (`screen.py base,qb` then `screen.py report`). Not in production.
 - `overnight.sh` — unattended v3 pipeline through deploy + push (log `data/overnight.log`).
 - `src/analyze.py` — v1 analysis (tells, coach table, EPA vs predictability). Reads v1 preds.
 - `src/showcase_data.py` → `site/results.json`; `src/pick_drive.py` → `site/drive.json`.
@@ -76,6 +81,21 @@ Site headline (full_v3, 2019–2025, 243k plays): 77.5%, ll 0.455, AUC 0.856 vs 
 Ablation on 2023 (ll): v2 0.4790 → +align 0.4718, +ftn 0.4743, +bias 0.4794 (no gain, dropped), all kept 0.4682,
 +CatBoost blend 0.4635. Biggest tells: pistol (25% pass) vs shotgun (78%), empty backfield (94%), box count.
 The coach-bias features added nothing beyond existing streak/prev-play/coach-PROE features — the trees already learn it.
+
+### 2026-10-23 model deep dive
+- Error analysis (full_v3 2021–23): 1st & 10 = 47% of log loss; team-season bias variance ~6x noise (first-half bias
+  correlates 0.51 with second half) → the model is slow to learn a team's current identity.
+- **Formation labels changed in 2023** (nflverse: EMPTY/I_FORM/SINGLEBACK/JUMBO/WILDCAT → SHOTGUN/UNDER CENTER/PISTOL).
+  `features.py` now maps every season onto the new set. Rule: predictions use the taxonomy consistent with their season,
+  so 2019–2022 full_v3 keep the old-label run (detailed labels were consistent then and better: 2021 0.454 vs 0.466)
+  and 2023–2025 were re-run with harmonized labels (2023 0.4632 → 0.4527; 2024 0.4333 → 0.4327; 2025 flat).
+- Stage-2 correction (decided on 2023, confirmed once on 2024–25): +0.0014–0.0016 ll on every holdout season.
+  Final (after stage 2): full_v3 2024 79.7% (ll 0.431), 2025 77.7% (0.457); live_v3 2024 79.0% (0.443), 2025 77.2%
+  (0.466). Site headline 2019–2025: 77.7%, ll 0.452, AUC 0.858, neutral 70.7%.
+- Tried, no gain (dropped): QB-at-snap identity/quality/mobility features (+0.0009 before the formation fix, 0 after),
+  last-3-games / season 1st-down / scripted-play / last-season lean, new head coach, in-game 1st-down lean; extra stage-2
+  terms (opponent, down bucket, coach, drive, last 3 games: ≤ +0.0004).
+- Next ideas: OOF stacking with model-residual features, multi-season tuning, play-caller (OC) data, injuries/inactives.
 
 ## Caveats
 - nflfastR xpass was fit on seasons overlapping 2019–2020, so the benchmark is slightly flattered there.
