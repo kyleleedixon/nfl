@@ -92,18 +92,13 @@ td.n, th.n { text-align: right; }
 .game .meter { flex: 1; height: 10px; border-radius: 5px; background: var(--wash); overflow: hidden; }
 .game .meter i { display: block; height: 100%; background: var(--pass); }
 .game .lab { font-family: var(--display); font-weight: 700; font-size: 1.1rem; min-width: 3rem; text-align: right; }
-.share { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
-.share img { width: min(100%, 18rem); height: auto; border-radius: 10px; border: 2px solid var(--grid); }
-.share p { max-width: 28rem; color: var(--ink-2); margin: 0 0 1rem; }
-a.chip { display: inline-block; font: 500 .9rem var(--text); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; padding: .3rem .9rem; text-decoration: none; }
-a.chip:hover { background: var(--wash); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <a class="mark" href="/">TELEGRAPHED</a>
-    <div class="meta" id="meta"></div>
+    <nav class="meta"><span id="meta"></span> · <a href="/">How it works</a></nav>
   </header>
 
   <div class="hero">
@@ -129,15 +124,6 @@ a.chip:hover { background: var(--wash); }
     <h2 id="week-h">This week</h2>
     <p class="say">Every play, every game. One game is about 60 snaps, so single games swing more than the season rankings.</p>
     <div class="games" id="games"></div>
-  </section>
-
-  <section class="blk" id="share">
-    <h2>Share it</h2>
-    <div class="share">
-      <img id="card" alt="This week's rankings as a shareable image" width="1200" height="1500">
-      <div><p>The same rankings as an image, sized for X and Instagram. Follow <a href="https://x.com/TelegraphedNFL">@TelegraphedNFL</a> for new rankings every Tuesday.</p>
-        <a class="chip" id="dl" download>Download image</a></div>
-    </div>
   </section>
 
   <footer><a href="/">How the model works</a> · Follow <a href="https://x.com/TelegraphedNFL">@TelegraphedNFL</a> on X.<br>Neutral situations: downs 1–3, win probability 20–80%, outside the last two minutes of each half. Play-by-play data: nflverse.</footer>
@@ -226,7 +212,6 @@ function draw(D) {
     d.querySelector('.lab').textContent = fmt0(g.acc);
     return d;
   }));
-  el('card').src = D.card; el('dl').href = D.card;
   const render = () => rankChart(T, D.league_neutral);
   render();
   let rw; new ResizeObserver(() => { clearTimeout(rw); rw = setTimeout(render, 120); }).observe(document.querySelector('.wrap'));

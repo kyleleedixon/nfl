@@ -50,7 +50,22 @@ a { color: var(--pass); }
 header.top { display: flex; justify-content: space-between; align-items: baseline; padding: 1.25rem 0; border-bottom: 2px solid var(--ink); }
 .mark { font-family: var(--display); font-weight: 800; font-size: 1.75rem; letter-spacing: .01em; }
 .mark span { color: var(--pass); }
-header.top .meta { color: var(--ink-2); font-size: .9rem; }
+header.top .meta { color: var(--ink-2); font-size: .9rem; display: flex; gap: 1.25rem; align-items: baseline; }
+.navlink { font-weight: 600; color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--pass); }
+@media (max-width: 560px) { .hide-sm { display: none; } }
+
+/* this week's rankings, right under the hero */
+a.weekly { display: grid; grid-template-columns: 1fr auto; gap: .5rem 2rem; align-items: center; margin: 0 0 1rem; padding: 1.1rem 1.25rem;
+  border: 2px solid var(--ink); border-radius: 12px; color: var(--ink); text-decoration: none; background: var(--board); }
+a.weekly:hover { background: var(--wash); }
+a.weekly .wk { color: var(--ink-2); font-size: .85rem; font-weight: 500; }
+a.weekly .wh { font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.05; margin: .1rem 0 .4rem; }
+a.weekly .wl { display: flex; gap: .4rem 1.5rem; flex-wrap: wrap; color: var(--ink-2); font-size: .95rem; }
+a.weekly .wl b { color: var(--ink); font-weight: 600; }
+a.weekly .dot { display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; background: var(--pass); }
+a.weekly .dot.hollow { background: transparent; border: 2px solid var(--pass); }
+a.weekly .go { font: 500 .9rem var(--text); border: 2px solid var(--ink); border-radius: 999px; padding: .3rem .9rem; white-space: nowrap; }
+@media (max-width: 560px) { a.weekly { grid-template-columns: 1fr; } a.weekly .go { justify-self: start; } }
 
 .hero { padding: 3rem 0 2rem; }
 .hero h1, section.blk h2 { text-wrap: balance; }
@@ -113,13 +128,22 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
 <div class="wrap">
   <header class="top">
     <div class="mark">TELEGRAPHED</div>
-    <div class="meta" id="meta-plays"></div>
+    <nav class="meta"><a href="/weekly/" class="navlink">Weekly rankings</a><span id="meta-plays" class="hide-sm"></span></nav>
   </header>
 
   <div class="hero">
     <h1>We call the play before the snap.</h1>
     <p id="hero-sub">Pass or run, predicted from what can be known before the ball moves — then checked against what actually happened, on seasons the model never trained on.</p>
   </div>
+
+  <a class="weekly" href="/weekly/" id="weekly">
+    <div>
+      <div class="wk" id="wk-k">New every Tuesday</div>
+      <div class="wh">How predictable is your offense?</div>
+      <div class="wl" id="wk-l">Every NFL offense ranked by how often we call its plays before the snap.</div>
+    </div>
+    <span class="go">See all 32 rankings →</span>
+  </a>
 
   <div class="drive" id="drive">
     <div class="drive-head">
@@ -227,6 +251,19 @@ function dumbbell(box, rows, { domain, h = 30, extra } = {}) {
     .on('mousemove', (ev, r) => tip.show(ev, r.label, [`Telegraphed ${fmtP(r.a)}`, `Public benchmark ${fmtP(r.b)}`, `${fmtC(r.n)} plays`]))
     .on('mouseleave', () => tip.hide());
 }
+
+function weeklyTeaser(W) {
+  const T = W.teams, top = T[0], bot = T[T.length - 1];
+  document.getElementById('wk-k').textContent = `This week's rankings · ${W.season} week ${W.week}`;
+  const l = document.getElementById('wk-l'); l.replaceChildren();
+  const item = (cls, label, r) => {
+    const s = document.createElement('span'); const d = document.createElement('i'); d.className = 'dot' + cls;
+    s.append(d, label + ' ', Object.assign(document.createElement('b'), { textContent: `${r.team} ${fmt0(r.neutral)}` }));
+    return s;
+  };
+  l.append(item('', 'Open Book:', top), item(' hollow', 'Poker Face:', bot));
+}
+fetch('weekly/weekly.json').then((r) => r.json()).then(weeklyTeaser).catch(() => {});
 
 function drawAll(R, drive) {
   const H = R.headline;
