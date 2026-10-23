@@ -1,0 +1,39 @@
+{
+ "params": [
+  {
+   "learning_rate": 0.024928230336669174,
+   "num_leaves": 126,
+   "min_data_in_leaf": 158,
+   "feature_fraction": 0.6587219833103586,
+   "bagging_fraction": 0.9797136120948519,
+   "lambda_l2": 0.7344435600180426,
+   "min_gain_to_split": 0.5980258769840749,
+   "cat_smooth": 12.618419710603261
+  },
+  {
+   "learning_rate": 0.03390316996600856,
+   "num_leaves": 63,
+   "min_data_in_leaf": 252,
+   "feature_fraction": 0.5054454365277109,
+   "bagging_fraction": 0.9412522479747234,
+   "lambda_l2": 1.0073010930661417,
+   "min_gain_to_split": 0.3675463062055889,
+   "cat_smooth": 3.9313633628866196
+  },
+  {
+   "learning_rate": 0.024052727816553487,
+   "num_leaves": 64,
+   "min_data_in_leaf": 282,
+   "feature_fraction": 0.6138039073724583,
+   "bagging_fraction": 0.9951741267146547,
+   "lambda_l2": 2.006143166203695,
+   "min_gain_to_split": 0.5192714421311042,
+   "cat_smooth": 5.485773394090325
+  }
+ ],
+ "valid_ll": [
+  0.4651451089754113,
+  0.46536923617265447,
+  0.4654097391088468
+ ]
+}

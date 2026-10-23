@@ -19,6 +19,12 @@ predictable; the model leans on human-decision patterns and personnel tells, not
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.
 - `run_all.sh` — rebuilds everything end to end (`TUNE=1 ./run_all.sh` to re-tune).
 
+## Setup
+- Python 3.11 venv: `uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements.txt`.
+  pandas is pinned <3 (code relies on 2.x semantics). Run scripts with `.venv/bin/python` (`run_all.sh` uses `$PY`).
+- macOS without Homebrew libomp (Homebrew builds it from source on macOS 12): point LightGBM at scikit-learn's bundled copy:
+  `SP=.venv/lib/python3.11/site-packages; install_name_tool -add_rpath "$PWD/$SP/sklearn/.dylibs" $SP/lightgbm/lib/lib_lightgbm.dylib`
+
 ## Rules
 - Every feature must be knowable before the snap; historical rates use prior games only,
   in-game rates use prior snaps only. Walk-forward: season S is predicted by a model trained on seasons < S.

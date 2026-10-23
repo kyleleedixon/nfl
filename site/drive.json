@@ -1,0 +1,91 @@
+{
+ "title": "One real drive: CAR vs NO, 2025 week 10",
+ "hits": 11,
+ "n": 12,
+ "snaps": [
+  {
+   "situation": "1st & 10",
+   "context": "Q1 14:55, own 33, tied",
+   "p_pass": 0.761,
+   "actual": "pass",
+   "result": "completion, +7 yds"
+  },
+  {
+   "situation": "2nd & 3",
+   "context": "Q1 14:16, own 40, tied",
+   "p_pass": 0.227,
+   "actual": "run",
+   "result": "solid gain, +4 yds"
+  },
+  {
+   "situation": "1st & 10",
+   "context": "Q1 13:41, own 44, tied",
+   "p_pass": 0.541,
+   "actual": "pass",
+   "result": "short completion, -1 yds"
+  },
+  {
+   "situation": "2nd & 11",
+   "context": "Q1 12:57, own 43, tied",
+   "p_pass": 0.359,
+   "actual": "run",
+   "result": "short gain, +3 yds"
+  },
+  {
+   "situation": "3rd & 3",
+   "context": "Q1 12:12, opp 49, tied",
+   "p_pass": 0.759,
+   "actual": "run",
+   "result": "solid gain, +6 yds"
+  },
+  {
+   "situation": "1st & 10",
+   "context": "Q1 11:35, opp 43, tied",
+   "p_pass": 0.366,
+   "actual": "run",
+   "result": "stopped at or behind the line, +0 yds"
+  },
+  {
+   "situation": "2nd & 10",
+   "context": "Q1 10:56, opp 43, tied",
+   "p_pass": 0.835,
+   "actual": "pass",
+   "result": "completion, +11 yds"
+  },
+  {
+   "situation": "1st & 10",
+   "context": "Q1 10:18, opp 32, tied",
+   "p_pass": 0.586,
+   "actual": "pass",
+   "result": "short completion, +1 yds"
+  },
+  {
+   "situation": "2nd & 9",
+   "context": "Q1 9:35, opp 31, tied",
+   "p_pass": 0.707,
+   "actual": "pass",
+   "result": "incomplete"
+  },
+  {
+   "situation": "1st & 10",
+   "context": "Q1 9:23, opp 16, tied",
+   "p_pass": 0.062,
+   "actual": "run",
+   "result": "short gain, +3 yds"
+  },
+  {
+   "situation": "2nd & 7",
+   "context": "Q1 8:49, opp 13, tied",
+   "p_pass": 0.723,
+   "actual": "pass",
+   "result": "completion, +8 yds"
+  },
+  {
+   "situation": "1st & Goal",
+   "context": "Q1 8:04, opp 5, tied",
+   "p_pass": 0.2,
+   "actual": "run",
+   "result": "touchdown"
+  }
+ ]
+}

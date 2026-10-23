@@ -87,9 +87,8 @@ def main():
     qbx["qb_prior_snaps"] = qbx.groupby("pl")["size"].cumsum() - qbx["size"]
     ex = ex.merge(qbx[["pl", "game_id", "qb_prior_snaps"]], on=["pl", "game_id"], how="left")
 
-    sk = ex[ex["role"] != "QB"]
-    agg = sk.groupby(["game_id", "play_id"]).agg(
-        rb_tell=("ptell", lambda s: np.nan), te_tell=("ptell", lambda s: np.nan))
+    sk = ex[ex["role"] != "QB"].copy()
+    sk["low_share"] = (sk["share_l4"] < 0.25).astype(int)
     def role_agg(r, name):
         a = sk[sk["role"] == r].groupby(["game_id", "play_id"])["ptell"].agg(["max", "mean", "min"])
         a.columns = [f"{name}_tell_max", f"{name}_tell_mean", f"{name}_tell_min"]
@@ -97,7 +96,7 @@ def main():
     agg = pd.concat([role_agg("RB", "rb"), role_agg("TE", "te"), role_agg("WR", "wr"),
                      sk.groupby(["game_id", "play_id"]).agg(min_share=("share_l4", "min"),
                                                            mean_share=("share_l4", "mean"),
-                                                           n_low_share=("share_l4", lambda s: (s < 0.25).sum()))], axis=1)
+                                                           n_low_share=("low_share", "sum"))], axis=1)
     rbshare = sk[sk["role"] == "RB"].groupby(["game_id", "play_id"])["share_l4"].max().rename("rb_share")
     qb = ex[ex["role"] == "QB"].groupby(["game_id", "play_id"]).agg(qb_prior_snaps=("qb_prior_snaps", "max"),
                                                                    qb_tell=("ptell", "max"))

@@ -1,0 +1,438 @@
+{
+ "n_plays": 243285,
+ "n_games": 1960,
+ "seasons": "2019\u20132025",
+ "headline": {
+  "acc": 0.775,
+  "acc_public": 0.7116,
+  "acc_always_pass": 0.6097,
+  "acc_neutral": 0.7049,
+  "acc_neutral_public": 0.6095,
+  "ll": 0.4553,
+  "ll_public": 0.527,
+  "auc": 0.8563,
+  "auc_public": 0.7912,
+  "miss_reduction": 0.22,
+  "hi_conf_share": 0.4686,
+  "hi_conf_hit": 0.9186,
+  "hi_conf_share_public": 0.327
+ },
+ "by_season": [
+  {
+   "season": 2019,
+   "acc": 0.7731,
+   "acc_public": 0.7274,
+   "acc_always_pass": 0.6186,
+   "plays": 33397
+  },
+  {
+   "season": 2020,
+   "acc": 0.7651,
+   "acc_public": 0.7082,
+   "acc_always_pass": 0.6156,
+   "plays": 34098
+  },
+  {
+   "season": 2021,
+   "acc": 0.7747,
+   "acc_public": 0.7108,
+   "acc_always_pass": 0.6137,
+   "plays": 35608
+  },
+  {
+   "season": 2022,
+   "acc": 0.768,
+   "acc_public": 0.7075,
+   "acc_always_pass": 0.6021,
+   "plays": 35304
+  },
+  {
+   "season": 2023,
+   "acc": 0.7723,
+   "acc_public": 0.7067,
+   "acc_always_pass": 0.6129,
+   "plays": 35474
+  },
+  {
+   "season": 2024,
+   "acc": 0.7962,
+   "acc_public": 0.7108,
+   "acc_always_pass": 0.6026,
+   "plays": 34902
+  },
+  {
+   "season": 2025,
+   "acc": 0.7757,
+   "acc_public": 0.7104,
+   "acc_always_pass": 0.6026,
+   "plays": 34502
+  }
+ ],
+ "by_situation": [
+  {
+   "situation": "1st down",
+   "acc": 0.7158,
+   "acc_public": 0.6291,
+   "plays": 107080
+  },
+  {
+   "situation": "2nd down",
+   "acc": 0.7752,
+   "acc_public": 0.7111,
+   "plays": 80931
+  },
+  {
+   "situation": "3rd down",
+   "acc": 0.8919,
+   "acc_public": 0.8756,
+   "plays": 49791
+  },
+  {
+   "situation": "Neutral game state",
+   "acc": 0.7049,
+   "acc_public": 0.6095,
+   "plays": 106038
+  },
+  {
+   "situation": "Red zone",
+   "acc": 0.7802,
+   "acc_public": 0.7286,
+   "plays": 36736
+  },
+  {
+   "situation": "Final 2 min of half",
+   "acc": 0.879,
+   "acc_public": 0.8466,
+   "plays": 28466
+  }
+ ],
+ "confidence": [
+  {
+   "tier": "90%+",
+   "share": 0.2874,
+   "hit": 0.9618,
+   "plays": 69929
+  },
+  {
+   "tier": "80\u201390%",
+   "share": 0.1811,
+   "hit": 0.85,
+   "plays": 44069
+  },
+  {
+   "tier": "70\u201380%",
+   "share": 0.1807,
+   "hit": 0.7495,
+   "plays": 43968
+  },
+  {
+   "tier": "60\u201370%",
+   "share": 0.1789,
+   "hit": 0.6426,
+   "plays": 43535
+  },
+  {
+   "tier": "50\u201360%",
+   "share": 0.1717,
+   "hit": 0.5482,
+   "plays": 41784
+  }
+ ],
+ "calibration": [
+  {
+   "pred": 0.0629,
+   "actual": 0.0634,
+   "plays": 7971
+  },
+  {
+   "pred": 0.1541,
+   "actual": 0.156,
+   "plays": 18247
+  },
+  {
+   "pred": 0.2507,
+   "actual": 0.2438,
+   "plays": 23451
+  },
+  {
+   "pred": 0.3495,
+   "actual": 0.3567,
+   "plays": 23185
+  },
+  {
+   "pred": 0.4494,
+   "actual": 0.4516,
+   "plays": 21191
+  },
+  {
+   "pred": 0.5498,
+   "actual": 0.5479,
+   "plays": 20593
+  },
+  {
+   "pred": 0.6497,
+   "actual": 0.6418,
+   "plays": 20350
+  },
+  {
+   "pred": 0.7506,
+   "actual": 0.7418,
+   "plays": 20517
+  },
+  {
+   "pred": 0.8529,
+   "actual": 0.8542,
+   "plays": 25822
+  },
+  {
+   "pred": 0.9597,
+   "actual": 0.9651,
+   "plays": 61958
+  }
+ ],
+ "teams_2025": [
+  {
+   "team": "ATL",
+   "acc": 0.8207,
+   "acc_public": 0.7277,
+   "plays": 1032
+  },
+  {
+   "team": "TB",
+   "acc": 0.8117,
+   "acc_public": 0.7181,
+   "plays": 1057
+  },
+  {
+   "team": "LAC",
+   "acc": 0.8076,
+   "acc_public": 0.7689,
+   "plays": 1138
+  },
+  {
+   "team": "HOU",
+   "acc": 0.8017,
+   "acc_public": 0.7521,
+   "plays": 1210
+  },
+  {
+   "team": "NE",
+   "acc": 0.8006,
+   "acc_public": 0.7215,
+   "plays": 1264
+  },
+  {
+   "team": "DEN",
+   "acc": 0.7987,
+   "acc_public": 0.7151,
+   "plays": 1197
+  },
+  {
+   "team": "TEN",
+   "acc": 0.796,
+   "acc_public": 0.7357,
+   "plays": 995
+  },
+  {
+   "team": "BAL",
+   "acc": 0.7945,
+   "acc_public": 0.7212,
+   "plays": 954
+  },
+  {
+   "team": "ARI",
+   "acc": 0.7944,
+   "acc_public": 0.7168,
+   "plays": 1070
+  },
+  {
+   "team": "CLE",
+   "acc": 0.792,
+   "acc_public": 0.7402,
+   "plays": 1024
+  },
+  {
+   "team": "WAS",
+   "acc": 0.7891,
+   "acc_public": 0.7191,
+   "plays": 972
+  },
+  {
+   "team": "KC",
+   "acc": 0.7876,
+   "acc_public": 0.734,
+   "plays": 1045
+  },
+  {
+   "team": "MIN",
+   "acc": 0.7838,
+   "acc_public": 0.7135,
+   "plays": 939
+  },
+  {
+   "team": "JAX",
+   "acc": 0.782,
+   "acc_public": 0.6975,
+   "plays": 1124
+  },
+  {
+   "team": "NO",
+   "acc": 0.7804,
+   "acc_public": 0.7427,
+   "plays": 1061
+  },
+  {
+   "team": "SF",
+   "acc": 0.7787,
+   "acc_public": 0.7174,
+   "plays": 1175
+  },
+  {
+   "team": "BUF",
+   "acc": 0.7755,
+   "acc_public": 0.727,
+   "plays": 1194
+  },
+  {
+   "team": "CIN",
+   "acc": 0.773,
+   "acc_public": 0.7021,
+   "plays": 1044
+  },
+  {
+   "team": "LV",
+   "acc": 0.77,
+   "acc_public": 0.7029,
+   "plays": 939
+  },
+  {
+   "team": "MIA",
+   "acc": 0.7678,
+   "acc_public": 0.7071,
+   "plays": 939
+  },
+  {
+   "team": "NYJ",
+   "acc": 0.7662,
+   "acc_public": 0.7183,
+   "plays": 1001
+  },
+  {
+   "team": "PIT",
+   "acc": 0.7648,
+   "acc_public": 0.7133,
+   "plays": 1029
+  },
+  {
+   "team": "CAR",
+   "acc": 0.7638,
+   "acc_public": 0.6622,
+   "plays": 1054
+  },
+  {
+   "team": "DAL",
+   "acc": 0.762,
+   "acc_public": 0.7012,
+   "plays": 1101
+  },
+  {
+   "team": "NYG",
+   "acc": 0.7591,
+   "acc_public": 0.6865,
+   "plays": 1075
+  },
+  {
+   "team": "IND",
+   "acc": 0.755,
+   "acc_public": 0.6873,
+   "plays": 1004
+  },
+  {
+   "team": "PHI",
+   "acc": 0.7538,
+   "acc_public": 0.6927,
+   "plays": 1064
+  },
+  {
+   "team": "DET",
+   "acc": 0.7533,
+   "acc_public": 0.6876,
+   "plays": 1050
+  },
+  {
+   "team": "SEA",
+   "acc": 0.7411,
+   "acc_public": 0.6726,
+   "plays": 1182
+  },
+  {
+   "team": "LA",
+   "acc": 0.7397,
+   "acc_public": 0.6984,
+   "plays": 1260
+  },
+  {
+   "team": "CHI",
+   "acc": 0.734,
+   "acc_public": 0.6442,
+   "plays": 1248
+  },
+  {
+   "team": "GB",
+   "acc": 0.7323,
+   "acc_public": 0.6946,
+   "plays": 1061
+  }
+ ],
+ "live_2026": {
+  "acc": 0.7851,
+  "acc_public": 0.7129,
+  "plays": 11441,
+  "through_week": 6,
+  "weeks": [
+   {
+    "week": 1,
+    "acc": 0.7803,
+    "acc_public": 0.7184,
+    "plays": 1907
+   },
+   {
+    "week": 2,
+    "acc": 0.7811,
+    "acc_public": 0.6843,
+    "plays": 1923
+   },
+   {
+    "week": 3,
+    "acc": 0.7792,
+    "acc_public": 0.7036,
+    "plays": 1984
+   },
+   {
+    "week": 4,
+    "acc": 0.7858,
+    "acc_public": 0.7235,
+    "plays": 1975
+   },
+   {
+    "week": 5,
+    "acc": 0.7945,
+    "acc_public": 0.7271,
+    "plays": 1869
+   },
+   {
+    "week": 6,
+    "acc": 0.7902,
+    "acc_public": 0.7213,
+    "plays": 1783
+   }
+  ]
+ },
+ "live_backtest": {
+  "acc": 0.7802,
+  "seasons": [
+   2024,
+   2025
+  ]
+ }
+}

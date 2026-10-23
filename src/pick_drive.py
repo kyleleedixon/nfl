@@ -1,15 +1,17 @@
 """Pick a representative 2025 drive for the hero: long, mixed calls, model mostly right but not perfect."""
 import json
+import os
 import pandas as pd
 
-D = "data"
-P = pd.read_parquet(f"{D}/preds_v2.parquet")
+D = os.environ.get("DATA", "data")
+P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
+P = P.rename(columns={os.environ.get("MODEL", "full_v3"): "model"})
 F = pd.read_parquet(f"{D}/features_v2.parquet",
                     columns=["game_id", "play_id", "fixed_drive", "yardline_100", "score_differential",
                              "qtr", "half_seconds_remaining", "game_seconds_remaining", "yards_gained", "result",
                              "home_team", "posteam", "defteam", "week", "season_type", "is_target", "touchdown"])
-P = P[P.season == 2025].merge(F.drop(columns=["posteam", "defteam", "week"]), on=["game_id", "play_id"])
-P["hit"] = (P.full_v2 > .5) == P.y
+P = P[P.season == 2025].merge(F.drop(columns=["posteam", "defteam", "week", "qtr"]), on=["game_id", "play_id"])
+P["hit"] = (P.model > .5) == P.y
 best = []
 for (g, dr), x in P.groupby(["game_id", "fixed_drive"]):
     if not (9 <= len(x) <= 12):
@@ -22,7 +24,7 @@ for (g, dr), x in P.groupby(["game_id", "fixed_drive"]):
     acc = x.hit.mean()
     if not (0.8 <= acc < 1.0):
         continue
-    nonobvious = ((x.full_v2 - 0.5).abs() < 0.35).sum()
+    nonobvious = ((x.model - 0.5).abs() < 0.35).sum()
     best.append((acc, nonobvious, x.touchdown.max(), g, dr, x.qtr.iloc[0]))
 best.sort(key=lambda t: (-t[2], -t[0], -t[1]))
 acc, _, _, g, dr, _ = best[0]
@@ -48,7 +50,7 @@ for _, r in x.iterrows():
     sd = int(r.score_differential)
     score = "tied" if sd == 0 else (f"up {sd}" if sd > 0 else f"down {-sd}")
     snaps.append(dict(situation=f"{dn} & {togo}", context=f"{clock(r.half_seconds_remaining, r.qtr)}, {field(r.yardline_100, r.posteam, r.defteam)}, {score}",
-                      p_pass=round(float(r.full_v2), 3), actual="pass" if r.y == 1 else "run", result=res))
+                      p_pass=round(float(r.model), 3), actual="pass" if r.y == 1 else "run", result=res))
 r0 = x.iloc[0]
 out = dict(title=f"One real drive: {r0.posteam} vs {r0.defteam}, 2025 week {int(r0.week)}",
            hits=int(x.hit.sum()), n=int(len(x)), snaps=snaps)
