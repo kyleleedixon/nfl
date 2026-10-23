@@ -1,6 +1,7 @@
 """Post the weekly tweet to X (@TelegraphedNFL) with the card image (any further tweets in the file go as replies).
 
 Usage: python src/post_x.py [--dry-run] [season week]   (default: newest report not yet posted)
+       python src/post_x.py --check                      (verify credentials only; posts nothing)
 Reads state/threads/{season}_wk{week:02d}.json (written by weekly_report.py).
 Credentials: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET from the environment (GitHub Actions secrets)
 or ~/.config/telegraphed/x.env locally; never in the repo.
@@ -18,6 +19,23 @@ ENV = os.path.expanduser("~/.config/telegraphed/x.env")
 LOG = f"{ST}/x_posted.json"
 KEYS = ["X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_SECRET"]
 API = "https://api.x.com/2"
+
+
+
+def session():
+    from requests_oauthlib import OAuth1Session
+    if all(os.environ.get(k) for k in KEYS):
+        cred = {k: os.environ[k] for k in KEYS}
+    else:
+        cred = dict(l.strip().split("=", 1) for l in open(ENV) if "=" in l and not l.lstrip().startswith("#"))
+    return OAuth1Session(cred["X_API_KEY"], cred["X_API_SECRET"], cred["X_ACCESS_TOKEN"], cred["X_ACCESS_SECRET"])
+
+
+if "--check" in sys.argv:
+    r = session().get(f"{API}/users/me")
+    if r.status_code != 200 or r.headers.get("x-access-level") != "read-write":
+        sys.exit(f"credentials NOT ok: {r.status_code} {r.text[:200]} access={r.headers.get('x-access-level')}")
+    sys.exit(print(f"credentials ok: @{r.json()['data']['username']}, {r.headers['x-access-level']}") or 0)
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 dry = "--dry-run" in sys.argv
@@ -49,13 +67,7 @@ if dry:
         print(f"\n--- {i}/{len(T['tweets'])}{' (+ image)' if i == 1 else ''}{' (already posted)' if i <= len(rec['ids']) else ''}\n{t}")
     sys.exit(0)
 
-from requests_oauthlib import OAuth1Session  # noqa: E402
-
-if all(os.environ.get(k) for k in KEYS):
-    cred = {k: os.environ[k] for k in KEYS}
-else:
-    cred = dict(l.strip().split("=", 1) for l in open(ENV) if "=" in l and not l.lstrip().startswith("#"))
-x = OAuth1Session(cred["X_API_KEY"], cred["X_API_SECRET"], cred["X_ACCESS_TOKEN"], cred["X_ACCESS_SECRET"])
+x = session()
 
 
 def ok(r):

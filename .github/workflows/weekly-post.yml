@@ -7,7 +7,7 @@ on:
     - cron: "0 19 * * 2"
   workflow_dispatch:
     inputs:
-      dry_run: { description: "Preview only, don't post", type: boolean, default: true }
+      dry_run: { description: "Preview only: check the X keys and show the next tweet, don't post", type: boolean, default: true }
 permissions: { contents: write }
 concurrency: { group: weekly, cancel-in-progress: false }
 jobs:
@@ -25,7 +25,9 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
-        run: python src/post_x.py ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+        run: |
+          python src/post_x.py --check
+          python src/post_x.py ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
       - name: Save posting record
         if: always()
         run: |
