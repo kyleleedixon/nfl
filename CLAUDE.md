@@ -24,11 +24,16 @@ predictable; the model leans on human-decision patterns and personnel tells, not
 - `src/weekly_report.py` — Tuesday "How predictable is your offense?" rankings (neutral-situation read rate by team,
   team labels only), share card PNG, draft X thread (`data/reports/`), and `site/weekly/weekly.json` for the public
   page. `site/weekly/index.html` is a hand-written template sharing the main page's tokens and chart code.
-- `weekly.sh` — Tuesday refresh: new week → features → re-score current season → report → deploy → push. No-ops if
-  no new week. `launchd/` holds the schedule (Tue 6/9/12); `tools/pyexit/` works around a pyarrow hang at exit.
-- `src/post_x.py` — posts the weekly thread + card to X (@TelegraphedNFL), Tue 11am/1pm via `launchd/com.kyledixon.nfl-post.plist`.
-  Creds in `~/.config/telegraphed/x.env` (never the repo). Resumable via `data/x_posted.json`; `touch data/x_paused` stops it;
-  refuses reports >2 days old. `--dry-run` previews.
+- `weekly.sh` — Tuesday refresh: new week → features → `backtest_v3.py live` (re-train current season's live model only)
+  → report → push (Vercel deploys). No-ops if no new week (last reported week = `site/weekly/weekly.json`).
+- `src/post_x.py` — posts the weekly tweet + card to X (@TelegraphedNFL). Creds from env (GitHub secrets) or
+  `~/.config/telegraphed/x.env`, never the repo. Resumable via `state/x_posted.json`; a file `state/x_paused` stops it;
+  refuses drafts >2 days old. `--dry-run` previews.
+- Automation runs on **GitHub Actions**, not the laptop: `.github/workflows/weekly-refresh.yml` (Tue 11/14/16 UTC) and
+  `weekly-post.yml` (Tue 17/19 UTC = 11am CT). Both can be run by hand from the Actions tab. A fresh checkout needs
+  `artifacts/` (cached 2019–2025 preds, ablation decision, players table; see its README) and `state/` (tweet drafts,
+  posting record). Refresh `artifacts/preds_v3/` after re-running `backtest_v3.py run`. `tools/pyexit/` works around
+  a pyarrow hang at interpreter exit on macOS.
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.
 - `run_all.sh` — rebuilds everything end to end (`TUNE=1 ./run_all.sh` to re-tune).
 
