@@ -23,7 +23,10 @@ jobs:
         with: { python-version: "3.11", cache: pip }
       - run: pip install -r requirements.txt
       - uses: actions/cache@v4   # past seasons' nflverse files never change mid-season
-        with: { path: data/raw, key: nflverse-raw-${{ github.run_id }}, restore-keys: nflverse-raw- }
+        with:
+          path: data/raw
+          key: nflverse-raw-${{ github.run_id }}
+          restore-keys: nflverse-raw-
       - name: Refresh
         env:
           PY: python
