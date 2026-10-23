@@ -22,10 +22,21 @@ API = "https://api.x.com/2"
 
 
 
+def fail(msg):
+    """Exit with an error; in GitHub Actions also emit it as an annotation (readable on the run page)."""
+    if os.environ.get("GITHUB_ACTIONS"):
+        print(f"::error::{msg}")
+    sys.exit(msg)
+
+
 def session():
     from requests_oauthlib import OAuth1Session
+    if os.environ.get("GITHUB_ACTIONS"):
+        missing = [k for k in KEYS if not os.environ.get(k)]
+        if missing:
+            fail(f"missing GitHub secrets: {', '.join(missing)} (Settings > Secrets and variables > Actions > Repository secrets)")
     if all(os.environ.get(k) for k in KEYS):
-        cred = {k: os.environ[k] for k in KEYS}
+        cred = {k: os.environ[k].strip() for k in KEYS}
     else:
         cred = dict(l.strip().split("=", 1) for l in open(ENV) if "=" in l and not l.lstrip().startswith("#"))
     return OAuth1Session(cred["X_API_KEY"], cred["X_API_SECRET"], cred["X_ACCESS_TOKEN"], cred["X_ACCESS_SECRET"])
@@ -34,7 +45,7 @@ def session():
 if "--check" in sys.argv:
     r = session().get(f"{API}/users/me")
     if r.status_code != 200 or r.headers.get("x-access-level") != "read-write":
-        sys.exit(f"credentials NOT ok: {r.status_code} {r.text[:200]} access={r.headers.get('x-access-level')}")
+        fail(f"X credentials rejected: HTTP {r.status_code}, access={r.headers.get('x-access-level')}: {' '.join(r.text.split())[:200]}")
     sys.exit(print(f"credentials ok: @{r.json()['data']['username']}, {r.headers['x-access-level']}") or 0)
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
@@ -52,7 +63,7 @@ else:
     key = todo[-1]
 T = json.load(open(f"{ST}/threads/{key}.json"))
 if not args and not dry and time.time() - T.get("created", 0) > 2 * 86400:
-    sys.exit(f"newest report {key} is over 2 days old (did the Tuesday refresh fail?), not posting a stale thread")
+    fail(f"newest report {key} is over 2 days old (did the Tuesday refresh fail?), not posting a stale thread")
 rec = posted.setdefault(key, {"ids": []})
 if rec.get("complete"):
     sys.exit(print(f"{key} already posted: https://x.com/TelegraphedNFL/status/{rec['ids'][0]}") or 0)
@@ -72,7 +83,7 @@ x = session()
 
 def ok(r):
     if r.status_code >= 300:
-        sys.exit(f"X API {r.request.method} {r.url} -> {r.status_code}: {r.text[:500]}")
+        fail(f"X API {r.request.method} {r.url} -> {r.status_code}: {' '.join(r.text.split())[:400]}")
     return r.json()
 
 
