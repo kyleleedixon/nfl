@@ -27,6 +27,21 @@ NICK = dict(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills", CAR="Pant
             PHI="Eagles", PIT="Steelers", SF="49ers", SEA="Seahawks", TB="Buccaneers", TEN="Titans",
             WAS="Commanders")
 
+# fan hashtags go in the bot's tweets (allowed); official @handles go only in a reply Kyle posts by hand, because
+# X's automation rules forbid unsolicited automated @mentions
+TAG = dict(ARI="#BirdCityFootball", ATL="#DirtyBirds", BAL="#RavensFlock", BUF="#BillsMafia", CAR="#KeepPounding",
+           CHI="#DaBears", CIN="#RuleTheJungle", CLE="#DawgPound", DAL="#DallasCowboys", DEN="#BroncosCountry",
+           DET="#OnePride", GB="#GoPackGo", HOU="#WeAreTexans", IND="#ForTheShoe", JAX="#DUUUVAL", KC="#ChiefsKingdom",
+           LA="#RamsHouse", LAC="#BoltUp", LV="#RaiderNation", MIA="#FinsUp", MIN="#Skol", NE="#ForeverNE", NO="#Saints",
+           NYG="#TogetherBlue", NYJ="#JetUp", PHI="#FlyEaglesFly", PIT="#HereWeGo", SF="#FTTB", SEA="#GoHawks",
+           TB="#GoBucs", TEN="#TitanUp", WAS="#HTTC")
+AT = dict(ARI="@AZCardinals", ATL="@AtlantaFalcons", BAL="@Ravens", BUF="@BuffaloBills", CAR="@Panthers",
+          CHI="@ChicagoBears", CIN="@Bengals", CLE="@Browns", DAL="@dallascowboys", DEN="@Broncos", DET="@Lions",
+          GB="@packers", HOU="@HoustonTexans", IND="@Colts", JAX="@Jaguars", KC="@Chiefs", LA="@RamsNFL",
+          LAC="@chargers", LV="@Raiders", MIA="@MiamiDolphins", MIN="@Vikings", NE="@Patriots", NO="@Saints",
+          NYG="@Giants", NYJ="@nyjets", PHI="@Eagles", PIT="@steelers", SF="@49ers", SEA="@Seahawks",
+          TB="@Buccaneers", TEN="@Titans", WAS="@Commanders")
+
 season = int(sys.argv[1]) if len(sys.argv) > 1 else int(P.season.max())
 S = P[P.season == season].copy()
 week = int(sys.argv[2]) if len(sys.argv) > 2 else int(S.week.max())
@@ -82,22 +97,28 @@ top, bot = ytd.head(5), ytd.tail(5).iloc[::-1]
 wt, wb = wk.iloc[0], wk.iloc[-1]
 tweets = [
     f"Telegraphed: Week {week} Rankings 🧵\n\nEvery play caller has a tell. We predict pass or run before every NFL snap, "
-    f"and through week {week} we called {pct(league['acc'])} of them.\n\nWho's an Open Book, and who has a Poker Face?",
+    f"and through week {week} we called {pct(league['acc'])} of them.\n\nWho's an Open Book, and who has a Poker Face? #NFL",
     "📖 OPEN BOOK: most predictable offenses (neutral situations, season to date)\n\n"
-    + "\n".join(f"{r.rank}. {NICK[r.posteam]}: {pct(r.acc_neutral)}" for r in top.itertuples()),
+    + "\n".join(f"{r.rank}. {NICK[r.posteam]}: {pct(r.acc_neutral)}" for r in top.itertuples())
+    + "\n\n" + " ".join(TAG[t] for t in top.posteam),
     "🃏 POKER FACE: least predictable\n\n"
-    + "\n".join(f"{r.rank}. {NICK[r.posteam]}: {pct(r.acc_neutral)}" for r in bot.itertuples()),
+    + "\n".join(f"{r.rank}. {NICK[r.posteam]}: {pct(r.acc_neutral)}" for r in bot.itertuples())
+    + "\n\n" + " ".join(TAG[t] for t in bot.posteam),
     f"Week {week} extremes:\n\n🔓 {NICK[wt.posteam]} vs {NICK[opp[wt.posteam]]}: we called {pct(wt.acc)} of their plays\n"
     f"🔒 {NICK[wb.posteam]} vs {NICK[opp[wb.posteam]]}: just {pct(wb.acc)}\n\nFull rankings: {SITE}/weekly",
 ]
+featured = list(dict.fromkeys(list(top.posteam) + list(bot.posteam) + [wt.posteam, wb.posteam]))
+tag_reply = "Calling out this week's Open Books and Poker Faces 👀\n\n" + " ".join(AT[t] for t in featured)
 L += ["", "## Draft thread", ""]
 for i, t in enumerate(tweets, 1):
     L += [f"**{i}/{len(tweets)}** ({len(t)} chars{' ⚠️ over 280' if len(t) > 280 else ''})", "", "```", t, "```", ""]
 
+L += ["## Your manual reply (post from the X app, not the bot)", "", "```", tag_reply, "```", ""]
 os.makedirs(f"{D}/reports", exist_ok=True)
 out = f"{D}/reports/{season}_wk{week:02d}"
 open(f"{out}.md", "w").write("\n".join(L) + "\n")
-json.dump(dict(season=season, week=week, card=f"{out}_card.png", tweets=tweets), open(f"{out}_thread.json", "w"), indent=1)
+json.dump(dict(season=season, week=week, card=f"{out}_card.png", tweets=tweets, tag_reply=tag_reply),
+          open(f"{out}_thread.json", "w"), indent=1)
 
 
 # site tokens (site/index.html, light mode): the card must look like the site

@@ -83,3 +83,5 @@ for i, text in enumerate(T["tweets"]):
 rec["complete"] = True
 save()
 print(f"thread live: https://x.com/TelegraphedNFL/status/{rec['ids'][0]}")
+if T.get("tag_reply"):
+    print("\nNow reply to the thread from the X app with (manual tags are allowed, automated ones aren't):\n\n" + T["tag_reply"])
