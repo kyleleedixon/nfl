@@ -18,4 +18,4 @@ def mark_rpo(P, season):
     f["play_id"] = f.play_id.astype(float)
     P = P.drop(columns="rpo", errors="ignore").assign(play_id=P.play_id.astype(float))
     P = P.merge(f, on=["game_id", "play_id"], how="left")
-    return P.assign(rpo=P.pop("is_rpo").fillna(False).astype(bool))
+    return P.assign(rpo=P.pop("is_rpo").astype("boolean").fillna(False).astype(bool))

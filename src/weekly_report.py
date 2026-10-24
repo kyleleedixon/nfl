@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct
+from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct, logo
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -146,7 +146,8 @@ def card(path):
                 va="center", color=INK, fontsize=8.5, zorder=5)
         ax.annotate(f"{r.rank}", (0, yi), xycoords=("axes fraction", "data"), xytext=(-120, 0), textcoords="offset points",
                     ha="right", va="center", color=INK2, fontsize=8.5)
-        ax.annotate(NICK[r.posteam], (0, yi), xycoords=("axes fraction", "data"), xytext=(-112, 0), textcoords="offset points",
+        logo(ax, r.posteam, (0, yi), 13, coords=("axes fraction", "data"), offset=(-105, 0))
+        ax.annotate(NICK[r.posteam], (0, yi), xycoords=("axes fraction", "data"), xytext=(-94, 0), textcoords="offset points",
                     ha="left", va="center", color=INK, fontsize=10)
     ax.set_yticks([])
     ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(0.02))

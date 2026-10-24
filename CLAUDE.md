@@ -31,7 +31,7 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   page. `site/weekly/index.html` is a hand-written template sharing the main page's tokens and chart code.
 - `src/game_cards.py` — per-game card (Umpire Scorecards style): each offense's read rate vs NFL average, play-by-play
   dot chart (expected-pass/run zones), "Biggest surprise" banner (the model's most confident miss). Writes
-  `site/games/{game_id}.png` + `state/games/{game_id}.json`. Results only, never features/tells. Shared brand in `src/brand.py`; team hashtags in `src/hashtags.json`
+  `site/games/{game_id}.png` + `state/games/{game_id}.json`. Results only, never features/tells. Shared brand in `src/brand.py` (incl. `logo()`; team logos cached in `assets/logos/` by `src/fetch_logos.py`, re-run after a rebrand); team hashtags in `src/hashtags.json`
   (each with the season it was last confirmed; refresh warns on unconfirmed teams, `hashtag-check.yml` opens an issue every Aug 1).
 - `src/scoring.py` — what a public read rate counts: RPOs are not scored (the QB picks pass/run after the snap; FTN `is_rpo`).
   Game cards draw them as gray diamonds; weekly rankings and the NFL average leave them out. Play action is scored.

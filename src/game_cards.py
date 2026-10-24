@@ -17,7 +17,7 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -86,7 +86,8 @@ def card(path, gid, G, league, league_n, week):
     for x, t in [(0.06, away), (0.52, home)]:
         g = G[(G.posteam == t) & ~G.rpo]
         s = team_stats(g, league)
-        fig.text(x, 0.812, NICK[t].upper(), color=INK, fontsize=13, weight="bold", **disp)
+        logo(fig, t, (x + 0.018, 0.8175), 24)
+        fig.text(x + 0.045, 0.812, NICK[t].upper(), color=INK, fontsize=13, weight="bold", **disp)
         fig.text(x, 0.748, pct(s["acc"]), color=INK, fontsize=44, weight="bold", **disp)
         d = round(100 * s["acc"]) - round(100 * league)   # as displayed, so 79% vs 79% reads "even"
         tag = "📖" if d > 0 else ""
@@ -147,7 +148,8 @@ def card(path, gid, G, league, league_n, week):
         ax.tick_params(axis="y", length=0, pad=6)
         for sp in ax.spines.values():
             sp.set_visible(False)
-        fig.text(0.06, top, f"{NICK[t]} offense", color=INK, fontsize=12, weight="bold", **disp)
+        logo(fig, t, (0.073, top + 0.005), 18)
+        fig.text(0.092, top, f"{NICK[t]} offense", color=INK, fontsize=12, weight="bold", **disp)
         su = surprise(g[~g.rpo])
         if su:
             r, when, what = su

@@ -46,5 +46,21 @@ def use_fonts():
     plt.rcParams["font.family"] = ["Barlow"]
 
 
+LOGOS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "logos")   # src/fetch_logos.py
+
+
+def logo(target, team, xy, size, coords="figure fraction", offset=(0, 0)):
+    """Team logo centered at xy (offset in points), longest side `size` points. target: a Figure or Axes."""
+    import matplotlib.pyplot as plt
+    from matplotlib.offsetbox import AnnotationBbox, OffsetImage
+    path = os.path.join(LOGOS, f"{team}.png")
+    if not os.path.exists(path):
+        return
+    im = plt.imread(path)
+    box = AnnotationBbox(OffsetImage(im, zoom=size / max(im.shape[:2])), xy, xycoords=coords, xybox=offset,
+                         boxcoords="offset points", frameon=False, pad=0, annotation_clip=False)
+    (target.add_artist(box))
+
+
 def pct(x):
     return f"{100 * x:.0f}%"
