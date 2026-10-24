@@ -7,6 +7,7 @@ from sklearn.metrics import log_loss, roc_auc_score
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from season import current
+from brand import NICK
 
 D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
@@ -86,7 +87,7 @@ R["calibration"] = cal.round(4).to_dict("records")
 # team predictability, latest completed season (full model, else the live model if participation isn't out yet)
 LAST = NOW - 1 if (P.season == NOW - 1).any() else FULL_SEASONS[-1]
 sl = P[P.season == LAST].assign(m=lambda x: x.model.fillna(x.live))
-R["teams_last"] = dict(season=int(LAST), teams=sorted([dict(team=t, acc=round(acc(g.y, g.m), 4), acc_public=round(acc(g.y, g.xpass), 4),
+R["teams_last"] = dict(season=int(LAST), teams=sorted([dict(team=t, nick=NICK.get(t, t), acc=round(acc(g.y, g.m), 4), acc_public=round(acc(g.y, g.xpass), 4),
                        plays=int(len(g))) for t, g in sl.groupby("posteam")], key=lambda r: -r["acc"]))
 
 # season in progress, live model (runs without participation data), by week

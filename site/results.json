@@ -195,192 +195,224 @@
   "teams": [
    {
     "team": "ATL",
+    "nick": "Falcons",
     "acc": 0.8256,
     "acc_public": 0.7277,
     "plays": 1032
    },
    {
     "team": "TB",
+    "nick": "Buccaneers",
     "acc": 0.8184,
     "acc_public": 0.7181,
     "plays": 1057
    },
    {
     "team": "NE",
+    "nick": "Patriots",
     "acc": 0.8062,
     "acc_public": 0.7215,
     "plays": 1264
    },
    {
     "team": "LAC",
+    "nick": "Chargers",
     "acc": 0.8049,
     "acc_public": 0.7689,
     "plays": 1138
    },
    {
     "team": "HOU",
+    "nick": "Texans",
     "acc": 0.8033,
     "acc_public": 0.7521,
     "plays": 1210
    },
    {
     "team": "KC",
+    "nick": "Chiefs",
     "acc": 0.801,
     "acc_public": 0.734,
     "plays": 1045
    },
    {
     "team": "BAL",
+    "nick": "Ravens",
     "acc": 0.8008,
     "acc_public": 0.7212,
     "plays": 954
    },
    {
     "team": "CLE",
+    "nick": "Browns",
     "acc": 0.7988,
     "acc_public": 0.7402,
     "plays": 1024
    },
    {
     "team": "ARI",
+    "nick": "Cardinals",
     "acc": 0.7944,
     "acc_public": 0.7168,
     "plays": 1070
    },
    {
     "team": "TEN",
+    "nick": "Titans",
     "acc": 0.794,
     "acc_public": 0.7357,
     "plays": 995
    },
    {
     "team": "DEN",
+    "nick": "Broncos",
     "acc": 0.7911,
     "acc_public": 0.7151,
     "plays": 1197
    },
    {
     "team": "NO",
+    "nick": "Saints",
     "acc": 0.7842,
     "acc_public": 0.7427,
     "plays": 1061
    },
    {
     "team": "MIN",
+    "nick": "Vikings",
     "acc": 0.7838,
     "acc_public": 0.7135,
     "plays": 939
    },
    {
     "team": "WAS",
+    "nick": "Commanders",
     "acc": 0.7819,
     "acc_public": 0.7191,
     "plays": 972
    },
    {
     "team": "SF",
+    "nick": "49ers",
     "acc": 0.7779,
     "acc_public": 0.7174,
     "plays": 1175
    },
    {
     "team": "JAX",
+    "nick": "Jaguars",
     "acc": 0.7767,
     "acc_public": 0.6975,
     "plays": 1124
    },
    {
     "team": "BUF",
+    "nick": "Bills",
     "acc": 0.7747,
     "acc_public": 0.727,
     "plays": 1194
    },
    {
     "team": "LV",
+    "nick": "Raiders",
     "acc": 0.7732,
     "acc_public": 0.7029,
     "plays": 939
    },
    {
     "team": "NYJ",
+    "nick": "Jets",
     "acc": 0.7732,
     "acc_public": 0.7183,
     "plays": 1001
    },
    {
     "team": "CIN",
+    "nick": "Bengals",
     "acc": 0.772,
     "acc_public": 0.7021,
     "plays": 1044
    },
    {
     "team": "MIA",
+    "nick": "Dolphins",
     "acc": 0.771,
     "acc_public": 0.7071,
     "plays": 939
    },
    {
     "team": "PIT",
+    "nick": "Steelers",
     "acc": 0.7648,
     "acc_public": 0.7133,
     "plays": 1029
    },
    {
     "team": "CAR",
+    "nick": "Panthers",
     "acc": 0.7628,
     "acc_public": 0.6622,
     "plays": 1054
    },
    {
     "team": "PHI",
+    "nick": "Eagles",
     "acc": 0.7603,
     "acc_public": 0.6927,
     "plays": 1064
    },
    {
     "team": "DET",
+    "nick": "Lions",
     "acc": 0.76,
     "acc_public": 0.6876,
     "plays": 1050
    },
    {
     "team": "NYG",
+    "nick": "Giants",
     "acc": 0.7572,
     "acc_public": 0.6865,
     "plays": 1075
    },
    {
     "team": "DAL",
+    "nick": "Cowboys",
     "acc": 0.7539,
     "acc_public": 0.7012,
     "plays": 1101
    },
    {
     "team": "IND",
+    "nick": "Colts",
     "acc": 0.752,
     "acc_public": 0.6873,
     "plays": 1004
    },
    {
     "team": "SEA",
+    "nick": "Seahawks",
     "acc": 0.742,
     "acc_public": 0.6726,
     "plays": 1182
    },
    {
     "team": "LA",
+    "nick": "Rams",
     "acc": 0.7397,
     "acc_public": 0.6984,
     "plays": 1260
    },
    {
     "team": "GB",
+    "nick": "Packers",
     "acc": 0.738,
     "acc_public": 0.6946,
     "plays": 1061
    },
    {
     "team": "CHI",
+    "nick": "Bears",
     "acc": 0.7308,
     "acc_public": 0.6442,
     "plays": 1248
