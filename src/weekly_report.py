@@ -181,9 +181,9 @@ def page():
     data = dict(
         season=season, week=week, card=img,
         league_acc=round(float(league["acc"]), 4), league_neutral=round(float(neutral_avg), 4),
-        teams=[dict(rank=int(r.rank), team=NICK[r.posteam], move=int(r.move), neutral=round(float(r.acc_neutral), 4),
+        teams=[dict(rank=int(r.rank), team=NICK[r.posteam], abbr=r.posteam, move=int(r.move), neutral=round(float(r.acc_neutral), 4),
                     acc=round(float(r.acc), 4), snaps=int(r.neutral)) for r in ytd.itertuples()],
-        games=[dict(team=NICK[r.posteam], opp=NICK[opp[r.posteam]], acc=round(float(r.acc), 4), plays=int(r.plays))
+        games=[dict(team=NICK[r.posteam], abbr=r.posteam, opp=NICK[opp[r.posteam]], acc=round(float(r.acc), 4), plays=int(r.plays))
                for r in wk.itertuples()],
     )
     json.dump(data, open("site/weekly/weekly.json", "w"), indent=1)

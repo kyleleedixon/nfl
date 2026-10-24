@@ -1,0 +1,44 @@
+# Each August, before the season:
+# - open an issue listing every team's hashtag so someone confirms them (teams change them, e.g. WAS #HTTC -> #RaiseHail
+#   in 2026). Edit src/hashtags.json: fix the tag, set "checked" to the season. Hashtags need a human; logos don't:
+# - re-download team logos (src/fetch_logos.py: nflverse team table -> ESPN) and commit them if any changed.
+name: Preseason check
+on:
+  schedule:
+    - cron: "0 15 1 8 *"
+  workflow_dispatch:
+permissions: { contents: write, issues: write }
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          python3 - <<'PY' > body.json
+          import json, datetime
+          T = json.load(open("src/hashtags.json"))["teams"]
+          y = datetime.date.today().year
+          rows = "\n".join(f"- [ ] {t}: {v['tag']} (last checked {v['checked'] or 'never'})" for t, v in T.items())
+          print(json.dumps({"title": f"Confirm team hashtags for {y}",
+                            "body": f"The bot puts these in every tweet. Check each team's own X posts, fix any that "
+                                    f"changed in `src/hashtags.json`, and set `checked` to {y}.\n\n{rows}"}))
+          PY
+          curl -sf -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues -d @body.json > /dev/null
+  logos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q "pandas<3" requests pillow
+      - run: python src/fetch_logos.py
+      - name: Commit changed logos
+        run: |
+          git add assets/logos site/logos
+          if git diff --cached --quiet; then echo "logos unchanged"; exit 0; fi
+          echo "::notice::team logos changed: $(git diff --cached --name-only | tr '\n' ' ')"
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Preseason: update team logos"
+          git push

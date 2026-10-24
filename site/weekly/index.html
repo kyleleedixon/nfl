@@ -30,16 +30,19 @@
   --display: "Barlow Condensed", "Arial Narrow", sans-serif;
   --text: "Barlow", system-ui, sans-serif;
   --shadow: rgba(27, 29, 34, .12);
+  --logo-halo: none;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --board: #15181D; --ink: #ECEEF1; --ink-2: #A3AAB5; --grid: #2C3139; --pass: #6C9CF2; --run: #F07070;
     --hit: #5DBB76; --public: #6B7380; --wash: #1D2229; --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+  --logo-halo: drop-shadow(0 0 1.2px rgba(255, 255, 255, .7));   /* dark logos (Giants, Panthers) on the dark board */
   }
 }
 :root[data-theme="dark"] {
   --board: #15181D; --ink: #ECEEF1; --ink-2: #A3AAB5; --grid: #2C3139; --pass: #6C9CF2; --run: #F07070;
   --hit: #5DBB76; --public: #6B7380; --wash: #1D2229; --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+  --logo-halo: drop-shadow(0 0 1.2px rgba(255, 255, 255, .7));   /* dark logos (Giants, Panthers) on the dark board */
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -84,6 +87,8 @@ table { width: 100%; border-collapse: collapse; margin-top: .75rem; font-variant
 th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--grid); }
 th { font-weight: 500; color: var(--ink-2); font-size: .85rem; }
 td.n, th.n { text-align: right; }
+img.logo, image.logo { filter: var(--logo-halo); }
+img.logo { width: 1.15em; height: 1.15em; object-fit: contain; vertical-align: -.22em; margin-right: .4em; }
 .games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: .75rem; }
 .game { border: 2px solid var(--grid); border-radius: 10px; padding: .75rem .9rem; }
 .game .dd { font-family: var(--display); font-weight: 600; font-size: 1.15rem; }
@@ -153,6 +158,8 @@ function tipFor(box) {
 }
 const svgIn = (box, h) => { d3.select(box).select('svg').remove(); return d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${box.clientWidth} ${h}`); };
 const textW = (svg, arr, cls) => { const g = svg.append('g'); let w = 0; arr.forEach((s) => { w = Math.max(w, g.append('text').attr('class', cls).text(s).node().getComputedTextLength()); }); g.remove(); return w; };
+const logoSrc = (abbr) => `/logos/${abbr}.png`;
+const logoImg = (abbr) => { const i = document.createElement('img'); i.className = 'logo'; i.src = logoSrc(abbr); i.alt = ''; return i; };
 const moveTxt = (m) => (m > 0 ? `▲${m}` : m < 0 ? `▼${-m}` : '–');
 
 // each offense: a dot at its neutral read rate, joined to the league-average line
@@ -161,7 +168,8 @@ function rankChart(rows, avg) {
   const W = box.clientWidth, h = 26, H = rows.length * h + 30;
   const svg = svgIn(box, H);
   const rw = textW(svg, ['32'], 'tk') + 10;
-  const lw = rw + textW(svg, rows.map((r) => r.team), 'lb') + 14;
+  const lg = rows[0].abbr ? 24 : 0;   // logo column
+  const lw = rw + lg + textW(svg, rows.map((r) => r.team), 'lb') + 14;
   const lo = d3.min(rows, (r) => r.neutral), hi = d3.max(rows, (r) => r.neutral);
   const x = d3.scaleLinear([Math.floor((lo - .02) * 50) / 50, Math.ceil((hi + .02) * 50) / 50], [lw + 40, W - 48]);
   const y = d3.scaleBand(rows.map((r) => r.team), [4, H - 26]).padding(.3);
@@ -171,7 +179,8 @@ function rankChart(rows, avg) {
   svg.append('g').selectAll('text').data(ticks).join('text').attr('class', 'tk').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').text(fmt0);
   svg.append('line').attr('x1', x(avg)).attr('x2', x(avg)).attr('y1', 0).attr('y2', H - 24).attr('stroke', css('--ink-2')).attr('stroke-dasharray', '4 4');
   svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'tk').attr('x', rw - 10).attr('y', cy).attr('dy', '.35em').attr('text-anchor', 'end').text((r) => r.rank);
-  svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lb').attr('x', rw).attr('y', cy).attr('dy', '.35em').text((r) => r.team);
+  if (lg) svg.append('g').selectAll('image').data(rows).join('image').attr('class', 'logo').attr('href', (r) => logoSrc(r.abbr)).attr('x', rw).attr('y', (r) => cy(r) - 9).attr('width', 18).attr('height', 18);
+  svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lb').attr('x', rw + lg).attr('y', cy).attr('dy', '.35em').text((r) => r.team);
   const g = svg.append('g').selectAll('g').data(rows).join('g');
   const up = (r) => r.neutral >= avg;
   g.append('line').attr('x1', x(avg)).attr('x2', (r) => x(r.neutral)).attr('y1', cy).attr('y2', cy).attr('stroke', css('--pass')).attr('stroke-opacity', .35).attr('stroke-width', 4).attr('stroke-linecap', 'round');
@@ -198,7 +207,9 @@ function draw(D) {
   el('tbl').replaceChildren(...T.map((r) => {
     const tr = document.createElement('tr');
     [r.rank, moveTxt(r.move), r.team, fmt0(r.neutral), fmt0(r.acc), fmtC(r.snaps)].forEach((v, i) => {
-      const td = document.createElement('td'); td.textContent = v; if (i >= 3) td.className = 'n'; tr.appendChild(td);
+      const td = document.createElement('td'); td.textContent = v; if (i >= 3) td.className = 'n';
+      if (i === 2 && r.abbr) td.prepend(logoImg(r.abbr));
+      tr.appendChild(td);
     });
     return tr;
   }));
@@ -207,6 +218,7 @@ function draw(D) {
     const d = document.createElement('div'); d.className = 'game';
     d.innerHTML = '<div class="dd"></div><div class="ctx"></div><div class="call"><div class="meter"><i></i></div><div class="lab"></div></div>';
     d.querySelector('.dd').textContent = g.team;
+    if (g.abbr) d.querySelector('.dd').prepend(logoImg(g.abbr));
     d.querySelector('.ctx').textContent = `vs ${g.opp} · ${g.plays} plays`;
     d.querySelector('.meter i').style.width = `${g.acc * 100}%`;
     d.querySelector('.lab').textContent = fmt0(g.acc);

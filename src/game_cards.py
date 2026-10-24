@@ -17,7 +17,7 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -63,6 +63,12 @@ def surprise(g):
     return r, f"{q} {clock} · {dn}", f"We were {pct(sure)} sure of a {exp}. They {did} {gain}."
 
 
+def put(fig, rend, x, text, disp):
+    """Title-size text at x; returns its right edge (figure fraction)."""
+    t = fig.text(x, 0.880, text, color=INK, fontsize=31, weight="bold", **disp)
+    return fig.transFigure.inverted().transform(t.get_window_extent(rend))[1][0]
+
+
 def card(path, gid, G, league, league_n, week):
     use_fonts()
     disp = dict(family="Barlow Condensed")
@@ -78,7 +84,14 @@ def card(path, gid, G, league, league_n, week):
     date = pd.Timestamp(last.game_date).strftime("%a %b %-d")
     fig.text(0.94, 0.952, f"Week {week} · {date}", color=INK2, fontsize=10, ha="right", va="baseline")
     line(0.938, 1.6)
-    fig.text(0.06, 0.880, f"{NICK[away]} {a_s}  ·  {NICK[home]} {h_s}", color=INK, fontsize=31, weight="bold", **disp)
+    # title: [logo] Away 17  ·  [logo] Home 23, laid out left to right by measured text width
+    rend, x = fig.canvas.get_renderer(), 0.06
+    for i, (t, sc) in enumerate([(away, a_s), (home, h_s)]):
+        if i:
+            x = put(fig, rend, x, "·", disp) + 0.022
+        w = logo_w(t, 36) / (72 * fig.get_figwidth())   # logo width, figure fraction
+        logo(fig, t, (x + w / 2, 0.894), 36)
+        x = put(fig, rend, x + w + 0.014, f"{NICK[t]} {sc}", disp) + 0.022
     fig.text(0.06, 0.853, "How predictable was each offense? Share of pass/run calls we predicted before the snap.",
              color=INK2, fontsize=10.5)
 
