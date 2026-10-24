@@ -24,13 +24,15 @@ def load():
     d = pd.read_parquet(FEAT)
     d = d[d.is_target == 1].reset_index(drop=True)
     for c in CATS + CATS4:
-        d[c] = d[c].astype("category")
+        if c in d:
+            d[c] = d[c].astype("category")
     return d
 
 
 def arms():
     full, live, _ = chosen()
-    add = {"base": [], "qb": QB, "team": TEAM, "all": QB + TEAM, "rpo": HABIT}
+    callers = [c for c in pd.read_parquet(FEAT).columns if c.startswith("caller")] if "both" in FEAT else []
+    add = {"base": [], "qb": QB, "team": TEAM, "all": QB + TEAM, "rpo": HABIT, "caller": callers}
     return {(m, a): base + extra for a, extra in add.items() for m, base in [("full", full), ("live", live)]}
 
 
@@ -55,7 +57,7 @@ def report():
     rng = np.random.default_rng(0)
     for m in ["full", "live"]:
         got = {}
-        for a in ["base", "qb", "team", "all", "rpo"]:
+        for a in ["base", "qb", "team", "all", "rpo", "caller"]:
             fs = [f"{OUT}/{S}_{m}_{a}.parquet" for S in SEASONS]
             if all(os.path.exists(f) for f in fs):
                 got[a] = d.merge(pd.concat(pd.read_parquet(f) for f in fs), on=["game_id", "play_id"])

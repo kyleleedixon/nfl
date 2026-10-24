@@ -1,0 +1,261 @@
+season,team,head_coach,from_week,caller,confidence
+2018,ARI,Steve Wilks,1,Mike McCoy,high
+2018,ARI,Steve Wilks,8,Byron Leftwich,high
+2023,ARI,Jonathan Gannon,1,Drew Petzing,high
+2024,ARI,Jonathan Gannon,1,Drew Petzing,high
+2025,ARI,Jonathan Gannon,1,Drew Petzing,high
+2026,ARI,,1,Mike LaFleur,high
+2016,ATL,Dan Quinn,1,Kyle Shanahan,high
+2017,ATL,Dan Quinn,1,Steve Sarkisian,high
+2018,ATL,Dan Quinn,1,Steve Sarkisian,high
+2019,ATL,Dan Quinn,1,Dirk Koetter,high
+2020,ATL,Dan Quinn,1,Dirk Koetter,high
+2020,ATL,Raheem Morris,1,Dirk Koetter,high
+2024,ATL,Raheem Morris,1,Zac Robinson,high
+2025,ATL,Raheem Morris,1,Zac Robinson,high
+2026,ATL,,1,Tommy Rees,high
+2016,BAL,John Harbaugh,1,Marc Trestman,high
+2016,BAL,John Harbaugh,6,Marty Mornhinweg,high
+2017,BAL,John Harbaugh,1,Marty Mornhinweg,high
+2018,BAL,John Harbaugh,1,Marty Mornhinweg,high
+2019,BAL,John Harbaugh,1,Greg Roman,high
+2020,BAL,John Harbaugh,1,Greg Roman,high
+2021,BAL,John Harbaugh,1,Greg Roman,high
+2022,BAL,John Harbaugh,1,Greg Roman,high
+2023,BAL,John Harbaugh,1,Todd Monken,high
+2024,BAL,John Harbaugh,1,Todd Monken,high
+2025,BAL,John Harbaugh,1,Todd Monken,high
+2026,BAL,,1,Declan Doyle,high
+2016,BUF,Rex Ryan,1,Greg Roman,high
+2016,BUF,Rex Ryan,3,Anthony Lynn,high
+2017,BUF,Sean McDermott,1,Rick Dennison,high
+2018,BUF,Sean McDermott,1,Brian Daboll,high
+2019,BUF,Sean McDermott,1,Brian Daboll,high
+2020,BUF,Sean McDermott,1,Brian Daboll,high
+2021,BUF,Sean McDermott,1,Brian Daboll,high
+2022,BUF,Sean McDermott,1,Ken Dorsey,high
+2023,BUF,Sean McDermott,1,Ken Dorsey,high
+2023,BUF,Sean McDermott,11,Joe Brady,high
+2024,BUF,Sean McDermott,1,Joe Brady,high
+2025,BUF,Sean McDermott,1,Joe Brady,high
+2026,BUF,,1,Joe Brady,high
+2016,CAR,Ron Rivera,1,Mike Shula,high
+2017,CAR,Ron Rivera,1,Mike Shula,high
+2018,CAR,Ron Rivera,1,Norv Turner,high
+2019,CAR,Ron Rivera,1,Norv Turner,high
+2019,CAR,Ron Rivera,14,Scott Turner,med
+2020,CAR,Matt Rhule,1,Joe Brady,high
+2021,CAR,Matt Rhule,1,Joe Brady,high
+2021,CAR,Matt Rhule,14,Jeff Nixon,med
+2022,CAR,Matt Rhule,1,Ben McAdoo,high
+2022,CAR,Steve Wilks,1,Ben McAdoo,high
+2023,CAR,Chris Tabor,1,Thomas Brown,high
+2023,CAR,Frank Reich,8,Thomas Brown,med
+2023,CAR,Frank Reich,11,Frank Reich,high
+2026,CAR,,1,Brad Idzik,high
+2016,CHI,John Fox,1,Dowell Loggains,high
+2017,CHI,John Fox,1,Dowell Loggains,high
+2020,CHI,Matt Nagy,11,Bill Lazor,high
+2021,CHI,Matt Nagy,4,Bill Lazor,high
+2022,CHI,Matt Eberflus,1,Luke Getsy,high
+2023,CHI,Matt Eberflus,1,Luke Getsy,high
+2024,CHI,Matt Eberflus,1,Shane Waldron,high
+2024,CHI,Matt Eberflus,11,Thomas Brown,high
+2026,CHI,,1,Ben Johnson,high
+2016,CIN,Marvin Lewis,1,Ken Zampese,high
+2017,CIN,Marvin Lewis,1,Ken Zampese,high
+2017,CIN,Marvin Lewis,3,Bill Lazor,high
+2018,CIN,Marvin Lewis,1,Bill Lazor,high
+2026,CIN,,1,Zac Taylor,high
+2018,CLE,Hue Jackson,1,Todd Haley,high
+2018,CLE,Gregg Williams,1,Freddie Kitchens,high
+2024,CLE,Kevin Stefanski,8,Ken Dorsey,high
+2025,CLE,Kevin Stefanski,10,Tommy Rees,high
+2026,CLE,,1,Todd Monken,high
+2016,DAL,Jason Garrett,1,Scott Linehan,high
+2017,DAL,Jason Garrett,1,Scott Linehan,high
+2018,DAL,Jason Garrett,1,Scott Linehan,high
+2019,DAL,Jason Garrett,1,Kellen Moore,high
+2020,DAL,Mike McCarthy,1,Kellen Moore,high
+2021,DAL,Mike McCarthy,1,Kellen Moore,high
+2022,DAL,Mike McCarthy,1,Kellen Moore,high
+2026,DAL,,1,Brian Schottenheimer,high
+2017,DEN,Vance Joseph,1,Mike McCoy,high
+2017,DEN,Vance Joseph,12,Bill Musgrave,high
+2018,DEN,Vance Joseph,1,Bill Musgrave,high
+2019,DEN,Vic Fangio,1,Rich Scangarello,high
+2020,DEN,Vic Fangio,1,Pat Shurmur,high
+2021,DEN,Vic Fangio,1,Pat Shurmur,high
+2022,DEN,Jay Rosburg,1,Klint Kubiak,high
+2022,DEN,Nathaniel Hackett,11,Klint Kubiak,high
+2026,DEN,,1,Davis Webb,high
+2016,DET,Jim Caldwell,1,Jim Bob Cooter,high
+2017,DET,Jim Caldwell,1,Jim Bob Cooter,high
+2018,DET,Matt Patricia,1,Jim Bob Cooter,high
+2019,DET,Matt Patricia,1,Darrell Bevell,high
+2020,DET,Matt Patricia,1,Darrell Bevell,high
+2021,DET,Dan Campbell,1,Anthony Lynn,high
+2021,DET,Dan Campbell,10,Dan Campbell,high
+2022,DET,Dan Campbell,1,Ben Johnson,high
+2023,DET,Dan Campbell,1,Ben Johnson,high
+2024,DET,Dan Campbell,1,Ben Johnson,high
+2025,DET,Dan Campbell,1,John Morton,high
+2025,DET,Dan Campbell,10,Dan Campbell,high
+2026,DET,,1,Drew Petzing,high
+2026,GB,,1,Matt LaFleur,high
+2020,HOU,Bill O'Brien,1,Tim Kelly,high
+2020,HOU,Romeo Crennel,1,Tim Kelly,high
+2021,HOU,David Culley,1,Tim Kelly,high
+2022,HOU,Lovie Smith,1,Pep Hamilton,high
+2023,HOU,DeMeco Ryans,1,Bobby Slowik,high
+2024,HOU,DeMeco Ryans,1,Bobby Slowik,high
+2025,HOU,DeMeco Ryans,1,Nick Caley,high
+2026,HOU,,1,Nick Caley,high
+2016,IND,Chuck Pagano,1,Rob Chudzinski,high
+2017,IND,Chuck Pagano,1,Rob Chudzinski,high
+2022,IND,Jeff Saturday,1,Parks Frazier,high
+2026,IND,,1,Shane Steichen,high
+2016,JAX,Gus Bradley,1,Greg Olson,high
+2016,JAX,Doug Marrone,1,Nathaniel Hackett,high
+2016,JAX,Gus Bradley,8,Nathaniel Hackett,high
+2017,JAX,Doug Marrone,1,Nathaniel Hackett,high
+2018,JAX,Doug Marrone,1,Nathaniel Hackett,high
+2018,JAX,Doug Marrone,13,Scott Milanovich,high
+2019,JAX,Doug Marrone,1,John DeFilippo,high
+2020,JAX,Doug Marrone,1,Jay Gruden,high
+2021,JAX,Urban Meyer,1,Darrell Bevell,high
+2023,JAX,Doug Pederson,1,Press Taylor,high
+2024,JAX,Doug Pederson,1,Press Taylor,high
+2026,JAX,,1,Liam Coen,high
+2026,KC,,1,Andy Reid,high
+2016,LA,Jeff Fisher,1,Rob Boras,high
+2026,LA,,1,Sean McVay,high
+2016,LAC,Mike McCoy,1,Ken Whisenhunt,high
+2017,LAC,Anthony Lynn,1,Ken Whisenhunt,high
+2018,LAC,Anthony Lynn,1,Ken Whisenhunt,high
+2019,LAC,Anthony Lynn,1,Ken Whisenhunt,high
+2019,LAC,Anthony Lynn,9,Shane Steichen,high
+2020,LAC,Anthony Lynn,1,Shane Steichen,high
+2021,LAC,Brandon Staley,1,Joe Lombardi,high
+2022,LAC,Brandon Staley,1,Joe Lombardi,high
+2023,LAC,Brandon Staley,1,Joe Lombardi,high
+2023,LAC,Giff Smith,1,Joe Lombardi,high
+2024,LAC,Jim Harbaugh,1,Greg Roman,high
+2025,LAC,Jim Harbaugh,1,Greg Roman,high
+2026,LAC,,1,Mike McDaniel,high
+2016,LV,Jack Del Rio,1,Bill Musgrave,high
+2017,LV,Jack Del Rio,1,Todd Downing,high
+2021,LV,Rich Bisaccia,1,Greg Olson,high
+2023,LV,Antonio Pierce,1,Bo Hardegree,high
+2024,LV,Antonio Pierce,1,Luke Getsy,high
+2024,LV,Antonio Pierce,11,Scott Turner,high
+2025,LV,Pete Carroll,1,Chip Kelly,high
+2025,LV,Pete Carroll,12,Greg Olson,high
+2026,LV,,1,Klint Kubiak,high
+2019,MIA,Brian Flores,1,Chad O'Shea,high
+2020,MIA,Brian Flores,1,Chan Gailey,high
+2021,MIA,Brian Flores,1,George Godsey/Eric Studesville,high
+2026,MIA,,1,Bobby Slowik,high
+2016,MIN,Mike Zimmer,1,Norv Turner,high
+2016,MIN,Mike Zimmer,9,Pat Shurmur,high
+2017,MIN,Mike Zimmer,1,Pat Shurmur,high
+2018,MIN,Mike Zimmer,1,John DeFilippo,high
+2018,MIN,Mike Zimmer,15,Kevin Stefanski,high
+2019,MIN,Mike Zimmer,1,Kevin Stefanski,high
+2020,MIN,Mike Zimmer,1,Gary Kubiak,high
+2021,MIN,Mike Zimmer,1,Klint Kubiak,high
+2026,MIN,,1,Kevin O'Connell,high
+2016,NE,Bill Belichick,1,Josh McDaniels,high
+2017,NE,Bill Belichick,1,Josh McDaniels,high
+2018,NE,Bill Belichick,1,Josh McDaniels,high
+2019,NE,Bill Belichick,1,Josh McDaniels,high
+2020,NE,Bill Belichick,1,Josh McDaniels,high
+2021,NE,Bill Belichick,1,Josh McDaniels,high
+2022,NE,Bill Belichick,1,Matt Patricia,high
+2023,NE,Bill Belichick,1,Bill O'Brien,high
+2024,NE,Jerod Mayo,1,Alex Van Pelt,high
+2025,NE,Mike Vrabel,1,Josh McDaniels,high
+2026,NE,,1,Josh McDaniels,high
+2022,NO,Dennis Allen,1,Pete Carmichael,high
+2023,NO,Dennis Allen,1,Pete Carmichael,high
+2024,NO,Dennis Allen,1,Klint Kubiak,high
+2026,NO,,1,Kellen Moore,high
+2017,NYG,Steve Spagnuolo,1,Mike Sullivan,high
+2017,NYG,Ben McAdoo,6,Mike Sullivan,high
+2020,NYG,Joe Judge,1,Jason Garrett,high
+2021,NYG,Joe Judge,1,Jason Garrett,high
+2021,NYG,Joe Judge,12,Freddie Kitchens,high
+2022,NYG,Brian Daboll,1,Mike Kafka,high
+2023,NYG,Brian Daboll,1,Mike Kafka,high
+2025,NYG,Brian Daboll,1,Mike Kafka,high
+2026,NYG,,1,Matt Nagy,high
+2016,NYJ,Todd Bowles,1,Chan Gailey,high
+2017,NYJ,Todd Bowles,1,John Morton,high
+2018,NYJ,Todd Bowles,1,Jeremy Bates,high
+2021,NYJ,Robert Saleh,1,Mike LaFleur,high
+2022,NYJ,Robert Saleh,1,Mike LaFleur,high
+2023,NYJ,Robert Saleh,1,Nathaniel Hackett,high
+2024,NYJ,Robert Saleh,1,Nathaniel Hackett,high
+2024,NYJ,Robert Saleh,7,Todd Downing,high
+2025,NYJ,Aaron Glenn,1,Tanner Engstrand,high
+2026,NYJ,,1,Frank Reich,high
+2021,PHI,Nick Sirianni,8,Shane Steichen,med
+2022,PHI,Nick Sirianni,1,Shane Steichen,high
+2023,PHI,Nick Sirianni,1,Brian Johnson,high
+2024,PHI,Nick Sirianni,1,Kellen Moore,high
+2025,PHI,Nick Sirianni,1,Kevin Patullo,high
+2026,PHI,,1,Sean Mannion,high
+2016,PIT,Mike Tomlin,1,Todd Haley,high
+2017,PIT,Mike Tomlin,1,Todd Haley,high
+2018,PIT,Mike Tomlin,1,Randy Fichtner,high
+2019,PIT,Mike Tomlin,1,Randy Fichtner,high
+2020,PIT,Mike Tomlin,1,Randy Fichtner,high
+2021,PIT,Mike Tomlin,1,Matt Canada,high
+2022,PIT,Mike Tomlin,1,Matt Canada,high
+2023,PIT,Mike Tomlin,1,Matt Canada,high
+2023,PIT,Mike Tomlin,12,Eddie Faulkner,high
+2024,PIT,Mike Tomlin,1,Arthur Smith,high
+2025,PIT,Mike Tomlin,1,Arthur Smith,high
+2026,PIT,,1,Mike McCarthy,high
+2016,SEA,Pete Carroll,1,Darrell Bevell,high
+2017,SEA,Pete Carroll,1,Darrell Bevell,high
+2018,SEA,Pete Carroll,1,Brian Schottenheimer,high
+2019,SEA,Pete Carroll,1,Brian Schottenheimer,high
+2020,SEA,Pete Carroll,1,Brian Schottenheimer,high
+2021,SEA,Pete Carroll,1,Shane Waldron,high
+2022,SEA,Pete Carroll,1,Shane Waldron,high
+2023,SEA,Pete Carroll,1,Shane Waldron,high
+2024,SEA,Mike Macdonald,1,Ryan Grubb,high
+2025,SEA,Mike Macdonald,1,Klint Kubiak,high
+2026,SEA,,1,Brian Fleury,high
+2026,SF,,1,Kyle Shanahan,high
+2018,TB,Dirk Koetter,1,Todd Monken,high
+2018,TB,Dirk Koetter,10,Dirk Koetter,high
+2018,TB,Dirk Koetter,11,Todd Monken,high
+2019,TB,Bruce Arians,1,Byron Leftwich,high
+2020,TB,Bruce Arians,1,Byron Leftwich,high
+2021,TB,Bruce Arians,1,Byron Leftwich,high
+2022,TB,Todd Bowles,1,Byron Leftwich,high
+2023,TB,Todd Bowles,1,Dave Canales,high
+2024,TB,Todd Bowles,1,Liam Coen,high
+2025,TB,Todd Bowles,1,Josh Grizzard,high
+2026,TB,,1,Zac Robinson,high
+2016,TEN,Mike Mularkey,1,Terry Robiskie,high
+2017,TEN,Mike Mularkey,1,Terry Robiskie,high
+2018,TEN,Mike Vrabel,1,Matt LaFleur,high
+2019,TEN,Mike Vrabel,1,Arthur Smith,high
+2020,TEN,Mike Vrabel,1,Arthur Smith,high
+2021,TEN,Mike Vrabel,1,Todd Downing,high
+2022,TEN,Mike Vrabel,1,Todd Downing,high
+2023,TEN,Mike Vrabel,1,Tim Kelly,high
+2025,TEN,Brian Callahan,4,Bo Hardegree,high
+2026,TEN,,1,Brian Daboll,high
+2016,WAS,Jay Gruden,1,Sean McVay,high
+2019,WAS,Bill Callahan,1,Kevin O'Connell,high
+2020,WAS,Ron Rivera,1,Scott Turner,high
+2021,WAS,Ron Rivera,1,Scott Turner,high
+2022,WAS,Ron Rivera,1,Scott Turner,high
+2023,WAS,Ron Rivera,1,Eric Bieniemy,high
+2024,WAS,Dan Quinn,1,Kliff Kingsbury,high
+2025,WAS,Dan Quinn,1,Kliff Kingsbury,high
+2026,WAS,,1,David Blough,high

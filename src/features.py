@@ -9,6 +9,7 @@ Layers:
 
 Every rolling / historical feature uses only information available before the snap.
 """
+import os
 import sys
 import numpy as np
 import pandas as pd
@@ -195,6 +196,13 @@ def main():
 
     # ---- coach & team habits from PRIOR games only ----
     snaps["coach"] = np.where(snaps["posteam"] == snaps["home_team"], snaps["home_coach"], snaps["away_coach"])
+    if os.environ.get("CALLER"):   # experiment: habits keyed on who actually called the plays (src/callers.py)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from callers import resolve
+        gm = snaps[["game_id", "season", "week", "posteam", "coach"]].drop_duplicates(["game_id", "posteam"]).reset_index(drop=True)
+        gm["caller"] = resolve(gm)
+        snaps = snaps.drop(columns="coach").merge(gm[["game_id", "posteam", "caller"]].rename(columns={"caller": "coach"}),
+                                                  on=["game_id", "posteam"], how="left")
     snaps["home"] = (snaps["posteam"] == snaps["home_team"]).astype(int)
     tgt = snaps["ptype"].isin(["pass", "run"]) & (snaps["play_type"].isin(["pass", "run"]))
     snaps["_tgt"] = tgt

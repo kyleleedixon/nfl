@@ -142,6 +142,12 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
   (2026 wk1–7) vs offense ~0.86; accuracy only ~1 pt over "never blitz" (blitz rate 27–32%, rising yearly); top-10% most
   likely plays blitz 51–66%. Defensive personnel adds nothing. A defense's readability is noisy within a season
   (split-half 0.11) but carries year to year (0.21–0.42); MIN (Flores, 51% blitz) hardest to read in 2025.
+- Play-callers (2026-10-24): `src/playcallers.csv` (260 rows: every 2016–26 team-season where the head coach didn't call
+  plays + mid-season handoffs, verified against reporting; 2026 from ESPN's 32-team list, Sep 3) + `src/callers.py`. Caller ≠ HC
+  in 59% of team-games. Replacing HC habits with caller habits: wash. Adding caller habits alongside HC habits (caller_*,
+  caller_is_hc; `features.py` with CALLER=1 → data/caller/, merged): live +0.0023 [+0.0014, +0.0031] (single config 2021–23,
+  every season positive), production ensemble 2023 +0.0020 [+0.0008, +0.0033]; full +0.0001 (n.s.; personnel already
+  carries caller style). Not yet in production.
 - Next ideas: OOF stacking with model-residual features, multi-season tuning, play-caller (OC) data, injuries/inactives.
 
 ## Caveats
