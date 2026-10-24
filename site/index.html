@@ -64,7 +64,7 @@ a.weekly .wk { color: var(--ink-2); font-size: .85rem; font-weight: 500; }
 a.weekly .wh { font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.05; margin: .1rem 0 .4rem; }
 a.weekly .wl { display: flex; gap: .4rem 1.5rem; flex-wrap: wrap; color: var(--ink-2); font-size: .95rem; }
 a.weekly .wl b { color: var(--ink); font-weight: 600; }
-.mv { font-size: .8em; color: var(--ink-2); margin-left: .3em; }
+.mv { font-size: .8em; margin-left: .3em; } .mv.up { color: var(--hit); } .mv.dn { color: var(--run); }
 img.logo, image.logo { filter: var(--logo-halo, none); }
 img.logo { width: 1.15em; height: 1.15em; object-fit: contain; vertical-align: -.22em; margin-right: .3em; }
 a.weekly .dot { display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; background: var(--pass); }
@@ -287,7 +287,7 @@ function weeklyTeaser(W) {
     const b = Object.assign(document.createElement('b'), { textContent: `${r.team} ${fmt0(r.neutral)}` });
     if (r.abbr) b.prepend(logoImg(r.abbr));
     s.append(d, label + ' ', b);
-    if (W.week > 1 && r.move) s.append(Object.assign(document.createElement('span'), { className: 'mv', textContent: r.move > 0 ? `▲${r.move}` : `▼${-r.move}` }));
+    if (W.week > 1 && r.move) s.append(Object.assign(document.createElement('span'), { className: 'mv ' + (r.move > 0 ? 'up' : 'dn'), textContent: r.move > 0 ? `▲${r.move}` : `▼${-r.move}` }));
     return s;
   };
   l.append(item('', 'Open Book:', top), item(' hollow', 'Poker Face:', bot));

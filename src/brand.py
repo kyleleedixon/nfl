@@ -34,6 +34,7 @@ AT = dict(ARI="@AZCardinals", ATL="@AtlantaFalcons", BAL="@Ravens", BUF="@Buffal
 
 # site tokens (site/index.html, light mode): cards must look like the site
 BOARD, INK, INK2, GRID, PASS, RUN = "#FAFBFA", "#1B1D22", "#5A606B", "#DCE0E5", "#1E5BC6", "#C42B2B"
+UP, DOWN = "#2C7A3F", "#C42B2B"   # week-over-week change arrows (site tokens --hit / --run)
 FONTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "fonts")
 
 
@@ -76,10 +77,10 @@ def logo(target, team, xy, size, coords="figure fraction", offset=(0, 0)):
 def change(fig, x, y, n, suffix="", size=9, color=None, ha="right"):
     """Week-over-week change on a card: a drawn triangle (Barlow has no arrow glyphs) + the number, e.g. ▲ 3 pts.
     x is the right edge (ha="right") or left edge (ha="left") in figure fraction; y is the text's vertical center.
-    No change draws a dash. Neutral ink: moving up isn't good or bad."""
+    No change draws a dash. Green up, red down unless `color` is given."""
     import matplotlib.pyplot as plt
-    color = color or INK2
     n = int(round(n))
+    color = color or (UP if n > 0 else DOWN)
     if n == 0:
         fig.text(x, y, "–", color="#AEB4BD", fontsize=size, ha=ha, va="center")
         return

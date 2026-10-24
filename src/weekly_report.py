@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct, logo, arrow, change
+from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct, logo, arrow, change, UP, DOWN
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -129,10 +129,12 @@ def card(path):
     fig.lines.append(plt.Line2D([0.60, 0.60], [ky - 0.008, ky + 0.008], transform=fig.transFigure, color=INK2, lw=1.2, ls=(0, (2, 2))))
     fig.text(0.612, ky, "League average", color=INK2, fontsize=9.5, va="center")
     if week > 1:
-        fig.text(0.94, ky, f"Rank vs wk {week - 1}", color=INK2, fontsize=9.5, va="center", ha="right")
+        fig.text(0.94, ky, f"rank vs wk {week - 1}", color=INK2, fontsize=9.5, va="center", ha="right")
+        for mx, mk, c in [(0.827, "^", UP), (0.842, "v", DOWN)]:
+            fig.lines.append(plt.Line2D([mx], [ky], transform=fig.transFigure, marker=mk, ms=5.5, color=c, lw=0))
 
     # ranked dot chart, same marks as the page
-    ax = fig.add_axes([0.25, 0.085, 0.62, 0.605], facecolor=BOARD)   # right margin: rank change column
+    ax = fig.add_axes([0.28, 0.085, 0.66, 0.605], facecolor=BOARD)   # wide label column: name + rank change
     n = len(ytd)
     yy = list(range(n))[::-1]
     v = ytd.acc_neutral.values
@@ -140,20 +142,24 @@ def card(path):
     ax.set_xlim(lo, hi)
     ax.set_ylim(-0.7, n - 0.3)
     ax.axvline(neutral_avg, color=INK2, lw=1.1, ls=(0, (4, 4)), zorder=2)
+    names = []
     for yi, r in zip(yy, ytd.itertuples()):
         up = r.acc_neutral >= neutral_avg
         ax.plot([neutral_avg, r.acc_neutral], [yi, yi], color=PASS, alpha=.35, lw=3.2, solid_capstyle="round", zorder=3)
         ax.plot(r.acc_neutral, yi, "o", ms=7.5, mfc=PASS if up else BOARD, mec=PASS, mew=0 if up else 2, zorder=4)
         ax.text(r.acc_neutral + (0.0045 if up else -0.0045), yi, pct(r.acc_neutral), ha="left" if up else "right",
                 va="center", color=INK, fontsize=8.5, zorder=5)
-        if week > 1:
-            fy = fig.transFigure.inverted().transform(ax.transData.transform((0, yi)))[1]
-            change(fig, 0.94, fy, r.move, size=8.5)
-        ax.annotate(f"{r.rank}", (0, yi), xycoords=("axes fraction", "data"), xytext=(-120, 0), textcoords="offset points",
+        ax.annotate(f"{r.rank}", (0, yi), xycoords=("axes fraction", "data"), xytext=(-134, 0), textcoords="offset points",
                     ha="right", va="center", color=INK2, fontsize=8.5)
-        logo(ax, r.posteam, (0, yi), 13, coords=("axes fraction", "data"), offset=(-105, 0))
-        ax.annotate(NICK[r.posteam], (0, yi), xycoords=("axes fraction", "data"), xytext=(-94, 0), textcoords="offset points",
+        logo(ax, r.posteam, (0, yi), 13, coords=("axes fraction", "data"), offset=(-119, 0))
+        nm = ax.annotate(NICK[r.posteam], (0, yi), xycoords=("axes fraction", "data"), xytext=(-108, 0), textcoords="offset points",
                     ha="left", va="center", color=INK, fontsize=10)
+        names.append(nm)
+    if week > 1:   # rank change beside each name (measured after layout)
+        rend = fig.canvas.get_renderer()
+        for yi, r, nm in zip(yy, ytd.itertuples(), names):
+            bb = fig.transFigure.inverted().transform(nm.get_window_extent(rend))
+            change(fig, bb[1][0] + 0.010, (bb[0][1] + bb[1][1]) / 2, r.move, size=8.5, ha="left")
     ax.set_yticks([])
     ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(0.02))
     ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, _: f"{x:.0%}"))

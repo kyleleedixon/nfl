@@ -113,7 +113,7 @@ def card(path, gid, G, league, league_n, week, prev):
             v_ = fig.text(x + 0.40, y, v, color=INK if k != "Vs last game" else INK2, fontsize=10, ha="right", weight="semibold")
             if k == "Vs last game":
                 left = fig.transFigure.inverted().transform(v_.get_window_extent(rend))[0][0]
-                change(fig, left - 0.008, y + 0.004, round(100 * s["acc"]) - round(100 * prev[t]), " pts", size=10, color=INK)
+                change(fig, left - 0.008, y + 0.004, round(100 * s["acc"]) - round(100 * prev[t]), " pts", size=10)
     line(0.619, 0.8, GRID)
 
     # how to read it
