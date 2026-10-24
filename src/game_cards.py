@@ -255,20 +255,30 @@ def perfect_tweet(away, home, a_s, h_s, G, rec, tail):
         opp = home if t == away else away
         what = f"We called all {n} of the {NICK[t]}' pass/run plays against the {NICK[opp]} before the snap. Every one."
     when = (f"In {total:,} offensive games since 2019, it had never happened." if done == 0 else
-            f"Only the {done + 1}{'nd' if done == 1 else 'rd' if done == 2 else 'th'} time in {total:,} offensive games since 2019.")
+            f"Only the {ordinal(done + 1)} time in {total:,} offensive games since 2019.")
     tw = f"🚨 PERFECT READ 🚨\n\n{what}\n\n{when}\n\n{NICK[away]} {a_s}, {NICK[home]} {h_s}" + tail
     return tw if len(tw) <= 280 else f"🚨 PERFECT READ 🚨\n\n{what}\n\n{when}" + tail
 
 
 def perfect_history(gid):
-    """(perfect offense-games before this one, offense-games with 30+ plays) since 2019, from every cached prediction."""
-    A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "posteam", "season", "y", "full_v3", "live_v3"])
+    """(perfect offense-games before this one, offense-games with 30+ scored plays) since 2019, from every cached
+    prediction, scored exactly like the cards: RPOs left out wherever FTN charted them (2022+)."""
+    A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "play_id", "posteam", "season", "y", "full_v3", "live_v3"])
     A = A[(A.season >= 2019) & (A.game_id != gid)]
-    p = A.full_v3.fillna(A.live_v3)
-    A = A[p.notna()].assign(hit=((p > 0.5) == A.y)[p.notna()])
+    A["p"] = A.full_v3.fillna(A.live_v3)
+    A = A[A.p.notna()]
+    parts = []
+    for S, g in A.groupby("season"):
+        parts.append(mark_rpo(g, S) if os.path.exists(f"{D}/raw/ftn_{S}.parquet") else g.assign(rpo=False))
+    A = pd.concat(parts)
+    A = A[~A.rpo].assign(hit=lambda x: (x.p > 0.5) == x.y)
     g = A.groupby(["game_id", "posteam"]).hit.agg(["mean", "size"])
     g = g[g["size"] >= 30]
     return int((g["mean"] == 1).sum()), int(len(g))
+
+
+def ordinal(n):
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
 def records(P, charted, G):
