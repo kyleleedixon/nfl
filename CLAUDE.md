@@ -42,7 +42,8 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   both offenses' rank, posted 2 h before kickoff) and the week's 5 biggest surprises (Wed 6pm CT), both built by refresh.sh
   with the rankings. `post_x.py games` posts a due queue item before any game card. Game cards flag records
   (`game_cards.records`, scored like the cards, 35+ plays): all-time since 2019 (single-game read-rate high/low, most confident
-  miss; any week; records now HOU 98.4% 2024, DET 53.8% 2024, 99.8% miss CIN 2022 AFCCG) and season (same, from week 3).
+  miss; any week), compared live model vs live model (walk-forward live_v3 for every season 2019+, in artifacts/; 2019–23
+  live 75.3–76.5%); records now ATL 98.1% 2025, BAL 47.7% 2019, 99.5% miss GB 2024 wk1 and season (same, from week 3).
   Displayed confidences never say 100% (`brand.sure`: >99%).
 - Perfect read (every pass/run call of an offense's game right, 30+ plays; never happened in 4,108 offense-games 2019–25,
   best 98.2% MIA 2023): gold banner on the card and a special tweet (`game_cards.perfect_tweet`). Game cards and previews

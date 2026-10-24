@@ -27,7 +27,7 @@ SURE = 0.75  # "we were sure": model at least this confident
 def load(season):
     P = pd.read_parquet(f"{D}/preds_v3.parquet")
     P = P[P.season == season].copy()
-    P["p"] = P.full_v3.fillna(P.live_v3)
+    P["p"] = P.live_v3.fillna(P.full_v3)   # cards are the in-season (live) model; records compare live with live
     P["hit"] = (P.p > 0.5) == P.y
     P = mark_rpo(P, season)
     pbp = pd.read_parquet(f"{D}/raw/pbp_{season}.parquet",
@@ -270,12 +270,15 @@ _HIST = {}
 
 
 def history():
-    """Every offense-game since 2019 from the cached predictions, scored like the cards (RPOs left out where FTN charted
-    them): per (game_id, posteam) read rate, scored plays, and the most confident miss. Computed once per run."""
+    """Every offense-game since 2019, scored like the cards (RPOs left out where FTN charted them): per (game_id,
+    posteam) read rate, scored plays, and the most confident miss. Computed once per run.
+    Uses the live model's walk-forward predictions for every season (each season by a model trained only on earlier
+    seasons): in-season cards are live-model predictions, so records compare like with like. (The full personnel
+    model, which only exists after a season, is a bit more accurate and would set a tougher bar.)"""
     if "g" not in _HIST:
-        A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "play_id", "posteam", "season", "y", "full_v3", "live_v3"])
+        A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "play_id", "posteam", "season", "y", "live_v3"])
         A = A[A.season >= 2019]
-        A["p"] = A.full_v3.fillna(A.live_v3)
+        A["p"] = A.live_v3
         A = A[A.p.notna()]
         A = pd.concat([mark_rpo(g, S) if os.path.exists(f"{D}/raw/ftn_{S}.parquet") else g.assign(rpo=False)
                        for S, g in A.groupby("season")])
