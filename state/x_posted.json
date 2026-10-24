@@ -78,13 +78,14 @@
  },
  "2026_06_WAS_SF": {
   "ids": [
-   "2113802984467349934"
+   "2113819062442537206"
   ],
   "replaced": [
    "2113760913140367527",
-   "2113799689195737283"
+   "2113799689195737283",
+   "2113802984467349934"
   ],
-  "replaced_why": "RPOs unscored; then logos added (old posts deleted by hand)",
+  "replaced_why": "card layout updates (old posts deleted by hand)",
   "complete": true
  }
 }
