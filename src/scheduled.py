@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, change
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, change, matchup_tag
 from game_cards import load, surprise
 
 D = os.environ.get("DATA", "data")
@@ -88,7 +88,7 @@ def previews(season, days=3):
             lines.append(f"{'📖' if d > 0 else '🃏' if d < 0 else '➖'} {NICK[t]}: {ordinal(x['rank'])} of {len(T)} ({pct(x['neutral'])})")
         season_txt = "Season so far" if r.game_type == "REG" else "Regular season"
         tw = (f"{slot}: {NICK[r.away_team]} at {NICK[r.home_team]}\n\nHow predictable are these offenses? {season_txt}:\n"
-              + "\n".join(lines) + f"\nNFL average: {pct(W['league_neutral'])}\n\n#NFL {TAG[r.away_team]} {TAG[r.home_team]}")
+              + "\n".join(lines) + f"\nNFL average: {pct(W['league_neutral'])}\n\n#NFL {TAG[r.away_team]} {TAG[r.home_team]} {matchup_tag(r.away_team, r.home_team)}")
         queue(key, "preview", card, tw, ko.timestamp() - 2 * 3600, ko.timestamp())
 
 

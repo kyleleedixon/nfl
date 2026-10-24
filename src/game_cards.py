@@ -17,7 +17,7 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, arrow, change
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, arrow, change, GOLD, matchup_tag
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -96,8 +96,19 @@ def card(path, gid, G, league, league_n, week, prev, rec):
     date = pd.Timestamp(last.game_date).strftime("%a %b %-d")
     fig.text(0.94, 0.952, f"{round_name(gid, week)} · {date}", color=INK2, fontsize=10, ha="right", va="baseline")
     line(0.938, 1.6)
-    fig.text(0.06, 0.905, "How predictable was each offense? Share of pass/run calls we predicted before the snap.",
-             color=INK2, fontsize=10.5)
+    if rec["perfect"]:   # the one-in-thousands moment gets the gold banner in place of the subtitle
+        t0 = sorted(rec["perfect"])[0]
+        n0 = int(((G.posteam == t0) & ~G.rpo).sum())
+        fig.patches.append(matplotlib.patches.FancyBboxPatch((0.06, 0.888), 0.88, 0.034, boxstyle="round,pad=0,rounding_size=0.008",
+                                                             transform=fig.transFigure, fc=GOLD, ec="none"))
+        both = len(rec["perfect"]) == 2
+        fig.text(0.075, 0.905, "PERFECT READ", color=INK, fontsize=12, weight="bold", va="center", family="Barlow Condensed")
+        fig.text(0.925, 0.905, "We called every pass/run play of both offenses before the snap." if both else
+                 f"We called all {n0} of the {NICK[t0]}' pass/run plays before the snap.",   # every nickname is plural
+                 color=INK, fontsize=10.5, va="center", ha="right")
+    else:
+        fig.text(0.06, 0.905, "How predictable was each offense? Share of pass/run calls we predicted before the snap.",
+                 color=INK2, fontsize=10.5)
 
     # two stat columns, each headed by [logo] Team score (the title doubles as the column header)
     rend = fig.canvas.get_renderer()
@@ -113,7 +124,10 @@ def card(path, gid, G, league, league_n, week, prev, rec):
         fig.text(x + 0.165, 0.770, f"{'+' if d > 0 else ''}{d} pt{'s' if abs(d) != 1 else ''} vs NFL avg ({pct(league)})" if d else f"Even with NFL avg ({pct(league)})",
                  color=INK, fontsize=10.5, weight="semibold")
         lab = fig.text(x + 0.165, 0.750, "Open Book" if d > 0 else ("Poker Face" if d < 0 else ""), color=INK2, fontsize=10)
-        if rec["game"].get(t):   # season record for a single game's read rate
+        if t in rec["perfect"]:
+            lx = fig.transFigure.inverted().transform(lab.get_window_extent(rend))[1][0] + (0.012 if lab.get_text() else 0)
+            fig.text(lx, 0.750, ("· " if lab.get_text() else "") + "Perfect read", color=GOLD, fontsize=10, weight="bold")
+        elif rec["game"].get(t):   # season record for a single game's read rate
             lx = fig.transFigure.inverted().transform(lab.get_window_extent(rend))[1][0] + (0.012 if lab.get_text() else 0)
             fig.text(lx, 0.750, ("· " if lab.get_text() else "") + ("Season high" if rec["game"][t] == "high" else "Season low"),
                      color=PASS, fontsize=10, weight="bold")
@@ -191,6 +205,12 @@ def card(path, gid, G, league, league_n, week, prev, rec):
             top_ = f"BIGGEST SURPRISE OF {G.season.iloc[0]}" if t in rec["surprise"] else "BIGGEST SURPRISE"
             fig.text(0.095, by, f"{top_}  ·  {when}", color=BOARD, fontsize=9.5, weight="bold", va="center")
             fig.text(0.928, by, what, color=BOARD, fontsize=9.5, va="center", ha="right")
+        elif t in rec["perfect"]:   # no miss to show: the banner says so, in gold
+            by = top - 0.030
+            fig.patches.append(matplotlib.patches.FancyBboxPatch((0.06, by - 0.013), 0.88, 0.026, boxstyle="round,pad=0,rounding_size=0.008",
+                                                                 transform=fig.transFigure, fc=GOLD, ec="none"))
+            fig.text(0.075, by, "PERFECT READ", color=INK, fontsize=9.5, weight="bold", va="center")
+            fig.text(0.928, by, f"Not a single wrong call in {len(g[~g.rpo])} plays.", color=INK, fontsize=9.5, va="center", ha="right")
 
     line(0.05, 1.6)
     fig.text(0.06, 0.024, HANDLE, color=INK, fontsize=10.5, weight="semibold")
@@ -215,18 +235,53 @@ def tweet(away, home, a_s, h_s, G, league, prev, rec):
     notes += [f"🏆 Biggest surprise of {S} so far: {NICK[t]}'s (card)" for t in rec["surprise"]]
     base = (f"{NICK[away]} {a_s}, {NICK[home]} {h_s}\n\nHow predictable was each offense?\n" + "\n".join(lines)
             + f"\nNFL average: {pct(league)}")
-    tail = f"\n\n#NFL {TAG[away]} {TAG[home]}"
+    tail = f"\n\n#NFL {TAG[away]} {TAG[home]} {matchup_tag(away, home)}"
+    if rec["perfect"]:
+        return perfect_tweet(away, home, a_s, h_s, G, rec, tail)
     while notes and len(base + "\n\n" + "\n".join(notes) + tail) > 280:
         notes.pop()
     return base + ("\n\n" + "\n".join(notes) if notes else "") + tail
+
+
+def perfect_tweet(away, home, a_s, h_s, G, rec, tail):
+    """Every pass/run call of an offense's game predicted correctly. Never happened in 2019-25 (4,108 offense-games)."""
+    done, total = rec["history"]
+    teams = sorted(rec["perfect"])
+    if len(teams) == 2:
+        what = f"We called every pass/run play of BOTH offenses before the snap: {NICK[away]} and {NICK[home]}."
+    else:
+        t = teams[0]
+        n = int(((G.posteam == t) & ~G.rpo).sum())
+        opp = home if t == away else away
+        what = f"We called all {n} of the {NICK[t]}' pass/run plays against the {NICK[opp]} before the snap. Every one."
+    when = (f"In {total:,} offensive games since 2019, it had never happened." if done == 0 else
+            f"Only the {done + 1}{'nd' if done == 1 else 'rd' if done == 2 else 'th'} time in {total:,} offensive games since 2019.")
+    tw = f"🚨 PERFECT READ 🚨\n\n{what}\n\n{when}\n\n{NICK[away]} {a_s}, {NICK[home]} {h_s}" + tail
+    return tw if len(tw) <= 280 else f"🚨 PERFECT READ 🚨\n\n{what}\n\n{when}" + tail
+
+
+def perfect_history(gid):
+    """(perfect offense-games before this one, offense-games with 30+ plays) since 2019, from every cached prediction."""
+    A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "posteam", "season", "y", "full_v3", "live_v3"])
+    A = A[(A.season >= 2019) & (A.game_id != gid)]
+    p = A.full_v3.fillna(A.live_v3)
+    A = A[p.notna()].assign(hit=((p > 0.5) == A.y)[p.notna()])
+    g = A.groupby(["game_id", "posteam"]).hit.agg(["mean", "size"])
+    g = g[g["size"] >= 30]
+    return int((g["mean"] == 1).sum()), int(len(g))
 
 
 def records(P, charted, G):
     """Season records this game sets, against every other charted game through the same day (RPOs not scored):
     a single-game read rate above/below every other offense-game (from week 3, 35+ plays), and the most confident
     wrong call of the season."""
-    rec = {"game": {}, "surprise": set()}
+    rec = {"game": {}, "surprise": set(), "perfect": set()}
     week, day, gid = int(G.week.iloc[0]), G.game_date.iloc[0], G.game_id.iloc[0]
+    for t, g in G[~G.rpo].groupby("posteam"):   # any week: every call right, 30+ plays
+        if len(g) >= 30 and g.hit.all():
+            rec["perfect"].add(t)
+    if rec["perfect"]:
+        rec["history"] = perfect_history(gid)
     if week < 3:
         return rec
     O = P[P.game_id.isin(charted) & ~P.rpo & (P.game_date <= day) & (P.game_id != gid)]

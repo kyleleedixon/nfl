@@ -104,5 +104,13 @@ def arrow(n, unit=""):
     return f"▲{n}{unit}" if n > 0 else (f"▼{-n}{unit}" if n < 0 else "–")
 
 
+GOLD = "#C9A227"   # reserved for a perfect read (every pass/run call of an offense's game right; never happened 2019-25)
+
+
+def matchup_tag(away, home):
+    """The game hashtag teams use: away team first, e.g. #WASvsSF (nflverse abbreviations)."""
+    return f"#{away}vs{home}"
+
+
 def pct(x):
     return f"{100 * x:.0f}%"

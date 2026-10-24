@@ -42,6 +42,9 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   both offenses' rank, posted 2 h before kickoff) and the week's 5 biggest surprises (Wed 6pm CT), both built by refresh.sh
   with the rankings. `post_x.py games` posts a due queue item before any game card. Game cards flag season records
   (single-game read-rate high/low from week 3, most confident miss of the season: `game_cards.records`).
+- Perfect read (every pass/run call of an offense's game right, 30+ plays; never happened in 4,108 offense-games 2019–25,
+  best 98.2% MIA 2023): gold banner on the card and a special tweet (`game_cards.perfect_tweet`). Game cards and previews
+  also carry the matchup hashtag (#WASvsSF, away first).
 - `refresh.sh` — in-season refresh (replaces weekly.sh): waits for FTN charting (~1-2 days after a game; without FTN the
   live model loses 2–4 pts, so we never post before it) → features → `backtest_v3.py live` → cards for newly charted games
   → weekly rankings once FTN covers every game of a week (schedule: nflverse games.csv) → push. No-ops if nothing new.
