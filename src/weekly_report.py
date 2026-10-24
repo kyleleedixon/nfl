@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct, logo
+from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct, logo, arrow, change
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -75,8 +75,8 @@ wt, wb = wk.iloc[0], wk.iloc[-1]
 # one tweet with the card; the brand lives in the bio and on the card, not in every post
 tweets = [
     f"Week {week}: how predictable is your offense?\n\n"
-    "📖 Open Book\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)}" for r in top.head(3).itertuples())
-    + "\n\n🃏 Poker Face\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)}" for r in bot.head(3).itertuples())
+    "📖 Open Book\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)} {arrow(r.move)}".rstrip(" –") for r in top.head(3).itertuples())
+    + "\n\n🃏 Poker Face\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)} {arrow(r.move)}".rstrip(" –") for r in bot.head(3).itertuples())
     + f"\n\nAll 32: {SITE}/weekly\n#NFL {TAG[top.posteam.iloc[0]]} {TAG[bot.posteam.iloc[0]]}",
 ]
 featured = list(top.posteam[:3]) + list(bot.posteam[:3])  # the teams named in the tweet
@@ -128,9 +128,11 @@ def card(path):
     fig.text(0.342, ky, "Poker Face: below average", color=INK2, fontsize=9.5, va="center")
     fig.lines.append(plt.Line2D([0.60, 0.60], [ky - 0.008, ky + 0.008], transform=fig.transFigure, color=INK2, lw=1.2, ls=(0, (2, 2))))
     fig.text(0.612, ky, "League average", color=INK2, fontsize=9.5, va="center")
+    if week > 1:
+        fig.text(0.94, ky, f"Rank vs wk {week - 1}", color=INK2, fontsize=9.5, va="center", ha="right")
 
     # ranked dot chart, same marks as the page
-    ax = fig.add_axes([0.25, 0.085, 0.69, 0.605], facecolor=BOARD)
+    ax = fig.add_axes([0.25, 0.085, 0.62, 0.605], facecolor=BOARD)   # right margin: rank change column
     n = len(ytd)
     yy = list(range(n))[::-1]
     v = ytd.acc_neutral.values
@@ -144,6 +146,9 @@ def card(path):
         ax.plot(r.acc_neutral, yi, "o", ms=7.5, mfc=PASS if up else BOARD, mec=PASS, mew=0 if up else 2, zorder=4)
         ax.text(r.acc_neutral + (0.0045 if up else -0.0045), yi, pct(r.acc_neutral), ha="left" if up else "right",
                 va="center", color=INK, fontsize=8.5, zorder=5)
+        if week > 1:
+            fy = fig.transFigure.inverted().transform(ax.transData.transform((0, yi)))[1]
+            change(fig, 0.94, fy, r.move, size=8.5)
         ax.annotate(f"{r.rank}", (0, yi), xycoords=("axes fraction", "data"), xytext=(-120, 0), textcoords="offset points",
                     ha="right", va="center", color=INK2, fontsize=8.5)
         logo(ax, r.posteam, (0, yi), 13, coords=("axes fraction", "data"), offset=(-105, 0))

@@ -73,5 +73,35 @@ def logo(target, team, xy, size, coords="figure fraction", offset=(0, 0)):
     target.add_artist(box)
 
 
+def change(fig, x, y, n, suffix="", size=9, color=None, ha="right"):
+    """Week-over-week change on a card: a drawn triangle (Barlow has no arrow glyphs) + the number, e.g. ▲ 3 pts.
+    x is the right edge (ha="right") or left edge (ha="left") in figure fraction; y is the text's vertical center.
+    No change draws a dash. Neutral ink: moving up isn't good or bad."""
+    import matplotlib.pyplot as plt
+    color = color or INK2
+    n = int(round(n))
+    if n == 0:
+        fig.text(x, y, "–", color="#AEB4BD", fontsize=size, ha=ha, va="center")
+        return
+    t = fig.text(x, y, f"{abs(n)}{suffix}", color=color, fontsize=size, ha=ha, va="center")
+    tw = t.get_window_extent(fig.canvas.get_renderer()).width / fig.dpi / fig.get_figwidth()
+    mw = size * 0.75 / 72 / fig.get_figwidth()          # triangle width plus gap, figure fraction
+    if ha == "left":
+        t.set_x(x + mw)
+        mx = x + mw * 0.35
+    else:
+        mx = x - tw - mw * 0.65
+    fig.lines.append(plt.Line2D([mx], [y], transform=fig.transFigure, marker="^" if n > 0 else "v", ms=size * 0.55,
+                                color=color, lw=0))
+
+
+def arrow(n, unit=""):
+    """Change since last week: ▲3 / ▼2 / – (neutral ink everywhere: moving up isn't good or bad)."""
+    if n is None or n != n:
+        return ""
+    n = int(round(n))
+    return f"▲{n}{unit}" if n > 0 else (f"▼{-n}{unit}" if n < 0 else "–")
+
+
 def pct(x):
     return f"{100 * x:.0f}%"

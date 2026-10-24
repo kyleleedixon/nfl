@@ -17,7 +17,7 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, arrow, change
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -69,7 +69,7 @@ def put(fig, rend, x, text, disp):
     return fig.transFigure.inverted().transform(t.get_window_extent(rend))[1][0]
 
 
-def card(path, gid, G, league, league_n, week):
+def card(path, gid, G, league, league_n, week, prev):
     use_fonts()
     disp = dict(family="Barlow Condensed")
     away, home = G.away_team.iloc[0], G.home_team.iloc[0]
@@ -105,14 +105,19 @@ def card(path, gid, G, league, league_n, week):
                 ("Plays", f"{s['plays']}"),
                 (f"Calls we were {pct(SURE)}+ sure of", f"{s['sure']}  ({s['sure_missed']} wrong)"),
                 ("Pass rate", pct(s["pass_rate"]))]
+        if prev.get(t) is not None:   # this offense's previous game; the change is drawn beside it (whole points, as shown)
+            rows.append(("Vs last game", f"({pct(prev[t])})"))
         for i, (k, v) in enumerate(rows):
-            y = 0.712 - i * 0.024
+            y = 0.716 - i * 0.0215
             fig.text(x, y, k, color=INK2, fontsize=10)
-            fig.text(x + 0.40, y, v, color=INK, fontsize=10, ha="right", weight="semibold")
-    line(0.627, 0.8, GRID)
+            v_ = fig.text(x + 0.40, y, v, color=INK if k != "Vs last game" else INK2, fontsize=10, ha="right", weight="semibold")
+            if k == "Vs last game":
+                left = fig.transFigure.inverted().transform(v_.get_window_extent(rend))[0][0]
+                change(fig, left - 0.008, y + 0.004, round(100 * s["acc"]) - round(100 * prev[t]), " pts", size=10, color=INK)
+    line(0.619, 0.8, GRID)
 
     # how to read it
-    ky = 0.604
+    ky = 0.599
     fig.text(0.06, ky, "Each dot is a play.", color=INK, fontsize=9.5, va="center", weight="semibold")
     fig.lines.append(plt.Line2D([0.215], [ky], transform=fig.transFigure, marker="o", ms=6.5, color=PASS, lw=0))
     fig.text(0.227, ky, "pass", color=INK2, fontsize=9.5, va="center")
@@ -180,13 +185,14 @@ def card(path, gid, G, league, league_n, week):
     return away, home, a_s, h_s
 
 
-def tweet(away, home, a_s, h_s, G, league):
+def tweet(away, home, a_s, h_s, G, league, prev):
     lines = []
     G = G[~G.rpo]
     for t in sorted([away, home], key=lambda t: -G[G.posteam == t].hit.mean()):
         a = G[G.posteam == t].hit.mean()
         d = round(100 * a) - round(100 * league)
-        lines.append(f"{'📖' if d > 0 else '🃏' if d < 0 else '➖'} {NICK[t]} {pct(a)}")
+        ch = round(100 * a) - round(100 * prev[t]) if prev.get(t) is not None else None
+        lines.append(f"{'📖' if d > 0 else '🃏' if d < 0 else '➖'} {NICK[t]} {pct(a)}" + (f" ({arrow(ch)} vs last game)" if ch else ""))
     return (f"{NICK[away]} {a_s}, {NICK[home]} {h_s}\n\nHow predictable was each offense?\n" + "\n".join(lines)
             + f"\nNFL average: {pct(league)}\n\n#NFL {TAG[away]} {TAG[home]}")
 
@@ -206,8 +212,13 @@ def main():
         L = P[P.game_id.isin(charted) & (P.week <= week) & ~P.rpo]
         league, league_n = L.hit.mean(), L[L.neutral == 1].hit.mean()
         img = f"site/games/{gid}.png"
-        away, home, a_s, h_s = card(img, gid, G, league, league_n, week)
-        t = tweet(away, home, a_s, h_s, G, league)
+        # each offense's read rate in its previous game this season (RPOs not scored), for the change arrows
+        prev = {}
+        for tm in G.posteam.unique():
+            before = P[(P.posteam == tm) & (P.week < week) & ~P.rpo]
+            prev[tm] = before[before.week == before.week.max()].hit.mean() if len(before) else None
+        away, home, a_s, h_s = card(img, gid, G, league, league_n, week, prev)
+        t = tweet(away, home, a_s, h_s, G, league, prev)
         assert len(t) <= 280, (gid, len(t))
         json.dump(dict(season=season, week=week, game_id=gid, kickoff=str(G.game_date.iloc[0]), card=img, tweets=[t],
                        created=int(time.time())), open(f"state/games/{gid}.json", "w"), indent=1)
