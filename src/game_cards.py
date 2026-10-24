@@ -17,7 +17,7 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, arrow, change, GOLD, matchup_tag
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, arrow, change, GOLD, matchup_tag, sure
 from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
@@ -53,14 +53,14 @@ def surprise(g):
     if m.empty:
         return None
     r = m.loc[(m.p - 0.5).abs().idxmax()]
-    sure = r.p if r.p > 0.5 else 1 - r.p
+    conf = r.p if r.p > 0.5 else 1 - r.p
     exp, did = ("pass", "ran") if r.p > 0.5 else ("run", "passed")
     yds = int(r.yards_gained) if pd.notna(r.yards_gained) else 0
     gain = f"for {yds} yd{'s' if yds != 1 else ''}" if yds > 0 else ("for no gain" if yds == 0 else f"for a loss of {-yds}")
     q = f"Q{int(r.qtr)}" if r.qtr <= 4 else "OT"
     clock = str(r.time)[1:] if str(r.time).startswith("0") else str(r.time)
     dn = f"{int(r.down)}{['st', 'nd', 'rd', 'th'][min(int(r.down), 4) - 1]} & {int(r.ydstogo)}"
-    return r, f"{q} {clock} · {dn}", f"We were {pct(sure)} sure of a {exp}. They {did} {gain}."
+    return r, f"{q} {clock} · {dn}", f"We were {sure(conf)} sure of a {exp}. They {did} {gain}."
 
 
 ROUNDS = {"WC": "Wild Card", "DIV": "Divisional round", "CON": "Conference championship", "SB": "Super Bowl"}
@@ -129,8 +129,8 @@ def card(path, gid, G, league, league_n, week, prev, rec):
             fig.text(lx, 0.750, ("· " if lab.get_text() else "") + "Perfect read", color=GOLD, fontsize=10, weight="bold")
         elif rec["game"].get(t):   # season record for a single game's read rate
             lx = fig.transFigure.inverted().transform(lab.get_window_extent(rend))[1][0] + (0.012 if lab.get_text() else 0)
-            fig.text(lx, 0.750, ("· " if lab.get_text() else "") + ("Season high" if rec["game"][t] == "high" else "Season low"),
-                     color=PASS, fontsize=10, weight="bold")
+            word = {"high": "Season high", "low": "Season low", "high_all": "Best since 2019", "low_all": "Lowest since 2019"}
+            fig.text(lx, 0.750, ("· " if lab.get_text() else "") + word[rec["game"][t]], color=PASS, fontsize=10, weight="bold")
         rows = [("Neutral situations", (pct(s["neutral"]) if pd.notna(s["neutral"]) else "–") + f"  (NFL {pct(league_n)})"),
                 ("Plays", f"{s['plays']}"),
                 (f"Calls we were {pct(SURE)}+ sure of", f"{s['sure']}  ({s['sure_missed']} wrong)"),
@@ -202,7 +202,8 @@ def card(path, gid, G, league, league_n, week, prev, rec):
             fig.patches.append(matplotlib.patches.FancyBboxPatch((0.06, by - 0.013), 0.88, 0.026, boxstyle="round,pad=0,rounding_size=0.008",
                                                                  transform=fig.transFigure, fc=INK, ec="none"))
             fig.lines.append(plt.Line2D([0.078], [by], transform=fig.transFigure, marker="o", ms=10, mfc="none", mec=BOARD, mew=1.6, lw=0))
-            top_ = f"BIGGEST SURPRISE OF {G.season.iloc[0]}" if t in rec["surprise"] else "BIGGEST SURPRISE"
+            top_ = {"all": "BIGGEST SURPRISE SINCE 2019", "season": f"BIGGEST SURPRISE OF {G.season.iloc[0]}"}.get(
+                rec["surprise"].get(t), "BIGGEST SURPRISE")
             fig.text(0.095, by, f"{top_}  ·  {when}", color=BOARD, fontsize=9.5, weight="bold", va="center")
             fig.text(0.928, by, what, color=BOARD, fontsize=9.5, va="center", ha="right")
         elif t in rec["perfect"]:   # no miss to show: the banner says so, in gold
@@ -231,8 +232,13 @@ def tweet(away, home, a_s, h_s, G, league, prev, rec):
         ch = round(100 * a) - round(100 * prev[t]) if prev.get(t) is not None else None
         lines.append(f"{'📖' if d > 0 else '🃏' if d < 0 else '➖'} {NICK[t]} {pct(a)}" + (f" ({arrow(ch)} vs last game)" if ch else ""))
     S = G.season.iloc[0]
-    notes = [f"🏆 {'Most' if v == 'high' else 'Least'} predictable offense in a game this season: {NICK[t]}" for t, v in rec["game"].items()]
-    notes += [f"🏆 Biggest surprise of {S} so far: {NICK[t]}'s (card)" for t in rec["surprise"]]
+    word = {"high": f"Most predictable game of {S}", "low": f"Least predictable game of {S}",
+            "high_all": "Most predictable game since 2019", "low_all": "Least predictable game since 2019"}
+    rank = {"high_all": 0, "low_all": 0, "high": 1, "low": 1}
+    notes = [f"🏆 {word[v]}: {NICK[t]} ({pct(G[G.posteam == t].hit.mean())})"
+             for t, v in sorted(rec["game"].items(), key=lambda kv: rank[kv[1]])]
+    notes += [f"🏆 Biggest surprise {'since 2019' if v == 'all' else f'of {S}'}: {NICK[t]} (card)"
+              for t, v in sorted(rec["surprise"].items(), key=lambda kv: kv[1] != "all")]
     base = (f"{NICK[away]} {a_s}, {NICK[home]} {h_s}\n\nHow predictable was each offense?\n" + "\n".join(lines)
             + f"\nNFL average: {pct(league)}")
     tail = f"\n\n#NFL {TAG[away]} {TAG[home]} {matchup_tag(away, home)}"
@@ -260,21 +266,31 @@ def perfect_tweet(away, home, a_s, h_s, G, rec, tail):
     return tw if len(tw) <= 280 else f"🚨 PERFECT READ 🚨\n\n{what}\n\n{when}" + tail
 
 
+_HIST = {}
+
+
+def history():
+    """Every offense-game since 2019 from the cached predictions, scored like the cards (RPOs left out where FTN charted
+    them): per (game_id, posteam) read rate, scored plays, and the most confident miss. Computed once per run."""
+    if "g" not in _HIST:
+        A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "play_id", "posteam", "season", "y", "full_v3", "live_v3"])
+        A = A[A.season >= 2019]
+        A["p"] = A.full_v3.fillna(A.live_v3)
+        A = A[A.p.notna()]
+        A = pd.concat([mark_rpo(g, S) if os.path.exists(f"{D}/raw/ftn_{S}.parquet") else g.assign(rpo=False)
+                       for S, g in A.groupby("season")])
+        A = A[~A.rpo].assign(hit=lambda x: (x.p > 0.5) == x.y, conf=lambda x: (x.p - 0.5).abs() + 0.5)
+        g = A.groupby(["game_id", "posteam"]).agg(acc=("hit", "mean"), n=("hit", "size"))
+        g["worst"] = A[~A.hit].groupby(["game_id", "posteam"]).conf.max()
+        _HIST["g"] = g.reset_index()
+    return _HIST["g"]
+
+
 def perfect_history(gid):
-    """(perfect offense-games before this one, offense-games with 30+ scored plays) since 2019, from every cached
-    prediction, scored exactly like the cards: RPOs left out wherever FTN charted them (2022+)."""
-    A = pd.read_parquet(f"{D}/preds_v3.parquet", columns=["game_id", "play_id", "posteam", "season", "y", "full_v3", "live_v3"])
-    A = A[(A.season >= 2019) & (A.game_id != gid)]
-    A["p"] = A.full_v3.fillna(A.live_v3)
-    A = A[A.p.notna()]
-    parts = []
-    for S, g in A.groupby("season"):
-        parts.append(mark_rpo(g, S) if os.path.exists(f"{D}/raw/ftn_{S}.parquet") else g.assign(rpo=False))
-    A = pd.concat(parts)
-    A = A[~A.rpo].assign(hit=lambda x: (x.p > 0.5) == x.y)
-    g = A.groupby(["game_id", "posteam"]).hit.agg(["mean", "size"])
-    g = g[g["size"] >= 30]
-    return int((g["mean"] == 1).sum()), int(len(g))
+    """(perfect offense-games before this one, offense-games with 30+ scored plays) since 2019."""
+    g = history()
+    g = g[(g.game_id != gid) & (g.n >= 30)]
+    return int((g.acc == 1).sum()), int(len(g))
 
 
 def ordinal(n):
@@ -282,33 +298,45 @@ def ordinal(n):
 
 
 def records(P, charted, G):
-    """Season records this game sets, against every other charted game through the same day (RPOs not scored):
-    a single-game read rate above/below every other offense-game (from week 3, 35+ plays), and the most confident
-    wrong call of the season."""
-    rec = {"game": {}, "surprise": set(), "perfect": set()}
+    """Records this game sets, scored like the cards (RPOs not scored), 35+ plays:
+    - all-time (since 2019, every cached prediction): a single-game read rate above/below every other offense-game,
+      the most confident wrong call; any week
+    - season: the same against this season's charted games through the same day, from week 3
+    - perfect read: every call right (30+ plays)
+    rec["game"][team] in high_all / low_all / high / low; rec["surprise"][team] in all / season."""
+    rec = {"game": {}, "surprise": {}, "perfect": set()}
     week, day, gid = int(G.week.iloc[0]), G.game_date.iloc[0], G.game_id.iloc[0]
     for t, g in G[~G.rpo].groupby("posteam"):   # any week: every call right, 30+ plays
         if len(g) >= 30 and g.hit.all():
             rec["perfect"].add(t)
     if rec["perfect"]:
         rec["history"] = perfect_history(gid)
-    if week < 3:
-        return rec
+    H = history()
+    H = H[H.game_id != gid]
+    H35 = H[H.n >= 35]
     O = P[P.game_id.isin(charted) & ~P.rpo & (P.game_date <= day) & (P.game_id != gid)]
     TG = O.groupby(["game_id", "posteam"]).hit.agg(["mean", "size"])
     TG = TG[TG["size"] >= 35]["mean"]
     miss = O[~O.hit]
-    worst = (miss.p - 0.5).abs().max() + 0.5 if len(miss) else 1.0
+    worst_season = (miss.p - 0.5).abs().max() + 0.5 if len(miss) else 1.0
     for t, g in G[~G.rpo].groupby("posteam"):
-        if len(g) >= 35 and len(TG):
-            a = g.hit.mean()
-            if a > TG.max():
+        a = g.hit.mean()
+        if len(g) >= 35:
+            if len(H35) and a > H35.acc.max():
+                rec["game"][t] = "high_all"
+            elif len(H35) and a < H35.acc.min():
+                rec["game"][t] = "low_all"
+            elif week >= 3 and len(TG) and a > TG.max():
                 rec["game"][t] = "high"
-            elif a < TG.min():
+            elif week >= 3 and len(TG) and a < TG.min():
                 rec["game"][t] = "low"
         m = g[~g.hit]
-        if len(m) and (m.p - 0.5).abs().max() + 0.5 > worst:
-            rec["surprise"].add(t)
+        if len(m):
+            c = (m.p - 0.5).abs().max() + 0.5
+            if c > H.worst.max():
+                rec["surprise"][t] = "all"
+            elif week >= 3 and c > worst_season:
+                rec["surprise"][t] = "season"
     return rec
 
 

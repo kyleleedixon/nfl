@@ -112,5 +112,10 @@ def matchup_tag(away, home):
     return f"#{away}vs{home}"
 
 
+def sure(x):
+    """A confidence for display: never '100%' (the model is never certain; 99.6% would round up)."""
+    return ">99%" if x >= 0.995 else pct(x)
+
+
 def pct(x):
     return f"{100 * x:.0f}%"

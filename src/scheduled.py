@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, change, matchup_tag
+from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct, logo, logo_w, change, matchup_tag, sure
 from game_cards import load, surprise
 
 D = os.environ.get("DATA", "data")
@@ -141,7 +141,7 @@ def surprises(season, week):
     card = f"site/surprises/{season}_wk{week:02d}.png"
     os.makedirs("site/surprises", exist_ok=True)
     surprise_card(card, season, week, top)
-    lines = [f"{i}. {NICK[x['team']]}: {pct(x['conf'])} sure, wrong" for i, x in enumerate(top, 1)]
+    lines = [f"{i}. {NICK[x['team']]}: {sure(x['conf'])} sure, wrong" for i, x in enumerate(top, 1)]
     tw = (f"Week {week}: the 5 calls that fooled us most\n\n" + "\n".join(lines)
           + f"\n\n#NFL {TAG[top[0]['team']]} {TAG[top[1]['team']]}")
     now = dt.datetime.now(dt.timezone.utc)
@@ -168,7 +168,7 @@ def surprise_card(path, season, week, top):
         fig.text(0.215, y + 0.022, f"{NICK[x['team']]} vs {NICK[x['opp']]}", color=INK, fontsize=15, weight="bold", va="center", **disp)
         fig.text(0.215, y - 0.010, x["when"], color=INK2, fontsize=10, va="center")
         fig.text(0.215, y - 0.036, x["what"], color=INK, fontsize=10.5, va="center")
-        fig.text(0.925, y + 0.016, pct(x["conf"]), color=PASS if x["y"] == 0 else RUN, fontsize=30, weight="bold", ha="right", va="center", **disp)
+        fig.text(0.925, y + 0.016, sure(x["conf"]), color=PASS if x["y"] == 0 else RUN, fontsize=30, weight="bold", ha="right", va="center", **disp)
         fig.text(0.925, y - 0.024, "sure, and wrong", color=INK2, fontsize=9.5, ha="right", va="center")
     fig.text(0.05, 0.072, "Blue: we expected a pass. Red: we expected a run. RPOs not scored.", color=INK2, fontsize=9.5)
     footer(fig, y=0.024)
