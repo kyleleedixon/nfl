@@ -62,7 +62,7 @@ jobs:
       - name: Logos
         if: steps.when.outputs.go == '1'
         run: |
-          pip install -q "pandas<3" requests pillow
+          pip install -q pandas==2.3.3 requests==2.34.2 pillow==13.0.0
           python src/fetch_logos.py
           git add assets/logos site/logos
           if git diff --cached --quiet; then echo "logos unchanged"; exit 0; fi

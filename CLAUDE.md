@@ -58,6 +58,10 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   season). `season_close.sh` (monthly Mar–Aug via `preseason-check.yml`, idempotent): saves the finished season's live_v3 to
   `artifacts/preds_v3/`, runs full_v3 once nflverse publishes its participation (`backtest_v3.py close S`), refreshes
   `artifacts/players.parquet`. Tested on 2025: reproduced full_v3 exactly (ll 0.45866), ~20 min locally.
+- Hands-off across seasons (checked 2026-10-24): week 1–2 rankings use a scaled minimum (15 neutral snaps per week played,
+  ≥24 teams or no rankings that week); a rankings failure can't block game cards (run fails after pushing); playoff games get
+  cards (round names from schedule game_type) and previews (every playoff game, final regular-season rankings); refresh
+  backfills last season's live preds if season_close missed; requirements.txt pins exact versions.
 - `site/vercel.json` — `trailingSlash: true` so links like telegraphed.app/weekly (as X opens them) resolve relative paths.
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.
 - `run_all.sh` — rebuilds everything end to end (`TUNE=1 ./run_all.sh` to re-tune).

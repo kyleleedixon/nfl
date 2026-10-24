@@ -1,8 +1,14 @@
-pandas>=2.2,<3
-pyarrow>=15
-numpy>=1.26
-lightgbm>=4.3
-scikit-learn>=1.4
-catboost>=1.2
-optuna>=3.6
-requests-oauthlib>=2.0
+# exact versions: the pipeline runs unattended for years, so a new library release must never change it silently.
+# Upgrade deliberately (re-run the backtests) and bump these together.
+pandas==2.3.3
+pyarrow==26.0.0
+numpy==2.4.6
+scipy==1.17.1
+lightgbm==4.7.0
+scikit-learn==1.9.1
+catboost==1.2.10
+optuna==5.0.0
+matplotlib==3.11.2
+pillow==13.0.0
+requests==2.34.2
+requests-oauthlib==2.0.0

@@ -49,11 +49,12 @@ S = int(sys.argv[1])
 pbp = set(pd.read_parquet(f"data/raw/new/pbp_{S}.parquet", columns=["game_id"]).game_id)
 ftn = set(pd.read_parquet(f"data/raw/new/ftn_{S}.parquet", columns=["nflverse_game_id"]).nflverse_game_id)
 sch = pd.read_csv("data/raw/schedule.csv")
-sch = sch[(sch.season == S) & (sch.game_type == "REG")]
+sch = sch[sch.season == S]
 charted = pbp & ftn
-recent = set(sch.game_id[pd.to_datetime(sch.gameday) >= pd.Timestamp.now().normalize() - pd.Timedelta(days=6)])
+recent = set(sch.game_id[pd.to_datetime(sch.gameday) >= pd.Timestamp.now().normalize() - pd.Timedelta(days=6)])  # playoffs too
 new = [g for g in charted & recent if not os.path.exists(f"state/games/{g}.json")]
-full = [w for w, g in sch.groupby("week") if set(g.game_id) <= charted]
+reg = sch[sch.game_type == "REG"]   # rankings are regular season only
+full = [w for w, g in reg.groupby("week") if set(g.game_id) <= charted]
 print(len(new), max(full) if full else 0)
 EOF
 )"
@@ -61,8 +62,25 @@ DONE=$($PY -c "import json,sys; w=json.load(open('site/weekly/weekly.json')); pr
 WEEK=${WEEK:-$WEEKDONE}
 echo "new charted games: $NEWG; latest fully charted week: $WEEKDONE; last rankings: week $DONE"
 RANK=""
+RANKFAIL=""
 if [[ "$WEEK" -gt "$DONE" || -n "${FORCE:-}" ]] && [[ "$WEEK" -gt 0 ]]; then RANK=1; fi
-if [[ "$NEWG" -eq 0 && -z "$RANK" ]]; then echo "nothing new charted, nothing to do"; exit 0; fi
+commit_push() {
+  if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping commit and push"; return; fi
+  step "commit + push (Vercel deploys site/ from GitHub on push)"
+  git add site/results.json site/weekly site/games site/previews site/surprises state artifacts/preds_v3
+  git commit -q -m "$1
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || echo "nothing to commit"
+  git pull -q --rebase origin main
+  git push origin main
+}
+
+# previews of night and playoff games in the next few days (schedule + latest rankings only; rebuilt until posted)
+$PY src/scheduled.py previews "$SEASON" || echo "::warning::previews failed"
+if [[ "$NEWG" -eq 0 && -z "$RANK" ]]; then
+  if [[ -n "$(git status --porcelain state/queue site/previews)" ]]; then commit_push "Refresh: $SEASON previews"; fi
+  echo "nothing new charted"; exit 0
+fi
 mv data/raw/new/*.parquet data/raw/
 
 step "features"
@@ -73,14 +91,24 @@ $PY src/features_v3.py data/raw data/features_v2.parquet data/features_v3.parque
 step "re-train $SEASON live model (trained on seasons < $SEASON; only new plays change)"
 $PY src/backtest_v3.py live "$SEASON"
 
+# last season's final predictions normally come from artifacts/ (season_close.sh, each spring); if that ever didn't
+# happen, rebuild them here once so the site keeps last season, and save them for next time
+LAST=$((SEASON - 1))
+if [[ ! -f data/preds_v3/${LAST}_live_v3.parquet ]]; then
+  step "backfill $LAST live predictions (season_close.sh didn't save them)"
+  $PY src/backtest_v3.py live "$LAST"
+  cp data/preds_v3/${LAST}_live_v3.parquet artifacts/preds_v3/
+fi
+
 step "game cards"
 $PY src/game_cards.py "$SEASON"
 if [[ -n "$RANK" ]]; then
   step "weekly rankings: week $WEEK"
-  $PY src/weekly_report.py "$SEASON" "$WEEK"
-  # scheduled posts (state/queue/): the week's biggest surprises, and next week's prime-time previews off these rankings
+  # a rankings failure must not hold back the game cards: finish, push, then fail the run (GitHub emails on failure)
+  $PY src/weekly_report.py "$SEASON" "$WEEK" || RANKFAIL=1
+  # scheduled posts (state/queue/): the week's biggest surprises; previews rebuilt with the new rankings
   $PY src/scheduled.py surprises "$SEASON" "$WEEK" || echo "::warning::surprises card failed"
-  $PY src/scheduled.py previews "$SEASON" $((WEEK + 1)) || echo "::warning::prime-time previews failed"
+  $PY src/scheduled.py previews "$SEASON" || echo "::warning::previews failed"
 fi
 # hashtags nobody has confirmed for this season (src/hashtags.json): a warning on the Actions run, not a failure
 $PY -c "import os,sys; sys.path.insert(0,'src'); from brand import unchecked_tags; u=unchecked_tags($SEASON)
@@ -93,13 +121,7 @@ assert 0.7 < R["headline"]["acc"] < 0.95 and R["live"]["plays"] > 0, R["headline
 print("site data ok")
 EOF
 
-if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping commit and push"; exit 0; fi
-step "commit + push (Vercel deploys site/ from GitHub on push)"
-git add site/results.json site/weekly site/games site/previews site/surprises state
-git commit -q -m "Refresh: $SEASON, $NEWG new game card(s)${RANK:+, week $WEEK rankings}
-
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || echo "nothing to commit"
-git pull -q --rebase origin main
-git push origin main
+commit_push "Refresh: $SEASON, $NEWG new game card(s)${RANK:+, week $WEEK rankings}"
+if [[ -n "${RANKFAIL:-}" ]]; then echo "::error::weekly rankings failed (game cards were still pushed)"; exit 1; fi
 notify "Refresh done: $NEWG game card(s)${RANK:+, week $WEEK rankings}"
 step "done"

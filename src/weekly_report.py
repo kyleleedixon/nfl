@@ -20,7 +20,8 @@ from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
-MIN_NEUTRAL = 60  # season-to-date neutral snaps needed to be ranked
+MIN_NEUTRAL = 60  # season-to-date neutral snaps needed to be ranked (15 per week played until then: ~28 per game)
+MIN_TEAMS = 24    # fewer ranked teams than this (early season): no rankings this week
 
 season = int(sys.argv[1]) if len(sys.argv) > 1 else int(P.season.max())
 S = P[P.season == season].copy()
@@ -41,12 +42,14 @@ def table(df):
 
 def ranked(df):
     t = table(df)
-    t = t[t.neutral >= MIN_NEUTRAL].sort_values("acc_neutral", ascending=False).reset_index(drop=True)
+    t = t[t.neutral >= min(MIN_NEUTRAL, 15 * df.week.nunique())].sort_values("acc_neutral", ascending=False).reset_index(drop=True)
     t["rank"] = t.index + 1
     return t
 
 
 ytd = ranked(S)
+if len(ytd) < MIN_TEAMS:
+    sys.exit(print(f"only {len(ytd)} offenses have enough neutral snaps through week {week}; no rankings yet") or 0)
 prev_rank = dict(zip(*ranked(S[S.week < week])[["posteam", "rank"]].values.T))
 ytd["move"] = [prev_rank.get(t, r) - r for t, r in zip(ytd.posteam, ytd["rank"])]
 neutral_avg = S[S.neutral == 1].hit.mean()
@@ -77,7 +80,7 @@ tweets = [
     f"Week {week}: how predictable is your offense?\n\n"
     "📖 Open Book\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)} {arrow(r.move)}".rstrip(" –") for r in top.head(3).itertuples())
     + "\n\n🃏 Poker Face\n" + "\n".join(f"{r.rank}. {NICK[r.posteam]} {pct(r.acc_neutral)} {arrow(r.move)}".rstrip(" –") for r in bot.head(3).itertuples())
-    + f"\n\nAll 32: {SITE}/weekly\n#NFL {TAG[top.posteam.iloc[0]]} {TAG[bot.posteam.iloc[0]]}",
+    + f"\n\n{'All 32' if len(ytd) == 32 else 'Full rankings'}: {SITE}/weekly\n#NFL {TAG[top.posteam.iloc[0]]} {TAG[bot.posteam.iloc[0]]}",
 ]
 featured = list(top.posteam[:3]) + list(bot.posteam[:3])  # the teams named in the tweet
 tag_reply = "Calling out this week's Open Books and Poker Faces 👀\n\n" + " ".join(AT[t] for t in featured)
@@ -109,7 +112,7 @@ def card(path):
     fig.text(0.94, 0.952, f"{season} · Week {week}", color=INK2, fontsize=10, ha="right", va="baseline")
     line(0.938, 1.6)
     fig.text(0.06, 0.875, "How predictable is your offense?", color=INK, fontsize=33, weight="bold", **disp)
-    fig.text(0.06, 0.848, f"Share of pass/run calls we predicted before the snap, neutral situations, weeks 1–{week}",
+    fig.text(0.06, 0.848, f"Share of pass/run calls we predicted before the snap, neutral situations, {'week 1' if week == 1 else f'weeks 1–{week}'}",
              color=INK2, fontsize=10.5)
     # headline tiles
     top, bot = ytd.iloc[0], ytd.iloc[-1]

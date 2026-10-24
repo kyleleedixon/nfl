@@ -63,6 +63,18 @@ def surprise(g):
     return r, f"{q} {clock} · {dn}", f"We were {pct(sure)} sure of a {exp}. They {did} {gain}."
 
 
+ROUNDS = {"WC": "Wild Card", "DIV": "Divisional round", "CON": "Conference championship", "SB": "Super Bowl"}
+
+
+def round_name(gid, week):
+    """'Week 7', or the playoff round (from the nflverse schedule's game_type)."""
+    try:
+        sch = pd.read_csv(f"{D}/raw/schedule.csv", usecols=["game_id", "game_type"])
+        return ROUNDS.get(sch.set_index("game_id").game_type.get(gid), f"Week {week}")
+    except (FileNotFoundError, ValueError):
+        return f"Week {week}"
+
+
 def put(fig, rend, x, text, disp):
     """Title-size text at x; returns its right edge (figure fraction)."""
     t = fig.text(x, 0.840, text, color=INK, fontsize=31, weight="bold", **disp)
@@ -82,7 +94,7 @@ def card(path, gid, G, league, league_n, week, prev, rec):
 
     fig.text(0.06, 0.952, "TELEGRAPHED", color=INK, fontsize=17, weight="heavy", va="baseline", **disp)
     date = pd.Timestamp(last.game_date).strftime("%a %b %-d")
-    fig.text(0.94, 0.952, f"Week {week} · {date}", color=INK2, fontsize=10, ha="right", va="baseline")
+    fig.text(0.94, 0.952, f"{round_name(gid, week)} · {date}", color=INK2, fontsize=10, ha="right", va="baseline")
     line(0.938, 1.6)
     fig.text(0.06, 0.905, "How predictable was each offense? Share of pass/run calls we predicted before the snap.",
              color=INK2, fontsize=10.5)
