@@ -35,6 +35,8 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   (each with the season it was last confirmed; refresh warns on unconfirmed teams, `preseason-check.yml` opens an issue every Aug 1 and re-downloads team logos, committing any that changed).
 - `src/scoring.py` — what a public read rate counts: RPOs are not scored (the QB picks pass/run after the snap; FTN `is_rpo`).
   Game cards draw them as gray diamonds; weekly rankings and the NFL average leave them out. Play action is scored.
+- `src/defense.py` — experiment: will the defense blitz? (FTN `n_blitzers`>=1 on dropbacks, 2022+; `build`/`run`/`report`).
+  Same pre-snap rules; the play-caller is the DC. Not in production, nothing public yet.
 - `refresh.sh` — in-season refresh (replaces weekly.sh): waits for FTN charting (~1-2 days after a game; without FTN the
   live model loses 2–4 pts, so we never post before it) → features → `backtest_v3.py live` → cards for newly charted games
   → weekly rankings once FTN covers every game of a week (schedule: nflverse games.csv) → push. No-ops if nothing new.
@@ -121,6 +123,10 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
   downs +0.031 EPA, red zone +0.034, late & close +0.058, two-minute +0.107, 3rd down +0.142, 4th down +0.401 (wide CI);
   3rd-down surprises move the chains +7 pts more often. Team level: red-zone read rate (1st/2nd down) vs games with a
   red-zone TD r = −0.17 [−0.29, −0.05]; other situations ~0 after controlling for pass rate.
+- Blitz model (defense.py, live inputs, one LightGBM config, untuned): AUC 0.69 (2023), 0.67 (2024), 0.68 (2025), 0.72
+  (2026 wk1–7) vs offense ~0.86; accuracy only ~1 pt over "never blitz" (blitz rate 27–32%, rising yearly); top-10% most
+  likely plays blitz 51–66%. Defensive personnel adds nothing. A defense's readability is noisy within a season
+  (split-half 0.11) but carries year to year (0.21–0.42); MIN (Flores, 51% blitz) hardest to read in 2025.
 - Next ideas: OOF stacking with model-residual features, multi-season tuning, play-caller (OC) data, injuries/inactives.
 
 ## Caveats
