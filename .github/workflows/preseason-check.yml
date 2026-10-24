@@ -6,7 +6,8 @@
 # - open an issue listing every team's hashtag so someone confirms them (teams change them, e.g. WAS #HTTC -> #RaiseHail
 #   in 2026). Edit src/hashtags.json: fix the tag, set "checked" to the season.
 # - re-download team logos (src/fetch_logos.py: nflverse team table -> ESPN) and commit them if any changed.
-# The new season itself needs no step: src/season.py rolls the pipeline over in September.
+# The new season itself needs no step: src/season.py rolls the pipeline over in September. A monthly heartbeat commit
+# keeps GitHub from disabling the schedules over a quiet off-season.
 # Commits carry Kyle's identity: Vercel Hobby only deploys commits by the account owner.
 name: Preseason check
 on:
@@ -32,6 +33,15 @@ jobs:
           git config user.name "Kyle Dixon"
           git config user.email "kyleleedixon@gmail.com"
           ./season_close.sh
+      - name: Heartbeat
+        # GitHub disables a public repo's schedules after 60 days without commits; off-season months can be that quiet
+        run: |
+          date -u +%F > state/heartbeat
+          git add state/heartbeat
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Off-season heartbeat [skip ci]"
+          git pull -q --rebase origin main
+          git push origin main
   august:
     needs: season-close   # one push at a time
     if: always()
