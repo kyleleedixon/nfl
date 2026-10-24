@@ -69,7 +69,7 @@ def put(fig, rend, x, text, disp):
     return fig.transFigure.inverted().transform(t.get_window_extent(rend))[1][0]
 
 
-def card(path, gid, G, league, league_n, week, prev):
+def card(path, gid, G, league, league_n, week, prev, rec):
     use_fonts()
     disp = dict(family="Barlow Condensed")
     away, home = G.away_team.iloc[0], G.home_team.iloc[0]
@@ -100,7 +100,11 @@ def card(path, gid, G, league, league_n, week, prev):
         tag = "📖" if d > 0 else ""
         fig.text(x + 0.165, 0.770, f"{'+' if d > 0 else ''}{d} pt{'s' if abs(d) != 1 else ''} vs NFL avg ({pct(league)})" if d else f"Even with NFL avg ({pct(league)})",
                  color=INK, fontsize=10.5, weight="semibold")
-        fig.text(x + 0.165, 0.750, "Open Book" if d > 0 else ("Poker Face" if d < 0 else ""), color=INK2, fontsize=10)
+        lab = fig.text(x + 0.165, 0.750, "Open Book" if d > 0 else ("Poker Face" if d < 0 else ""), color=INK2, fontsize=10)
+        if rec["game"].get(t):   # season record for a single game's read rate
+            lx = fig.transFigure.inverted().transform(lab.get_window_extent(rend))[1][0] + (0.012 if lab.get_text() else 0)
+            fig.text(lx, 0.750, ("· " if lab.get_text() else "") + ("Season high" if rec["game"][t] == "high" else "Season low"),
+                     color=PASS, fontsize=10, weight="bold")
         rows = [("Neutral situations", (pct(s["neutral"]) if pd.notna(s["neutral"]) else "–") + f"  (NFL {pct(league_n)})"),
                 ("Plays", f"{s['plays']}"),
                 (f"Calls we were {pct(SURE)}+ sure of", f"{s['sure']}  ({s['sure_missed']} wrong)"),
@@ -172,7 +176,8 @@ def card(path, gid, G, league, league_n, week, prev):
             fig.patches.append(matplotlib.patches.FancyBboxPatch((0.06, by - 0.013), 0.88, 0.026, boxstyle="round,pad=0,rounding_size=0.008",
                                                                  transform=fig.transFigure, fc=INK, ec="none"))
             fig.lines.append(plt.Line2D([0.078], [by], transform=fig.transFigure, marker="o", ms=10, mfc="none", mec=BOARD, mew=1.6, lw=0))
-            fig.text(0.095, by, f"BIGGEST SURPRISE  ·  {when}", color=BOARD, fontsize=9.5, weight="bold", va="center")
+            top_ = f"BIGGEST SURPRISE OF {G.season.iloc[0]}" if t in rec["surprise"] else "BIGGEST SURPRISE"
+            fig.text(0.095, by, f"{top_}  ·  {when}", color=BOARD, fontsize=9.5, weight="bold", va="center")
             fig.text(0.928, by, what, color=BOARD, fontsize=9.5, va="center", ha="right")
 
     line(0.05, 1.6)
@@ -185,7 +190,7 @@ def card(path, gid, G, league, league_n, week, prev):
     return away, home, a_s, h_s
 
 
-def tweet(away, home, a_s, h_s, G, league, prev):
+def tweet(away, home, a_s, h_s, G, league, prev, rec):
     lines = []
     G = G[~G.rpo]
     for t in sorted([away, home], key=lambda t: -G[G.posteam == t].hit.mean()):
@@ -193,8 +198,41 @@ def tweet(away, home, a_s, h_s, G, league, prev):
         d = round(100 * a) - round(100 * league)
         ch = round(100 * a) - round(100 * prev[t]) if prev.get(t) is not None else None
         lines.append(f"{'📖' if d > 0 else '🃏' if d < 0 else '➖'} {NICK[t]} {pct(a)}" + (f" ({arrow(ch)} vs last game)" if ch else ""))
-    return (f"{NICK[away]} {a_s}, {NICK[home]} {h_s}\n\nHow predictable was each offense?\n" + "\n".join(lines)
-            + f"\nNFL average: {pct(league)}\n\n#NFL {TAG[away]} {TAG[home]}")
+    S = G.season.iloc[0]
+    notes = [f"🏆 {'Most' if v == 'high' else 'Least'} predictable offense in a game this season: {NICK[t]}" for t, v in rec["game"].items()]
+    notes += [f"🏆 Biggest surprise of {S} so far: {NICK[t]}'s (card)" for t in rec["surprise"]]
+    base = (f"{NICK[away]} {a_s}, {NICK[home]} {h_s}\n\nHow predictable was each offense?\n" + "\n".join(lines)
+            + f"\nNFL average: {pct(league)}")
+    tail = f"\n\n#NFL {TAG[away]} {TAG[home]}"
+    while notes and len(base + "\n\n" + "\n".join(notes) + tail) > 280:
+        notes.pop()
+    return base + ("\n\n" + "\n".join(notes) if notes else "") + tail
+
+
+def records(P, charted, G):
+    """Season records this game sets, against every other charted game through the same day (RPOs not scored):
+    a single-game read rate above/below every other offense-game (from week 3, 35+ plays), and the most confident
+    wrong call of the season."""
+    rec = {"game": {}, "surprise": set()}
+    week, day, gid = int(G.week.iloc[0]), G.game_date.iloc[0], G.game_id.iloc[0]
+    if week < 3:
+        return rec
+    O = P[P.game_id.isin(charted) & ~P.rpo & (P.game_date <= day) & (P.game_id != gid)]
+    TG = O.groupby(["game_id", "posteam"]).hit.agg(["mean", "size"])
+    TG = TG[TG["size"] >= 35]["mean"]
+    miss = O[~O.hit]
+    worst = (miss.p - 0.5).abs().max() + 0.5 if len(miss) else 1.0
+    for t, g in G[~G.rpo].groupby("posteam"):
+        if len(g) >= 35 and len(TG):
+            a = g.hit.mean()
+            if a > TG.max():
+                rec["game"][t] = "high"
+            elif a < TG.min():
+                rec["game"][t] = "low"
+        m = g[~g.hit]
+        if len(m) and (m.p - 0.5).abs().max() + 0.5 > worst:
+            rec["surprise"].add(t)
+    return rec
 
 
 def main():
@@ -217,8 +255,9 @@ def main():
         for tm in G.posteam.unique():
             before = P[(P.posteam == tm) & (P.week < week) & ~P.rpo]
             prev[tm] = before[before.week == before.week.max()].hit.mean() if len(before) else None
-        away, home, a_s, h_s = card(img, gid, G, league, league_n, week, prev)
-        t = tweet(away, home, a_s, h_s, G, league, prev)
+        rec = records(P, charted, G)
+        away, home, a_s, h_s = card(img, gid, G, league, league_n, week, prev, rec)
+        t = tweet(away, home, a_s, h_s, G, league, prev, rec)
         assert len(t) <= 280, (gid, len(t))
         json.dump(dict(season=season, week=week, game_id=gid, kickoff=str(G.game_date.iloc[0]), card=img, tweets=[t],
                        created=int(time.time())), open(f"state/games/{gid}.json", "w"), indent=1)

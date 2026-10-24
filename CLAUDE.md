@@ -37,6 +37,10 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   Game cards draw them as gray diamonds; weekly rankings and the NFL average leave them out. Play action is scored.
 - `src/defense.py` — experiment: will the defense blitz? (FTN `n_blitzers`>=1 on dropbacks, 2022+; `build`/`run`/`report`).
   Same pre-snap rules; the play-caller is the DC. Not in production, nothing public yet.
+- `src/scheduled.py` — scheduled posts in `state/queue/` (post_at/expires): prime-time previews (kickoff ≥7pm ET, card with
+  both offenses' rank, posted 2 h before kickoff) and the week's 5 biggest surprises (Wed 6pm CT), both built by refresh.sh
+  with the rankings. `post_x.py games` posts a due queue item before any game card. Game cards flag season records
+  (single-game read-rate high/low from week 3, most confident miss of the season: `game_cards.records`).
 - `refresh.sh` — in-season refresh (replaces weekly.sh): waits for FTN charting (~1-2 days after a game; without FTN the
   live model loses 2–4 pts, so we never post before it) → features → `backtest_v3.py live` → cards for newly charted games
   → weekly rankings once FTN covers every game of a week (schedule: nflverse games.csv) → push. No-ops if nothing new.

@@ -78,6 +78,9 @@ $PY src/game_cards.py "$SEASON"
 if [[ -n "$RANK" ]]; then
   step "weekly rankings: week $WEEK"
   $PY src/weekly_report.py "$SEASON" "$WEEK"
+  # scheduled posts (state/queue/): the week's biggest surprises, and next week's prime-time previews off these rankings
+  $PY src/scheduled.py surprises "$SEASON" "$WEEK" || echo "::warning::surprises card failed"
+  $PY src/scheduled.py previews "$SEASON" $((WEEK + 1)) || echo "::warning::prime-time previews failed"
 fi
 # hashtags nobody has confirmed for this season (src/hashtags.json): a warning on the Actions run, not a failure
 $PY -c "import os,sys; sys.path.insert(0,'src'); from brand import unchecked_tags; u=unchecked_tags($SEASON)
@@ -92,7 +95,7 @@ EOF
 
 if [[ -n "${NODEPLOY:-}" ]]; then step "NODEPLOY set: skipping commit and push"; exit 0; fi
 step "commit + push (Vercel deploys site/ from GitHub on push)"
-git add site/results.json site/weekly site/games state
+git add site/results.json site/weekly site/games site/previews site/surprises state
 git commit -q -m "Refresh: $SEASON, $NEWG new game card(s)${RANK:+, week $WEEK rankings}
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" || echo "nothing to commit"

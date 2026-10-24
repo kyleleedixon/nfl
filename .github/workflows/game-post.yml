@@ -1,5 +1,7 @@
-# Every 30 min, 8am-10pm CT: post the oldest queued game card (state/games/, written by refresh.sh), one per run so a
-# batch of games is spaced out. Same safety rails as the weekly post (state/x_paused, resumable, stale cards skipped).
+# Every 30 min, 8am-10pm CT, one post per run: a scheduled post that's due (state/queue/: prime-time previews 2 h
+# before kickoff, the week's biggest surprises) goes first; otherwise the oldest game card (state/games/), so a batch
+# of games goes out half an hour apart as soon as FTN charts them. Written by refresh.sh. Same safety rails as the
+# weekly post (state/x_paused, resumable, stale posts skipped).
 name: Game post
 on:
   schedule:

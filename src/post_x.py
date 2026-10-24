@@ -1,9 +1,11 @@
 """Post the weekly tweet to X (@TelegraphedNFL) with the card image (any further tweets in the file go as replies).
 
 Usage: python src/post_x.py [--dry-run] [season week]   (default: newest weekly report not yet posted)
-       python src/post_x.py games [--dry-run]            (oldest queued game card; one per run so they're spaced out)
+       python src/post_x.py games [--dry-run]            (next post: a due scheduled post, else the oldest game card;
+                                                          one per run so they're spaced out)
        python src/post_x.py --check                      (verify credentials only; posts nothing)
-Reads state/threads/{season}_wk{week:02d}.json (weekly_report.py) or state/games/{game_id}.json (game_cards.py).
+Reads state/threads/{season}_wk{week:02d}.json (weekly_report.py), state/games/{game_id}.json (game_cards.py) or
+state/queue/{key}.json (scheduled.py: prime-time previews, weekly surprises; each has post_at / expires).
 Credentials: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET from the environment (GitHub Actions secrets)
 or ~/.config/telegraphed/x.env locally; never in the repo.
 Safe to re-run: every posted tweet is recorded in state/x_posted.json (committed), so a retry finishes a partial thread
@@ -63,12 +65,19 @@ DIR = f"{ST}/games" if games else f"{ST}/threads"
 
 if games:
     done = {k for k, v in posted.items() if v.get("complete")}
+    now = time.time()
+    # scheduled posts (previews before kickoff, surprises) go first when due; a game card never delays them
+    sq = [json.load(open(p)) for p in glob.glob(f"{ST}/queue/*.json")]
+    due = sorted((x for x in sq if x["key"] not in done and x["post_at"] <= now < x["expires"]), key=lambda x: x["post_at"])
     q = [json.load(open(p)) for p in glob.glob(f"{DIR}/*.json")]
-    fresh = lambda g: time.time() - pd_ts(g["kickoff"]) < 6 * 86400   # a game card a week late isn't worth posting
+    fresh = lambda g: now - pd_ts(g["kickoff"]) < 6 * 86400   # a game card a week late isn't worth posting
     q = sorted((g for g in q if g["game_id"] not in done and fresh(g)), key=lambda g: (g["kickoff"], g["game_id"]))
-    if not q:
+    if due:
+        DIR, key = f"{ST}/queue", due[0]["key"]
+    elif q:
+        key = q[0]["game_id"]
+    else:
         sys.exit(print("no game cards queued") or 0)
-    key = q[0]["game_id"]
 elif args:
     key = f"{int(args[0])}_wk{int(args[1]):02d}"
 else:
