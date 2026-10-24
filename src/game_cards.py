@@ -65,7 +65,7 @@ def surprise(g):
 
 def put(fig, rend, x, text, disp):
     """Title-size text at x; returns its right edge (figure fraction)."""
-    t = fig.text(x, 0.880, text, color=INK, fontsize=31, weight="bold", **disp)
+    t = fig.text(x, 0.840, text, color=INK, fontsize=31, weight="bold", **disp)
     return fig.transFigure.inverted().transform(t.get_window_extent(rend))[1][0]
 
 
@@ -84,23 +84,17 @@ def card(path, gid, G, league, league_n, week):
     date = pd.Timestamp(last.game_date).strftime("%a %b %-d")
     fig.text(0.94, 0.952, f"Week {week} · {date}", color=INK2, fontsize=10, ha="right", va="baseline")
     line(0.938, 1.6)
-    # title: [logo] Away 17  ·  [logo] Home 23, laid out left to right by measured text width
-    rend, x = fig.canvas.get_renderer(), 0.06
-    for i, (t, sc) in enumerate([(away, a_s), (home, h_s)]):
-        if i:
-            x = put(fig, rend, x, "·", disp) + 0.022
-        w = logo_w(t, 36) / (72 * fig.get_figwidth())   # logo width, figure fraction
-        logo(fig, t, (x + w / 2, 0.894), 36)
-        x = put(fig, rend, x + w + 0.014, f"{NICK[t]} {sc}", disp) + 0.022
-    fig.text(0.06, 0.853, "How predictable was each offense? Share of pass/run calls we predicted before the snap.",
+    fig.text(0.06, 0.905, "How predictable was each offense? Share of pass/run calls we predicted before the snap.",
              color=INK2, fontsize=10.5)
 
-    # two stat columns
-    for x, t in [(0.06, away), (0.52, home)]:
+    # two stat columns, each headed by [logo] Team score (the title doubles as the column header)
+    rend = fig.canvas.get_renderer()
+    for x, t, sc in [(0.06, away, a_s), (0.52, home, h_s)]:
         g = G[(G.posteam == t) & ~G.rpo]
         s = team_stats(g, league)
-        logo(fig, t, (x + 0.018, 0.8175), 24)
-        fig.text(x + 0.045, 0.812, NICK[t].upper(), color=INK, fontsize=13, weight="bold", **disp)
+        w = logo_w(t, 34) / (72 * fig.get_figwidth())   # logo width, figure fraction
+        logo(fig, t, (x + w / 2, 0.853), 34)
+        put(fig, rend, x + w + 0.014, f"{NICK[t]} {sc}", disp)
         fig.text(x, 0.748, pct(s["acc"]), color=INK, fontsize=44, weight="bold", **disp)
         d = round(100 * s["acc"]) - round(100 * league)   # as displayed, so 79% vs 79% reads "even"
         tag = "📖" if d > 0 else ""
