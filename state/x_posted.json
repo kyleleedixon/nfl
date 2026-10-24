@@ -1,8 +1,12 @@
 {
  "2026_wk06": {
   "ids": [
+   "2113799684577808406"
+  ],
+  "replaced": [
    "2113681016275570939"
   ],
+  "replaced_why": "RPOs no longer scored",
   "deleted_thread": [
    "2113680024322687085",
    "2113680026184864236",
@@ -73,8 +77,12 @@
  },
  "2026_06_WAS_SF": {
   "ids": [
+   "2113799689195737283"
+  ],
+  "replaced": [
    "2113760913140367527"
   ],
+  "replaced_why": "RPOs no longer scored",
   "complete": true
  }
 }
