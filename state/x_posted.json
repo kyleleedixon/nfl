@@ -1,13 +1,14 @@
 {
  "2026_wk06": {
   "ids": [
-   "2113802979312566310"
+   "2113823464268177545"
   ],
   "replaced": [
    "2113681016275570939",
-   "2113799684577808406"
+   "2113799684577808406",
+   "2113802979312566310"
   ],
-  "replaced_why": "RPOs unscored; then logos added (old posts deleted by hand)",
+  "replaced_why": "card updates (old posts deleted by hand)",
   "deleted_thread": [
    "2113680024322687085",
    "2113680026184864236",
@@ -78,14 +79,15 @@
  },
  "2026_06_WAS_SF": {
   "ids": [
-   "2113819062442537206"
+   "2113823470547038266"
   ],
   "replaced": [
    "2113760913140367527",
    "2113799689195737283",
-   "2113802984467349934"
+   "2113802984467349934",
+   "2113819062442537206"
   ],
-  "replaced_why": "card layout updates (old posts deleted by hand)",
+  "replaced_why": "card updates (old posts deleted by hand)",
   "complete": true
  }
 }
