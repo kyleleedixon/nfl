@@ -47,6 +47,11 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   `artifacts/` (cached 2019–2025 preds, ablation decision, players table; see its README) and `state/` (tweet drafts,
   posting record). Refresh `artifacts/preds_v3/` after re-running `backtest_v3.py run`. `tools/pyexit/` works around
   a pyarrow hang at interpreter exit on macOS.
+- Season rollover needs no one: `src/season.py` (Sep–Dec = this year, Jan–Aug = last year) drives refresh.sh, the
+  refresh data stamp, `backtest_v3.py live` and showcase_data (headline = every season with full_v3; live section = current
+  season). `season_close.sh` (monthly Mar–Aug via `preseason-check.yml`, idempotent): saves the finished season's live_v3 to
+  `artifacts/preds_v3/`, runs full_v3 once nflverse publishes its participation (`backtest_v3.py close S`), refreshes
+  `artifacts/players.parquet`. Tested on 2025: reproduced full_v3 exactly (ll 0.45866), ~20 min locally.
 - `site/vercel.json` — `trailingSlash: true` so links like telegraphed.app/weekly (as X opens them) resolve relative paths.
 - `site/index.html` — public showcase (static; fetches the two JSON files). Deploy the `site/` folder only.
 - `run_all.sh` — rebuilds everything end to end (`TUNE=1 ./run_all.sh` to re-tune).
@@ -108,6 +113,14 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
   log loss (model 45% accurate on them; 73% end as runs). Prior-game RPO/play-action habits: no gain (full +0.0000, live −0.0004).
   A 5-class call model (trained 2022) can't spot RPOs pre-snap (AUC 0.80 but max P(RPO) 0.45). Decision: don't model them, stop
   scoring them publicly (2026 rankings moved KC 31→17, CIN 16→2). Play action = 24% of log loss; stays scored.
+- Unpredictability vs success (full_v3 2019–25, neutral): within the same down/distance/field position, surprise calls
+  (model <50% on the call made) gain more: pass +0.033 EPA/play [+0.011, +0.057], run +0.023 [+0.006, +0.037]. But at the
+  team-season level read rate is uncorrelated with EPA/play (−0.01), points (−0.02) or win% (−0.07); first-half read rate
+  doesn't predict second-half EPA. Surprise helps a play; being predictable overall doesn't cost a team measurably.
+- Predictability when it matters (full_v3 2019–25; surprise minus expected, same down/distance/field): neutral early
+  downs +0.031 EPA, red zone +0.034, late & close +0.058, two-minute +0.107, 3rd down +0.142, 4th down +0.401 (wide CI);
+  3rd-down surprises move the chains +7 pts more often. Team level: red-zone read rate (1st/2nd down) vs games with a
+  red-zone TD r = −0.17 [−0.29, −0.05]; other situations ~0 after controlling for pass rate.
 - Next ideas: OOF stacking with model-residual features, multi-season tuning, play-caller (OC) data, injuries/inactives.
 
 ## Caveats

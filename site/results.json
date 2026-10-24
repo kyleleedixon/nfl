@@ -190,201 +190,205 @@
    "plays": 63571
   }
  ],
- "teams_2025": [
-  {
-   "team": "ATL",
-   "acc": 0.8256,
-   "acc_public": 0.7277,
-   "plays": 1032
-  },
-  {
-   "team": "TB",
-   "acc": 0.8184,
-   "acc_public": 0.7181,
-   "plays": 1057
-  },
-  {
-   "team": "NE",
-   "acc": 0.8062,
-   "acc_public": 0.7215,
-   "plays": 1264
-  },
-  {
-   "team": "LAC",
-   "acc": 0.8049,
-   "acc_public": 0.7689,
-   "plays": 1138
-  },
-  {
-   "team": "HOU",
-   "acc": 0.8033,
-   "acc_public": 0.7521,
-   "plays": 1210
-  },
-  {
-   "team": "KC",
-   "acc": 0.801,
-   "acc_public": 0.734,
-   "plays": 1045
-  },
-  {
-   "team": "BAL",
-   "acc": 0.8008,
-   "acc_public": 0.7212,
-   "plays": 954
-  },
-  {
-   "team": "CLE",
-   "acc": 0.7988,
-   "acc_public": 0.7402,
-   "plays": 1024
-  },
-  {
-   "team": "ARI",
-   "acc": 0.7944,
-   "acc_public": 0.7168,
-   "plays": 1070
-  },
-  {
-   "team": "TEN",
-   "acc": 0.794,
-   "acc_public": 0.7357,
-   "plays": 995
-  },
-  {
-   "team": "DEN",
-   "acc": 0.7911,
-   "acc_public": 0.7151,
-   "plays": 1197
-  },
-  {
-   "team": "NO",
-   "acc": 0.7842,
-   "acc_public": 0.7427,
-   "plays": 1061
-  },
-  {
-   "team": "MIN",
-   "acc": 0.7838,
-   "acc_public": 0.7135,
-   "plays": 939
-  },
-  {
-   "team": "WAS",
-   "acc": 0.7819,
-   "acc_public": 0.7191,
-   "plays": 972
-  },
-  {
-   "team": "SF",
-   "acc": 0.7779,
-   "acc_public": 0.7174,
-   "plays": 1175
-  },
-  {
-   "team": "JAX",
-   "acc": 0.7767,
-   "acc_public": 0.6975,
-   "plays": 1124
-  },
-  {
-   "team": "BUF",
-   "acc": 0.7747,
-   "acc_public": 0.727,
-   "plays": 1194
-  },
-  {
-   "team": "LV",
-   "acc": 0.7732,
-   "acc_public": 0.7029,
-   "plays": 939
-  },
-  {
-   "team": "NYJ",
-   "acc": 0.7732,
-   "acc_public": 0.7183,
-   "plays": 1001
-  },
-  {
-   "team": "CIN",
-   "acc": 0.772,
-   "acc_public": 0.7021,
-   "plays": 1044
-  },
-  {
-   "team": "MIA",
-   "acc": 0.771,
-   "acc_public": 0.7071,
-   "plays": 939
-  },
-  {
-   "team": "PIT",
-   "acc": 0.7648,
-   "acc_public": 0.7133,
-   "plays": 1029
-  },
-  {
-   "team": "CAR",
-   "acc": 0.7628,
-   "acc_public": 0.6622,
-   "plays": 1054
-  },
-  {
-   "team": "PHI",
-   "acc": 0.7603,
-   "acc_public": 0.6927,
-   "plays": 1064
-  },
-  {
-   "team": "DET",
-   "acc": 0.76,
-   "acc_public": 0.6876,
-   "plays": 1050
-  },
-  {
-   "team": "NYG",
-   "acc": 0.7572,
-   "acc_public": 0.6865,
-   "plays": 1075
-  },
-  {
-   "team": "DAL",
-   "acc": 0.7539,
-   "acc_public": 0.7012,
-   "plays": 1101
-  },
-  {
-   "team": "IND",
-   "acc": 0.752,
-   "acc_public": 0.6873,
-   "plays": 1004
-  },
-  {
-   "team": "SEA",
-   "acc": 0.742,
-   "acc_public": 0.6726,
-   "plays": 1182
-  },
-  {
-   "team": "LA",
-   "acc": 0.7397,
-   "acc_public": 0.6984,
-   "plays": 1260
-  },
-  {
-   "team": "GB",
-   "acc": 0.738,
-   "acc_public": 0.6946,
-   "plays": 1061
-  },
-  {
-   "team": "CHI",
-   "acc": 0.7308,
-   "acc_public": 0.6442,
-   "plays": 1248
-  }
- ],
- "live_2026": {
+ "teams_last": {
+  "season": 2025,
+  "teams": [
+   {
+    "team": "ATL",
+    "acc": 0.8256,
+    "acc_public": 0.7277,
+    "plays": 1032
+   },
+   {
+    "team": "TB",
+    "acc": 0.8184,
+    "acc_public": 0.7181,
+    "plays": 1057
+   },
+   {
+    "team": "NE",
+    "acc": 0.8062,
+    "acc_public": 0.7215,
+    "plays": 1264
+   },
+   {
+    "team": "LAC",
+    "acc": 0.8049,
+    "acc_public": 0.7689,
+    "plays": 1138
+   },
+   {
+    "team": "HOU",
+    "acc": 0.8033,
+    "acc_public": 0.7521,
+    "plays": 1210
+   },
+   {
+    "team": "KC",
+    "acc": 0.801,
+    "acc_public": 0.734,
+    "plays": 1045
+   },
+   {
+    "team": "BAL",
+    "acc": 0.8008,
+    "acc_public": 0.7212,
+    "plays": 954
+   },
+   {
+    "team": "CLE",
+    "acc": 0.7988,
+    "acc_public": 0.7402,
+    "plays": 1024
+   },
+   {
+    "team": "ARI",
+    "acc": 0.7944,
+    "acc_public": 0.7168,
+    "plays": 1070
+   },
+   {
+    "team": "TEN",
+    "acc": 0.794,
+    "acc_public": 0.7357,
+    "plays": 995
+   },
+   {
+    "team": "DEN",
+    "acc": 0.7911,
+    "acc_public": 0.7151,
+    "plays": 1197
+   },
+   {
+    "team": "NO",
+    "acc": 0.7842,
+    "acc_public": 0.7427,
+    "plays": 1061
+   },
+   {
+    "team": "MIN",
+    "acc": 0.7838,
+    "acc_public": 0.7135,
+    "plays": 939
+   },
+   {
+    "team": "WAS",
+    "acc": 0.7819,
+    "acc_public": 0.7191,
+    "plays": 972
+   },
+   {
+    "team": "SF",
+    "acc": 0.7779,
+    "acc_public": 0.7174,
+    "plays": 1175
+   },
+   {
+    "team": "JAX",
+    "acc": 0.7767,
+    "acc_public": 0.6975,
+    "plays": 1124
+   },
+   {
+    "team": "BUF",
+    "acc": 0.7747,
+    "acc_public": 0.727,
+    "plays": 1194
+   },
+   {
+    "team": "LV",
+    "acc": 0.7732,
+    "acc_public": 0.7029,
+    "plays": 939
+   },
+   {
+    "team": "NYJ",
+    "acc": 0.7732,
+    "acc_public": 0.7183,
+    "plays": 1001
+   },
+   {
+    "team": "CIN",
+    "acc": 0.772,
+    "acc_public": 0.7021,
+    "plays": 1044
+   },
+   {
+    "team": "MIA",
+    "acc": 0.771,
+    "acc_public": 0.7071,
+    "plays": 939
+   },
+   {
+    "team": "PIT",
+    "acc": 0.7648,
+    "acc_public": 0.7133,
+    "plays": 1029
+   },
+   {
+    "team": "CAR",
+    "acc": 0.7628,
+    "acc_public": 0.6622,
+    "plays": 1054
+   },
+   {
+    "team": "PHI",
+    "acc": 0.7603,
+    "acc_public": 0.6927,
+    "plays": 1064
+   },
+   {
+    "team": "DET",
+    "acc": 0.76,
+    "acc_public": 0.6876,
+    "plays": 1050
+   },
+   {
+    "team": "NYG",
+    "acc": 0.7572,
+    "acc_public": 0.6865,
+    "plays": 1075
+   },
+   {
+    "team": "DAL",
+    "acc": 0.7539,
+    "acc_public": 0.7012,
+    "plays": 1101
+   },
+   {
+    "team": "IND",
+    "acc": 0.752,
+    "acc_public": 0.6873,
+    "plays": 1004
+   },
+   {
+    "team": "SEA",
+    "acc": 0.742,
+    "acc_public": 0.6726,
+    "plays": 1182
+   },
+   {
+    "team": "LA",
+    "acc": 0.7397,
+    "acc_public": 0.6984,
+    "plays": 1260
+   },
+   {
+    "team": "GB",
+    "acc": 0.738,
+    "acc_public": 0.6946,
+    "plays": 1061
+   },
+   {
+    "team": "CHI",
+    "acc": 0.7308,
+    "acc_public": 0.6442,
+    "plays": 1248
+   }
+  ]
+ },
+ "live": {
+  "season": 2026,
   "acc": 0.7848,
   "acc_public": 0.7125,
   "plays": 11555,

@@ -8,7 +8,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PY:-.venv/bin/python}
 export PYTHONPATH="$PWD/tools/pyexit"   # avoids a pyarrow hang at interpreter exit
-SEASON=${SEASON:-2026}
+SEASON=${SEASON:-$($PY src/season.py)}   # rolls over each September (src/season.py)
 mkdir -p data/raw data/ref data/preds_v3
 if [[ -z "${CI:-}" ]]; then
   exec >>data/refresh.log 2>&1
@@ -31,9 +31,13 @@ for y in $(seq 2016 $((SEASON - 1))); do   # past seasons: download once
   if [[ $y -ge 2022 ]]; then get ftn_charting/ftn_charting_$y.parquet ftn_$y.parquet; fi
 done
 mkdir -p data/raw/new   # current season: always fresh
-curl -sfL -o data/raw/new/pbp_$SEASON.parquet $REL/pbp/play_by_play_$SEASON.parquet
+if ! curl -sfL -o data/raw/new/pbp_$SEASON.parquet $REL/pbp/play_by_play_$SEASON.parquet; then
+  echo "no $SEASON play-by-play yet (season not started)"; exit 0
+fi
 curl -sfL -o data/raw/new/part_$SEASON.parquet $REL/pbp_participation/pbp_participation_$SEASON.parquet || rm -f data/raw/new/part_$SEASON.parquet
-curl -sfL -o data/raw/new/ftn_$SEASON.parquet $REL/ftn_charting/ftn_charting_$SEASON.parquet
+if ! curl -sfL -o data/raw/new/ftn_$SEASON.parquet $REL/ftn_charting/ftn_charting_$SEASON.parquet; then
+  echo "no $SEASON FTN charting yet"; exit 0
+fi
 curl -sfL -o data/raw/schedule.csv https://github.com/nflverse/nfldata/raw/master/data/games.csv
 
 # what's new: charted games (in play-by-play and FTN) from the last 6 days without a card, and the latest week
@@ -82,7 +86,7 @@ $PY src/showcase_data.py >/dev/null
 $PY - <<'EOF'
 import json
 R = json.load(open("site/results.json"))
-assert 0.7 < R["headline"]["acc"] < 0.95 and R["live_2026"]["plays"] > 0, R["headline"]
+assert 0.7 < R["headline"]["acc"] < 0.95 and R["live"]["plays"] > 0, R["headline"]
 print("site data ok")
 EOF
 

@@ -198,14 +198,14 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
   </section>
 
   <section class="blk" id="live">
-    <h2>2026, as it happens</h2>
+    <h2 id="live-h">This season, as it happens</h2>
     <p class="say" id="live-say"></p>
     <div class="chart" id="c-live"><div class="key"><span style="--c:var(--pass)">Telegraphed, live</span><span style="--c:var(--public)">Public benchmark</span></div></div>
   </section>
 
   <section class="blk" id="teams">
     <h2>Every offense has a tell</h2>
-    <p class="say">How often each offense's play call was predicted correctly in 2025, against the public benchmark.</p>
+    <p class="say" id="teams-say">How often each offense's play call was predicted correctly last season, against the public benchmark.</p>
     <div class="chart" id="c-teams"><div class="key"><span style="--c:var(--pass)">Telegraphed</span><span style="--c:var(--public)">Public benchmark</span></div></div>
   </section>
 
@@ -214,7 +214,7 @@ footer { color: var(--ink-2); font-size: .85rem; padding: 3rem 0 2.5rem; border-
     <div class="method">
       <p>Every number on this page is out of sample. For each season, the model is trained only on earlier seasons, then asked to call every snap of the new one. Nothing about a play is used unless it is knowable before the snap.</p>
       <p>Pass includes dropbacks that end in a sack or scramble. Kneel-downs, spikes and two-point tries are left out. The public benchmark is nflfastR's expected pass model, the standard open-source reference.</p>
-      <p>The live 2026 model runs on data available during the season; the historical model uses additional pre-snap data that is published after each season.</p>
+      <p>The live in-season model runs on data available during the season; the historical model uses additional pre-snap data that is published after each season.</p>
     </div>
   </section>
 
@@ -297,16 +297,18 @@ function drawAll(R, drive) {
   cs.append('On ', Object.assign(document.createElement('b'), { textContent: fmt0(H.hi_conf_share) }),
     ' of all snaps the model is at least 80% sure. On those, it is right ', Object.assign(document.createElement('b'), { textContent: fmtP(H.hi_conf_hit) }),
     ` of the time. The public model reaches that confidence on ${fmt0(H.hi_conf_share_public)} of snaps.`);
-  const L = R.live_2026;
+  const L = R.live;
+  document.getElementById('live-h').textContent = `${L.season}, as it happens`;
+  document.getElementById('teams-say').textContent = `How often each offense's play call was predicted correctly in ${R.teams_last.season}, against the public benchmark.`;
   const ls = document.getElementById('live-say');
   ls.append(`Through week ${L.through_week}, the in-season model has called `, Object.assign(document.createElement('b'), { textContent: fmtP(L.acc) }),
     ` of ${fmtC(L.plays)} plays correctly, against ${fmtP(L.acc_public)} for the public benchmark. Updated every week.`);
-  document.getElementById('updated').textContent = `through 2026 week ${L.through_week}`;
+  document.getElementById('updated').textContent = `through ${L.season} week ${L.through_week}`;
 
   const render = () => {
     dumbbell(document.getElementById('c-season'), R.by_season.map((r) => ({ label: String(r.season), a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.65, 0.85] });
     dumbbell(document.getElementById('c-sit'), R.by_situation.map((r) => ({ label: r.situation, a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.55, 0.95] });
-    dumbbell(document.getElementById('c-teams'), R.teams_2025.map((r) => ({ label: r.team, a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.6, 0.9], h: 24 });
+    dumbbell(document.getElementById('c-teams'), R.teams_last.teams.map((r) => ({ label: r.team, a: r.acc, b: r.acc_public, n: r.plays })), { domain: [0.6, 0.9], h: 24 });
     confChart(R.confidence); calChart(R.calibration); liveChart(L.weeks);
   };
   render();

@@ -4,6 +4,9 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.metrics import log_loss, roc_auc_score
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from season import current
 
 D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
@@ -20,12 +23,15 @@ def ll(y, p):
     return float(log_loss(y, np.clip(p, 1e-4, 1 - 1e-4), labels=[0, 1]))
 
 
-bt = P[P.season.between(2019, 2025)].copy()
+# historical = every completed season with the full (personnel) model; live = the season in progress
+NOW = current()
+FULL_SEASONS = sorted(int(s) for s in P.season[P.model.notna()].unique())   # full model runs only after a season (season_close.sh)
+bt = P[P.season.isin(FULL_SEASONS)].copy()
 base_rate = {S: float(P[P.season < S].y.mean()) if (P.season < S).any() else 0.6 for S in P.season.unique()}
 R = {}
 R["n_plays"] = int(len(bt))
 R["n_games"] = int(bt.game_id.nunique())
-R["seasons"] = "2019–2025"
+R["seasons"] = f"{FULL_SEASONS[0]}–{FULL_SEASONS[-1]}"
 R["headline"] = dict(
     acc=round(acc(bt.y, bt.model), 4), acc_public=round(acc(bt.y, bt.xpass), 4),
     acc_always_pass=round(float(bt.y.mean()), 4),
@@ -77,18 +83,20 @@ bt["b"] = pd.cut(bt.model, bins, include_lowest=True)
 cal = bt.groupby("b", observed=True).agg(pred=("model", "mean"), actual=("y", "mean"), plays=("y", "size")).reset_index(drop=True)
 R["calibration"] = cal.round(4).to_dict("records")
 
-# team predictability, latest full season
-s25 = bt[bt.season == 2025]
-R["teams_2025"] = sorted([dict(team=t, acc=round(acc(g.y, g.model), 4), acc_public=round(acc(g.y, g.xpass), 4),
-                               plays=int(len(g))) for t, g in s25.groupby("posteam")], key=lambda r: -r["acc"])
+# team predictability, latest completed season (full model, else the live model if participation isn't out yet)
+LAST = NOW - 1 if (P.season == NOW - 1).any() else FULL_SEASONS[-1]
+sl = P[P.season == LAST].assign(m=lambda x: x.model.fillna(x.live))
+R["teams_last"] = dict(season=int(LAST), teams=sorted([dict(team=t, acc=round(acc(g.y, g.m), 4), acc_public=round(acc(g.y, g.xpass), 4),
+                       plays=int(len(g))) for t, g in sl.groupby("posteam")], key=lambda r: -r["acc"]))
 
-# 2026 live (model that runs without participation data), by week
-s26 = P[P.season == 2026]
-R["live_2026"] = dict(acc=round(acc(s26.y, s26.live), 4), acc_public=round(acc(s26.y, s26.xpass), 4),
-                      plays=int(len(s26)), through_week=int(s26.week.max()),
+# season in progress, live model (runs without participation data), by week
+s26 = P[(P.season == NOW) & P.live.notna()]
+R["live"] = dict(season=NOW, acc=round(acc(s26.y, s26.live), 4) if len(s26) else None,
+                      acc_public=round(acc(s26.y, s26.xpass), 4) if len(s26) else None,
+                      plays=int(len(s26)), through_week=int(s26.week.max()) if len(s26) else 0,
                       weeks=[dict(week=int(w), acc=round(acc(g.y, g.live), 4), acc_public=round(acc(g.y, g.xpass), 4),
                                   plays=int(len(g))) for w, g in s26.groupby("week")])
 lb = bt[bt.live.notna()]
 R["live_backtest"] = dict(acc=round(acc(lb.y, lb.live), 4), seasons=sorted(int(x) for x in lb.season.unique()))
 json.dump(R, open(OUT, "w"), indent=1)
-print(json.dumps({k: R[k] for k in ["headline", "by_season", "by_situation", "confidence", "live_2026", "live_backtest"]}, indent=1))
+print(json.dumps({k: R[k] for k in ["headline", "by_season", "by_situation", "confidence", "live", "live_backtest"]}, indent=1))

@@ -6,6 +6,7 @@ usage: backtest_v3.py ablate          -> feature-group / model ablation on the 2
        backtest_v3.py tune [trials]   -> Optuna LightGBM search: train <=2021, early-stop on 2022
        backtest_v3.py run             -> walk-forward 2019..2026, writes data/preds_v3.parquet
        backtest_v3.py live [season]   -> re-train only that season's live_v3 model (weekly refresh), rewrite preds
+       backtest_v3.py close season    -> after a season: its live_v3, plus full_v3 once participation is published
 """
 import json
 import os
@@ -203,6 +204,27 @@ def live(S):
     merge(d)
 
 
+def close(S):
+    """Season wrap-up (season_close.sh): final live_v3 for season S, and full_v3 when nflverse has published S's
+    participation (personnel) data. Both train on seasons < S, exactly like the walk-forward run."""
+    d = load()
+    FULL3_, LIVE3_, use_cat = chosen()
+    te_all = d[d.season == S]
+    cover = float(te_all.has_personnel.mean()) if len(te_all) else 0.0
+    jobs = [("live_v3", LIVE3_)] + ([("full_v3", FULL3_)] if cover >= 0.9 else [])
+    print(f"{S}: {len(te_all)} plays, participation coverage {cover:.1%} -> {[n for n, _ in jobs]}", flush=True)
+    os.makedirs(f"{D}/preds_v3", exist_ok=True)
+    tr, va, te = split(d, S)
+    for name, cols in jobs:
+        t0 = time.time()
+        p = lgb_ens(tr, va, te, cols, params())
+        if use_cat:
+            p = (p + cat_fit_predict(tr, va, te, cols)) / 2
+        te[["game_id", "play_id"]].assign(**{name: p}).to_parquet(f"{D}/preds_v3/{S}_{name}.parquet", index=False)
+        print(S, name, *score(te.y, p), f"{time.time() - t0:.0f}s", flush=True)
+    merge(d)
+
+
 def merge(d):
     out = d.loc[d.season >= 2019, OUTCOLS].copy()
     for name in ["full_v3", "full_v2", "live_v3", "live_v2"]:
@@ -225,6 +247,9 @@ if __name__ == "__main__":
     elif cmd == "tune":
         tune(int(sys.argv[2]) if len(sys.argv) > 2 else 40)
     elif cmd == "live":
-        live(int(sys.argv[2]) if len(sys.argv) > 2 else 2026)
+        from season import current
+        live(int(sys.argv[2]) if len(sys.argv) > 2 else current())
+    elif cmd == "close":
+        close(int(sys.argv[2]))
     else:
         run()

@@ -22,10 +22,11 @@ jobs:
         id: stamp
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
+          y=$(date -u +%Y); [ "$(date -u +%m)" -lt 9 ] && y=$((y - 1))   # season in progress (src/season.py)
           s=""
           for t in pbp ftn_charting; do
             s="$s$(curl -sf -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/nflverse/nflverse-data/releases/tags/$t \
-              | python3 -c "import json,sys; print(''.join(a['updated_at'] for a in json.load(sys.stdin)['assets'] if a['name'].endswith('_2026.parquet')))")"
+              | python3 -c "import json,sys; print(''.join(a['updated_at'] for a in json.load(sys.stdin)['assets'] if a['name'].endswith('_$y.parquet')))")"
           done
           echo "key=nflverse-stamp-$(echo "$s" | sha1sum | cut -c1-16)-$(date -u +%F)" >> "$GITHUB_OUTPUT"
       - uses: actions/cache/restore@v4

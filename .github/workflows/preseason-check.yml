@@ -1,19 +1,49 @@
-# Each August, before the season:
+# Between seasons, nothing here needs a person except confirming hashtags.
+# Monthly March-August:
+# - season close (season_close.sh): save the finished season's predictions, run the full model once nflverse publishes
+#   its participation data, refresh the players table. Idempotent; no-ops once done.
+# Each August (or by hand):
 # - open an issue listing every team's hashtag so someone confirms them (teams change them, e.g. WAS #HTTC -> #RaiseHail
-#   in 2026). Edit src/hashtags.json: fix the tag, set "checked" to the season. Hashtags need a human; logos don't:
+#   in 2026). Edit src/hashtags.json: fix the tag, set "checked" to the season.
 # - re-download team logos (src/fetch_logos.py: nflverse team table -> ESPN) and commit them if any changed.
+# The new season itself needs no step: src/season.py rolls the pipeline over in September.
+# Commits carry Kyle's identity: Vercel Hobby only deploys commits by the account owner.
 name: Preseason check
 on:
   schedule:
-    - cron: "0 15 1 8 *"
+    - cron: "0 15 1 3-8 *"
   workflow_dispatch:
 permissions: { contents: write, issues: write }
+concurrency: { group: refresh, cancel-in-progress: false }   # never alongside a refresh (both push)
 jobs:
-  issue:
+  season-close:
     runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
-      - env: { GH_TOKEN: "${{ github.token }}" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements.txt
+      - uses: actions/cache/restore@v4
+        with: { path: data/raw, key: nflverse-raw-none, restore-keys: nflverse-raw- }
+      - name: Season close
+        env: { PY: python, THREADS: "4" }
+        run: |
+          git config user.name "Kyle Dixon"
+          git config user.email "kyleleedixon@gmail.com"
+          ./season_close.sh
+  august:
+    needs: season-close   # one push at a time
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - id: when
+        run: echo "go=$([ "$(date -u +%m)" = 08 ] || [ "${{ github.event_name }}" = workflow_dispatch ] && echo 1 || echo 0)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        if: steps.when.outputs.go == '1'
+      - name: Hashtag issue
+        if: steps.when.outputs.go == '1'
+        env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           python3 - <<'PY' > body.json
           import json, datetime
@@ -26,19 +56,17 @@ jobs:
           PY
           curl -sf -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/issues -d @body.json > /dev/null
-  logos:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        if: steps.when.outputs.go == '1'
         with: { python-version: "3.11" }
-      - run: pip install -q "pandas<3" requests pillow
-      - run: python src/fetch_logos.py
-      - name: Commit changed logos
+      - name: Logos
+        if: steps.when.outputs.go == '1'
         run: |
+          pip install -q "pandas<3" requests pillow
+          python src/fetch_logos.py
           git add assets/logos site/logos
           if git diff --cached --quiet; then echo "logos unchanged"; exit 0; fi
           echo "::notice::team logos changed: $(git diff --cached --name-only | tr '\n' ' ')"
-          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -q -m "Preseason: update team logos"
+          git -c user.name="Kyle Dixon" -c user.email="kyleleedixon@gmail.com" commit -q -m "Preseason: update team logos"
+          git pull -q --rebase origin main
           git push
