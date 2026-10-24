@@ -1,6 +1,6 @@
 """Fast feature screen: one LightGBM config, walk-forward steps 2021-2023 (never 2024+).
 
-usage: screen.py arm[,arm...]   arms: base, qb, team, all   (each arm x {full, live} x {2021, 2022, 2023})
+usage: screen.py arm[,arm...]   arms: base, qb, team, all, rpo (needs FEAT=data/features_v5.parquet)  (each arm x {full, live} x {2021, 2022, 2023})
 Test predictions go to data/screen/{S}_{model}_{arm}.parquet (resumable); `screen.py report` compares arms with a
 paired bootstrap over games.
 """
@@ -12,14 +12,16 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(__file__))
 from backtest_v3 import chosen, CATS, split, lgb_fit_predict, params, score
 from features_v4 import QB, TEAM, CATS as CATS4
+from features_v5 import HABIT
 
 D = os.environ.get("DATA", "data")
-OUT = f"{D}/screen"
-SEASONS = [2021, 2022, 2023]
+FEAT = os.environ.get("FEAT", f"{D}/features_v4.parquet")
+OUT = os.environ.get("OUT", f"{D}/screen")
+SEASONS = [int(s) for s in os.environ.get("SEASONS", "2021,2022,2023").split(",")]
 
 
 def load():
-    d = pd.read_parquet(f"{D}/features_v4.parquet")
+    d = pd.read_parquet(FEAT)
     d = d[d.is_target == 1].reset_index(drop=True)
     for c in CATS + CATS4:
         d[c] = d[c].astype("category")
@@ -28,7 +30,7 @@ def load():
 
 def arms():
     full, live, _ = chosen()
-    add = {"base": [], "qb": QB, "team": TEAM, "all": QB + TEAM}
+    add = {"base": [], "qb": QB, "team": TEAM, "all": QB + TEAM, "rpo": HABIT}
     return {(m, a): base + extra for a, extra in add.items() for m, base in [("full", full), ("live", live)]}
 
 
@@ -53,7 +55,7 @@ def report():
     rng = np.random.default_rng(0)
     for m in ["full", "live"]:
         got = {}
-        for a in ["base", "qb", "team", "all"]:
+        for a in ["base", "qb", "team", "all", "rpo"]:
             fs = [f"{OUT}/{S}_{m}_{a}.parquet" for S in SEASONS]
             if all(os.path.exists(f) for f in fs):
                 got[a] = d.merge(pd.concat(pd.read_parquet(f) for f in fs), on=["game_id", "play_id"])

@@ -3,7 +3,7 @@
 Usage: python src/weekly_report.py [season] [week]   (defaults: latest season and week in preds)
 Writes data/reports/{season}_wk{week:02d}.md (rankings + draft tweet) and _card.png (share image),
 state/threads/{season}_wk{week:02d}.json (what post_x.py posts),\nand site/weekly/weekly.json + card PNGs for the public page (site/weekly/index.html is a hand-written template).
-Aggregate results only: no feature names or tells (same rule as site/).
+Aggregate results only: no feature names or tells (same rule as site/). RPOs are not scored (src/scoring.py).
 """
 import json
 import os
@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brand import BRAND, HANDLE, SITE, NICK, TAG, AT, BOARD, INK, INK2, GRID, PASS, use_fonts, pct
+from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
 P = pd.read_parquet(f"{D}/{os.environ.get('PREDS', 'preds_v3')}.parquet")
@@ -29,6 +30,7 @@ S = S[S.week <= week]
 S["p"] = S.full_v3.fillna(S.live_v3) if "full_v3" in S else S.live_v3
 S["hit"] = (S.p > 0.5) == S.y
 S["hit_pub"] = (S.xpass > 0.5) == S.y
+S = S[~mark_rpo(S, season).rpo.values]   # RPOs aren't the play-caller's pass/run decision (src/scoring.py)
 
 
 def table(df):
@@ -58,7 +60,7 @@ L = [f"# Predictability report: {season} week {week}", "",
      f"Model called {pct(league['acc'])} of {league['plays']:,} plays through week {week} "
      f"(public benchmark {pct(league['pub'])}).", "",
      "## Season to date, neutral situations (ranked)",
-     "Neutral = downs 1–3, win prob 20–80%, outside the last 2 min of each half. Removes garbage time and obvious downs.", "",
+     "Neutral = downs 1–3, win prob 20–80%, outside the last 2 min of each half. Removes garbage time and obvious downs. " + NOTE, "",
      "| Rank | Move | Offense | Neutral read rate | All plays | Neutral snaps |",
      "|---|---|---|---|---|---|"]
 for r in ytd.itertuples():
@@ -158,6 +160,7 @@ def card(path):
     # footer, as on the site
     line(0.05, 1.6)
     fig.text(0.06, 0.024, HANDLE, color=INK, fontsize=10.5, weight="semibold")
+    fig.text(0.5, 0.024, NOTE, color=INK2, fontsize=9, ha="center")
     fig.text(0.94, 0.024, f"{SITE}/weekly", color=INK2, fontsize=10, ha="right")
     fig.savefig(path, facecolor=BOARD)
 

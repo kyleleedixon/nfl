@@ -33,6 +33,8 @@ predictable; the model leans on human-decision patterns and personnel tells, not
   dot chart (expected-pass/run zones), "Biggest surprise" banner (the model's most confident miss). Writes
   `site/games/{game_id}.png` + `state/games/{game_id}.json`. Results only, never features/tells. Shared brand in `src/brand.py`; team hashtags in `src/hashtags.json`
   (each with the season it was last confirmed; refresh warns on unconfirmed teams, `hashtag-check.yml` opens an issue every Aug 1).
+- `src/scoring.py` — what a public read rate counts: RPOs are not scored (the QB picks pass/run after the snap; FTN `is_rpo`).
+  Game cards draw them as gray diamonds; weekly rankings and the NFL average leave them out. Play action is scored.
 - `refresh.sh` — in-season refresh (replaces weekly.sh): waits for FTN charting (~1-2 days after a game; without FTN the
   live model loses 2–4 pts, so we never post before it) → features → `backtest_v3.py live` → cards for newly charted games
   → weekly rankings once FTN covers every game of a week (schedule: nflverse games.csv) → push. No-ops if nothing new.
@@ -102,6 +104,10 @@ The coach-bias features added nothing beyond existing streak/prev-play/coach-PRO
 - Tried, no gain (dropped): QB-at-snap identity/quality/mobility features (+0.0009 before the formation fix, 0 after),
   last-3-games / season 1st-down / scripted-play / last-season lean, new head coach, in-game 1st-down lean; extra stage-2
   terms (opponent, down bucket, coach, drive, last 3 games: ≤ +0.0004).
+- RPO / call-type experiment (`features_v5.py`, `calltype.py`, `screen.py rpo`; 2022–23 only): RPOs are 5% of plays but 10% of
+  log loss (model 45% accurate on them; 73% end as runs). Prior-game RPO/play-action habits: no gain (full +0.0000, live −0.0004).
+  A 5-class call model (trained 2022) can't spot RPOs pre-snap (AUC 0.80 but max P(RPO) 0.45). Decision: don't model them, stop
+  scoring them publicly (2026 rankings moved KC 31→17, CIN 16→2). Play action = 24% of log loss; stays scored.
 - Next ideas: OOF stacking with model-residual features, multi-season tuning, play-caller (OC) data, injuries/inactives.
 
 ## Caveats

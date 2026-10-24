@@ -4,6 +4,7 @@ Usage: python src/game_cards.py [season] [game_id ...]   (default: ready games f
 A game is ready once FTN has charted it (the live model leans on FTN; without it accuracy drops 2-4 pts).
 Writes site/games/{game_id}.png (card) and state/games/{game_id}.json (tweet + card path, posted by post_x.py games).
 Results only: read rates and the model's per-play calls, never features or tells (same rule as site/).
+RPOs are drawn but not scored (src/scoring.py).
 """
 import json
 import os
@@ -17,6 +18,7 @@ import numpy as np
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brand import HANDLE, SITE, NICK, TAG, BOARD, INK, INK2, GRID, PASS, RUN, use_fonts, pct
+from scoring import mark_rpo, NOTE
 
 D = os.environ.get("DATA", "data")
 SURE = 0.75  # "we were sure": model at least this confident
@@ -27,6 +29,7 @@ def load(season):
     P = P[P.season == season].copy()
     P["p"] = P.full_v3.fillna(P.live_v3)
     P["hit"] = (P.p > 0.5) == P.y
+    P = mark_rpo(P, season)
     pbp = pd.read_parquet(f"{D}/raw/pbp_{season}.parquet",
                           columns=["game_id", "play_id", "home_team", "away_team", "home_score", "away_score",
                                    "game_seconds_remaining", "time", "yards_gained", "game_date", "qtr"])
@@ -81,7 +84,7 @@ def card(path, gid, G, league, league_n, week):
 
     # two stat columns
     for x, t in [(0.06, away), (0.52, home)]:
-        g = G[G.posteam == t]
+        g = G[(G.posteam == t) & ~G.rpo]
         s = team_stats(g, league)
         fig.text(x, 0.812, NICK[t].upper(), color=INK, fontsize=13, weight="bold", **disp)
         fig.text(x, 0.748, pct(s["acc"]), color=INK, fontsize=44, weight="bold", **disp)
@@ -125,9 +128,12 @@ def card(path, gid, G, league, league_n, week):
         for q in range(15, int(end / 60) + 1, 15):
             ax.axvline(q, color=GRID, lw=0.9, zorder=1)
         col = np.where(g.y == 1, PASS, RUN)
-        hit = g.hit.values
+        hit = g.hit.values & ~g.rpo.values
+        miss = ~g.hit.values & ~g.rpo.values
         ax.scatter(x[hit], g.p[hit], s=34, c=col[hit], linewidths=0, zorder=4)
-        ax.scatter(x[~hit], g.p[~hit], s=34, facecolors=BOARD, edgecolors=col[~hit], linewidths=1.8, zorder=5)
+        ax.scatter(x[miss], g.p[miss], s=34, facecolors=BOARD, edgecolors=col[miss], linewidths=1.8, zorder=5)
+        rp = g.rpo.values   # unscored: small gray diamonds
+        ax.scatter(x[rp], g.p[rp], s=26, marker="D", c="#AEB4BD", linewidths=0, zorder=4.5)
         ax.set_xlim(-1, end / 60 + 1)
         ax.set_ylim(-0.06, 1.06)
         ax.set_yticks([0.78, 0.22])
@@ -142,7 +148,7 @@ def card(path, gid, G, league, league_n, week):
         for sp in ax.spines.values():
             sp.set_visible(False)
         fig.text(0.06, top, f"{NICK[t]} offense", color=INK, fontsize=12, weight="bold", **disp)
-        su = surprise(g)
+        su = surprise(g[~g.rpo])
         if su:
             r, when, what = su
             sx = (3600 - r.game_seconds_remaining) / 60
@@ -157,6 +163,8 @@ def card(path, gid, G, league, league_n, week):
 
     line(0.05, 1.6)
     fig.text(0.06, 0.024, HANDLE, color=INK, fontsize=10.5, weight="semibold")
+    fig.lines.append(plt.Line2D([0.30], [0.0285], transform=fig.transFigure, marker="D", ms=5, color="#AEB4BD", lw=0))
+    fig.text(0.312, 0.024, NOTE, color=INK2, fontsize=9)
     fig.text(0.94, 0.024, SITE, color=INK2, fontsize=10, ha="right")
     fig.savefig(path, facecolor=BOARD)
     plt.close(fig)
@@ -165,6 +173,7 @@ def card(path, gid, G, league, league_n, week):
 
 def tweet(away, home, a_s, h_s, G, league):
     lines = []
+    G = G[~G.rpo]
     for t in sorted([away, home], key=lambda t: -G[G.posteam == t].hit.mean()):
         a = G[G.posteam == t].hit.mean()
         d = round(100 * a) - round(100 * league)
@@ -185,7 +194,7 @@ def main():
         G = P[P.game_id == gid]
         week = int(G.week.iloc[0])
         # league average: every charted play this season through this game's week, same model
-        L = P[P.game_id.isin(charted) & (P.week <= week)]
+        L = P[P.game_id.isin(charted) & (P.week <= week) & ~P.rpo]
         league, league_n = L.hit.mean(), L[L.neutral == 1].hit.mean()
         img = f"site/games/{gid}.png"
         away, home, a_s, h_s = card(img, gid, G, league, league_n, week)
