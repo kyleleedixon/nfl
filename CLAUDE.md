@@ -32,11 +32,12 @@ predictable; the model leans on human-decision patterns and personnel tells, not
 - `src/game_cards.py` — per-game card (Umpire Scorecards style): each offense's read rate vs NFL average, play-by-play
   dot chart (expected-pass/run zones), "Biggest surprise" banner (the model's most confident miss). Writes
   `site/games/{game_id}.png` + `state/games/{game_id}.json`. Results only, never features/tells. Shared brand in `src/brand.py` (incl. `logo()`; team logos cached in `assets/logos/` by `src/fetch_logos.py`, re-run after a rebrand); team hashtags in `src/hashtags.json`
-  (each with the season it was last confirmed; refresh warns on unconfirmed teams, `preseason-check.yml` opens an issue every Aug 1 and re-downloads team logos, committing any that changed).
+  (`src/check_hashtags.py` confirms each against the team's own last 50 X posts every Aug 1 and Sep 15 via `preseason-check.yml`, switching if a new tag clearly took over; most team accounts now only tag matchups, so those are kept as 'unverified'. The same workflow re-downloads team logos each Aug 1).
 - `src/scoring.py` — what a public read rate counts: RPOs are not scored (the QB picks pass/run after the snap; FTN `is_rpo`).
   Game cards draw them as gray diamonds; weekly rankings and the NFL average leave them out. Play action is scored.
 - `src/defense.py` — experiment: will the defense blitz? (FTN `n_blitzers`>=1 on dropbacks, 2022+; `build`/`run`/`report`).
   Same pre-snap rules; the play-caller is the DC. Not in production, nothing public yet.
+- Nothing needs a person: hashtags are checked automatically too (no August issue anymore).
 - `src/scheduled.py` — scheduled posts in `state/queue/` (post_at/expires): prime-time previews (kickoff ≥7pm ET, card with
   both offenses' rank, posted 2 h before kickoff) and the week's 5 biggest surprises (Wed 6pm CT), both built by refresh.sh
   with the rankings. `post_x.py games` posts a due queue item before any game card. Game cards flag season records

@@ -1,129 +1,148 @@
 {
- "_note": "Fan hashtags the bot puts in tweets. 'checked' = the season someone confirmed the team is using it (look at the team's own X posts). Teams change them (WAS: #HTTC -> #RaiseHail in 2026); refresh warns and an August issue reminds when a team hasn't been checked for the current season.",
+ "_note": "Fan hashtags the bot puts in tweets. 'checked' = the season src/check_hashtags.py last confirmed it against the team's own recent X posts (runs Aug 1 and mid-Sep); 'unverified' = the team account uses no slogan tags to check against; 'previous' = the tag before an automatic switch.",
  "teams": {
   "ARI": {
    "tag": "#BirdCityFootball",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "ATL": {
    "tag": "#DirtyBirds",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "BAL": {
    "tag": "#RavensFlock",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "BUF": {
    "tag": "#BillsMafia",
-   "checked": null
+   "checked": 2026
   },
   "CAR": {
    "tag": "#KeepPounding",
-   "checked": null
+   "checked": 2026
   },
   "CHI": {
    "tag": "#DaBears",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "CIN": {
    "tag": "#RuleTheJungle",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "CLE": {
    "tag": "#DawgPound",
-   "checked": null
+   "checked": 2026
   },
   "DAL": {
    "tag": "#DallasCowboys",
-   "checked": null
+   "checked": 2026
   },
   "DEN": {
    "tag": "#BroncosCountry",
-   "checked": null
+   "checked": 2026
   },
   "DET": {
    "tag": "#OnePride",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "GB": {
    "tag": "#GoPackGo",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "HOU": {
    "tag": "#WeAreTexans",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "IND": {
    "tag": "#ForTheShoe",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "JAX": {
    "tag": "#DUUUVAL",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "KC": {
    "tag": "#ChiefsKingdom",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "LA": {
    "tag": "#RamsHouse",
-   "checked": null
+   "checked": 2026
   },
   "LAC": {
    "tag": "#BoltUp",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "LV": {
    "tag": "#RaiderNation",
-   "checked": null
+   "checked": 2026
   },
   "MIA": {
    "tag": "#FinsUp",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "MIN": {
    "tag": "#Skol",
-   "checked": null
+   "checked": 2026
   },
   "NE": {
    "tag": "#ForeverNE",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "NO": {
    "tag": "#Saints",
-   "checked": null
+   "checked": 2026
   },
   "NYG": {
    "tag": "#TogetherBlue",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "NYJ": {
    "tag": "#JetUp",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "PHI": {
    "tag": "#FlyEaglesFly",
-   "checked": null
+   "checked": 2026
   },
   "PIT": {
    "tag": "#HereWeGo",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "SEA": {
    "tag": "#GoHawks",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "SF": {
    "tag": "#FTTB",
-   "checked": null
+   "checked": 2026
   },
   "TB": {
    "tag": "#GoBucs",
-   "checked": null
+   "checked": 2026,
+   "unverified": true
   },
   "TEN": {
    "tag": "#TitanUp",
-   "checked": null
+   "checked": 2026
   },
   "WAS": {
    "tag": "#RaiseHail",
