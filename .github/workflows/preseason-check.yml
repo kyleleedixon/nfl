@@ -4,6 +4,8 @@
 #   its participation data, refresh the players table. Idempotent; no-ops once done. Then a heartbeat commit, so GitHub
 #   never disables the schedules over a quiet off-season (it does after 60 days without commits in a public repo).
 # August 1 and September 15:
+# - research every team's head coach and play-caller (src/check_coaches.py audit: Claude + web search, sourced) into
+#   src/headcoaches.csv / src/playcallers.csv; in season, coach-check.yml looks for changes weekly
 # - check every team's hashtag against its own recent X posts (src/check_hashtags.py) and commit any change.
 # August 1:
 # - re-download team logos (src/fetch_logos.py: nflverse team table -> ESPN) and commit them if any changed.
@@ -60,7 +62,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
-      - run: pip install -q pandas==2.3.3 requests==2.34.2 pillow==13.0.0 requests-oauthlib==2.0.0
+      - run: pip install -q pandas==2.3.3 requests==2.34.2 pillow==13.0.0 requests-oauthlib==2.0.0 anthropic==2.3.0
+      - name: Coaches and play-callers (all 32 teams, researched with Claude + web search)
+        env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}" }
+        run: python src/check_coaches.py audit
       - name: Hashtags
         env:
           X_API_KEY: ${{ secrets.X_API_KEY }}
@@ -73,9 +78,9 @@ jobs:
         run: python src/fetch_logos.py
       - name: Commit changes
         run: |
-          git add src/hashtags.json assets/logos site/logos
+          git add src/hashtags.json assets/logos site/logos src/headcoaches.csv src/playcallers.csv state/coach_check.json
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
           echo "::notice::updated: $(git diff --cached --name-only | tr '\n' ' ')"
-          git -c user.name="Kyle Dixon" -c user.email="kyleleedixon@gmail.com" commit -q -m "Preseason: team hashtags/logos"
+          git -c user.name="Kyle Dixon" -c user.email="kyleleedixon@gmail.com" commit -q -m "Preseason: coaches, play-callers, hashtags, logos"
           git pull -q --rebase origin main
           git push

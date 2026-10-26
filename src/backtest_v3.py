@@ -29,6 +29,10 @@ FTN = ["ftn_hash", "ftn_qb_loc", "ftn_backfield", "ftn_box", "ftn_motion"]
 CATS = CATS_V2 + ["prev3_type", "pat3", "prev_same_dd_type", "ftn_hash", "ftn_qb_loc"]
 FULL3 = FULL + BIAS + ALIGN + FTN
 LIVE3 = LIVE + BIAS + FTN  # FTN charting is published during the season; participation is not
+# the play-caller's habits next to the head coach's (src/caller_features.py). Tested 2026-10-24, NOT used: +0.0003
+# [-0.0002, +0.0007] for the live model once caller_pf_proe (participation-derived, a leak) was excluded; full +0.0001
+CALLER = ["caller_dd_proe", "caller_neutral_pass", "caller_proe", "caller_proe_after_fail",
+          "caller_proe_after_pass", "caller_proe_after_run", "caller_switch_rate", "caller_is_hc"]
 OUTCOLS = ["game_id", "play_id", "season", "week", "posteam", "defteam", "coach", "y", "xpass",
            "neutral", "down", "ydstogo", "qtr", "epa", "has_personnel"]
 

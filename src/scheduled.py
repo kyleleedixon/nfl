@@ -38,8 +38,12 @@ def kickoff(r):
 def queue(key, kind, card, tweet, post_at, expires):
     os.makedirs(Q, exist_ok=True)
     assert len(tweet) <= 280, (key, len(tweet))
-    json.dump(dict(key=key, kind=kind, card=card, tweets=[tweet], post_at=int(post_at), expires=int(expires),
-                   created=int(time.time())), open(f"{Q}/{key}.json", "w"), indent=1)
+    path = f"{Q}/{key}.json"
+    new = dict(key=key, kind=kind, card=card, tweets=[tweet], post_at=int(post_at), expires=int(expires))
+    old = json.load(open(path)) if os.path.exists(path) else {}
+    if {k: old.get(k) for k in new} == new:
+        return   # unchanged: leave the file (and git) alone
+    json.dump({**new, "created": int(time.time())}, open(path, "w"), indent=1)
     print(key, "posts", dt.datetime.fromtimestamp(post_at, ET).strftime("%a %b %-d %-I:%M%p ET"), "\n" + tweet + "\n")
 
 

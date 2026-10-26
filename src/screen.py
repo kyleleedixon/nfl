@@ -31,7 +31,9 @@ def load():
 
 def arms():
     full, live, _ = chosen()
-    callers = [c for c in pd.read_parquet(FEAT).columns if c.startswith("caller")] if "both" in FEAT else []
+    live = [c for c in live if not c.startswith("caller")]   # base = no caller inputs; the caller arm adds them
+    from backtest_v3 import CALLER
+    callers = CALLER   # live-valid caller inputs (no participation-derived history)
     add = {"base": [], "qb": QB, "team": TEAM, "all": QB + TEAM, "rpo": HABIT, "caller": callers}
     return {(m, a): base + extra for a, extra in add.items() for m, base in [("full", full), ("live", live)]}
 

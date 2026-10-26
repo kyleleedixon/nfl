@@ -16,6 +16,23 @@ CSV = os.path.join(os.path.dirname(os.path.abspath(__file__)), "playcallers.csv"
 ALIAS = {"Klint Kubliak": "Klint Kubiak", "Jay Rosburg": "Jerry Rosburg"}   # nflverse spellings
 
 
+HCS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "headcoaches.csv")
+
+
+def head_coaches(games):
+    """Corrected head coach per row (season, week, posteam, coach): src/headcoaches.csv overrides nflverse, whose head
+    coach for some 2026 teams is stale (ARI, ATL, BUF). Maintained by check_coaches.py."""
+    coach = games["coach"].replace(ALIAS)
+    if not os.path.exists(HCS):
+        return coach
+    h = pd.read_csv(HCS).sort_values("from_week")
+    for (s, team), rows in h.groupby(["season", "team"]):
+        m = (games["season"] == s) & (games["posteam"] == team)
+        for r in rows.itertuples():
+            coach = coach.mask(m & (games["week"] >= r.from_week), r.head_coach)
+    return coach
+
+
 def resolve(games):
     """games: one row per (game_id, posteam) with season, week, posteam, coach (head coach). Returns the caller per row."""
     g = games.copy()

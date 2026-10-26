@@ -1,0 +1,33 @@
+# Weekly in season (Tuesday 9am CT, after the weekend's firings and play-calling handoffs are announced): ask Claude, with
+# web search, for head-coach and play-caller changes and record them in src/headcoaches.csv / src/playcallers.csv
+# (src/check_coaches.py changes). The full 32-team audit runs Aug 1 and Sep 15 (preseason-check.yml). Needs the
+# ANTHROPIC_API_KEY secret; without it the run skips with a warning.
+name: Coach check
+on:
+  schedule:
+    - cron: "0 14 * 9-12,1 2"
+  workflow_dispatch:
+    inputs:
+      mode: { description: "changes (last 10 days) or audit (all 32 teams)", default: changes }
+permissions: { contents: write }
+concurrency: { group: refresh, cancel-in-progress: false }   # never alongside a refresh (both push)
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q anthropic==2.3.0
+      - name: Check coaches
+        env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}" }
+        run: python src/check_coaches.py ${{ inputs.mode || 'changes' }}
+      - name: Commit changes
+        run: |
+          git add src/headcoaches.csv src/playcallers.csv state/coach_check.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          echo "::notice::coaching changes recorded: $(python3 -c "import json; print('; '.join(json.load(open('state/coach_check.json'))['updated']))")"
+          git -c user.name="Kyle Dixon" -c user.email="kyleleedixon@gmail.com" commit -q -m "Coach check: head coach / play-caller changes [skip ci]"
+          git pull -q --rebase origin main
+          git push
