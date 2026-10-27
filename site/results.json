@@ -421,52 +421,52 @@
  },
  "live": {
   "season": 2026,
-  "acc": 0.7851,
-  "acc_public": 0.7125,
-  "plays": 11555,
+  "acc": 0.7859,
+  "acc_public": 0.7143,
+  "plays": 13131,
   "through_week": 7,
   "weeks": [
    {
     "week": 1,
-    "acc": 0.7845,
+    "acc": 0.7855,
     "acc_public": 0.7184,
     "plays": 1907
    },
    {
     "week": 2,
-    "acc": 0.7847,
+    "acc": 0.7837,
     "acc_public": 0.6843,
     "plays": 1923
    },
    {
     "week": 3,
-    "acc": 0.7807,
+    "acc": 0.7802,
     "acc_public": 0.7036,
     "plays": 1984
    },
    {
     "week": 4,
-    "acc": 0.7848,
+    "acc": 0.7858,
     "acc_public": 0.7235,
     "plays": 1975
    },
    {
     "week": 5,
-    "acc": 0.7871,
+    "acc": 0.7854,
     "acc_public": 0.7271,
     "plays": 1869
    },
    {
     "week": 6,
-    "acc": 0.7919,
+    "acc": 0.793,
     "acc_public": 0.7213,
     "plays": 1783
    },
    {
     "week": 7,
-    "acc": 0.7456,
-    "acc_public": 0.6754,
-    "plays": 114
+    "acc": 0.7882,
+    "acc_public": 0.7237,
+    "plays": 1690
    }
   ]
  },
