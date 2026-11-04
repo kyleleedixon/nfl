@@ -1,93 +1,111 @@
 {
  "season": 2026,
- "week": 7,
- "card": "2026_wk07.png",
- "league_acc": 0.8039,
- "league_neutral": 0.7465,
+ "week": 8,
+ "card": "2026_wk08.png",
+ "league_acc": 0.802,
+ "league_neutral": 0.7446,
  "teams": [
   {
    "rank": 1,
-   "team": "Lions",
-   "abbr": "DET",
-   "move": 0,
-   "neutral": 0.828,
-   "acc": 0.8062,
-   "snaps": 157
+   "team": "Bengals",
+   "abbr": "CIN",
+   "move": 5,
+   "neutral": 0.807,
+   "acc": 0.8414,
+   "snaps": 171
   },
   {
    "rank": 2,
    "team": "Steelers",
    "abbr": "PIT",
-   "move": 1,
-   "neutral": 0.7989,
-   "acc": 0.8325,
-   "snaps": 179
+   "move": 0,
+   "neutral": 0.8021,
+   "acc": 0.8087,
+   "snaps": 187
   },
   {
    "rank": 3,
-   "team": "Falcons",
-   "abbr": "ATL",
-   "move": -1,
-   "neutral": 0.7895,
-   "acc": 0.8045,
-   "snaps": 171
+   "team": "Lions",
+   "abbr": "DET",
+   "move": -2,
+   "neutral": 0.785,
+   "acc": 0.7965,
+   "snaps": 200
   },
   {
    "rank": 4,
-   "team": "Colts",
-   "abbr": "IND",
-   "move": 0,
-   "neutral": 0.7834,
-   "acc": 0.8174,
-   "snaps": 217
+   "team": "Falcons",
+   "abbr": "ATL",
+   "move": -1,
+   "neutral": 0.7849,
+   "acc": 0.7996,
+   "snaps": 186
   },
   {
    "rank": 5,
+   "team": "Colts",
+   "abbr": "IND",
+   "move": -1,
+   "neutral": 0.7826,
+   "acc": 0.8269,
+   "snaps": 230
+  },
+  {
+   "rank": 6,
    "team": "Texans",
    "abbr": "HOU",
-   "move": 0,
+   "move": -1,
    "neutral": 0.7793,
    "acc": 0.8276,
    "snaps": 213
   },
   {
-   "rank": 6,
-   "team": "Bengals",
-   "abbr": "CIN",
-   "move": 0,
-   "neutral": 0.771,
-   "acc": 0.8252,
-   "snaps": 131
-  },
-  {
    "rank": 7,
-   "team": "Eagles",
-   "abbr": "PHI",
-   "move": 0,
-   "neutral": 0.7704,
-   "acc": 0.8458,
-   "snaps": 196
+   "team": "Rams",
+   "abbr": "LA",
+   "move": 8,
+   "neutral": 0.7642,
+   "acc": 0.8008,
+   "snaps": 229
   },
   {
    "rank": 8,
    "team": "Cowboys",
    "abbr": "DAL",
-   "move": 1,
-   "neutral": 0.765,
-   "acc": 0.8385,
-   "snaps": 183
+   "move": 0,
+   "neutral": 0.7641,
+   "acc": 0.8197,
+   "snaps": 195
   },
   {
    "rank": 9,
-   "team": "Panthers",
-   "abbr": "CAR",
-   "move": 5,
-   "neutral": 0.7606,
-   "acc": 0.8338,
-   "snaps": 142
+   "team": "Commanders",
+   "abbr": "WAS",
+   "move": 12,
+   "neutral": 0.7636,
+   "acc": 0.8103,
+   "snaps": 165
   },
   {
    "rank": 10,
+   "team": "Ravens",
+   "abbr": "BAL",
+   "move": 1,
+   "neutral": 0.7614,
+   "acc": 0.8337,
+   "snaps": 197
+  },
+  {
+   "rank": 11,
+   "team": "Panthers",
+   "abbr": "CAR",
+   "move": -2,
+   "neutral": 0.758,
+   "acc": 0.8338,
+   "snaps": 157
+  },
+  {
+   "rank": 12,
    "team": "Giants",
    "abbr": "NYG",
    "move": -2,
@@ -96,400 +114,382 @@
    "snaps": 172
   },
   {
-   "rank": 11,
-   "team": "Ravens",
-   "abbr": "BAL",
-   "move": 1,
-   "neutral": 0.7556,
-   "acc": 0.83,
-   "snaps": 180
-  },
-  {
-   "rank": 12,
-   "team": "Chargers",
-   "abbr": "LAC",
-   "move": -2,
-   "neutral": 0.7529,
-   "acc": 0.8011,
-   "snaps": 170
-  },
-  {
    "rank": 13,
-   "team": "Jaguars",
-   "abbr": "JAX",
-   "move": 0,
-   "neutral": 0.75,
-   "acc": 0.7806,
-   "snaps": 168
+   "team": "Eagles",
+   "abbr": "PHI",
+   "move": -6,
+   "neutral": 0.7543,
+   "acc": 0.84,
+   "snaps": 232
   },
   {
    "rank": 14,
-   "team": "Bills",
-   "abbr": "BUF",
-   "move": 1,
+   "team": "Broncos",
+   "abbr": "DEN",
+   "move": 5,
    "neutral": 0.75,
-   "acc": 0.7872,
-   "snaps": 196
+   "acc": 0.8101,
+   "snaps": 212
   },
   {
    "rank": 15,
-   "team": "Rams",
-   "abbr": "LA",
-   "move": -4,
-   "neutral": 0.7488,
-   "acc": 0.7909,
-   "snaps": 211
-  },
-  {
-   "rank": 16,
-   "team": "Jets",
-   "abbr": "NYJ",
-   "move": 2,
-   "neutral": 0.7461,
-   "acc": 0.7948,
-   "snaps": 193
-  },
-  {
-   "rank": 17,
    "team": "Buccaneers",
    "abbr": "TB",
    "move": 2,
-   "neutral": 0.7458,
-   "acc": 0.8123,
-   "snaps": 177
+   "neutral": 0.7487,
+   "acc": 0.8192,
+   "snaps": 191
   },
   {
-   "rank": 18,
-   "team": "Patriots",
-   "abbr": "NE",
-   "move": -2,
-   "neutral": 0.7443,
-   "acc": 0.8134,
-   "snaps": 176
+   "rank": 16,
+   "team": "Chargers",
+   "abbr": "LAC",
+   "move": -4,
+   "neutral": 0.7436,
+   "acc": 0.7947,
+   "snaps": 195
   },
   {
-   "rank": 19,
-   "team": "Broncos",
-   "abbr": "DEN",
-   "move": 4,
-   "neutral": 0.7418,
-   "acc": 0.8065,
-   "snaps": 182
-  },
-  {
-   "rank": 20,
+   "rank": 17,
    "team": "Saints",
    "abbr": "NO",
-   "move": 9,
+   "move": 3,
    "neutral": 0.7387,
    "acc": 0.8045,
    "snaps": 199
   },
   {
+   "rank": 18,
+   "team": "Jaguars",
+   "abbr": "JAX",
+   "move": -5,
+   "neutral": 0.7374,
+   "acc": 0.7581,
+   "snaps": 179
+  },
+  {
+   "rank": 19,
+   "team": "Bills",
+   "abbr": "BUF",
+   "move": -5,
+   "neutral": 0.7345,
+   "acc": 0.7681,
+   "snaps": 226
+  },
+  {
+   "rank": 20,
+   "team": "Vikings",
+   "abbr": "MIN",
+   "move": 4,
+   "neutral": 0.7333,
+   "acc": 0.7802,
+   "snaps": 210
+  },
+  {
    "rank": 21,
-   "team": "Commanders",
-   "abbr": "WAS",
-   "move": 1,
-   "neutral": 0.7372,
-   "acc": 0.7977,
-   "snaps": 137
+   "team": "Cardinals",
+   "abbr": "ARI",
+   "move": 4,
+   "neutral": 0.733,
+   "acc": 0.8147,
+   "snaps": 221
   },
   {
    "rank": 22,
-   "team": "Packers",
-   "abbr": "GB",
-   "move": 8,
-   "neutral": 0.7308,
-   "acc": 0.8076,
-   "snaps": 156
+   "team": "Browns",
+   "abbr": "CLE",
+   "move": 4,
+   "neutral": 0.7304,
+   "acc": 0.8135,
+   "snaps": 204
   },
   {
    "rank": 23,
-   "team": "Titans",
-   "abbr": "TEN",
-   "move": -6,
-   "neutral": 0.7293,
-   "acc": 0.7988,
-   "snaps": 133
+   "team": "Patriots",
+   "abbr": "NE",
+   "move": -5,
+   "neutral": 0.7277,
+   "acc": 0.7936,
+   "snaps": 202
   },
   {
    "rank": 24,
-   "team": "Vikings",
-   "abbr": "MIN",
-   "move": 1,
-   "neutral": 0.7253,
-   "acc": 0.7748,
-   "snaps": 182
+   "team": "Jets",
+   "abbr": "NYJ",
+   "move": -8,
+   "neutral": 0.7261,
+   "acc": 0.7836,
+   "snaps": 230
   },
   {
    "rank": 25,
-   "team": "Cardinals",
-   "abbr": "ARI",
-   "move": -1,
-   "neutral": 0.725,
-   "acc": 0.8128,
-   "snaps": 200
+   "team": "Raiders",
+   "abbr": "LV",
+   "move": 4,
+   "neutral": 0.7252,
+   "acc": 0.793,
+   "snaps": 222
   },
   {
    "rank": 26,
-   "team": "Browns",
-   "abbr": "CLE",
-   "move": 0,
-   "neutral": 0.724,
-   "acc": 0.7948,
-   "snaps": 192
+   "team": "Packers",
+   "abbr": "GB",
+   "move": -4,
+   "neutral": 0.7247,
+   "acc": 0.8088,
+   "snaps": 178
   },
   {
    "rank": 27,
    "team": "Seahawks",
    "abbr": "SEA",
    "move": 0,
-   "neutral": 0.7228,
-   "acc": 0.7915,
-   "snaps": 184
+   "neutral": 0.7233,
+   "acc": 0.7911,
+   "snaps": 206
   },
   {
    "rank": 28,
-   "team": "Chiefs",
-   "abbr": "KC",
-   "move": -7,
-   "neutral": 0.7197,
-   "acc": 0.7875,
-   "snaps": 157
-  },
-  {
-   "rank": 29,
-   "team": "Raiders",
-   "abbr": "LV",
-   "move": -1,
-   "neutral": 0.7135,
-   "acc": 0.7887,
-   "snaps": 185
-  },
-  {
-   "rank": 30,
    "team": "49ers",
    "abbr": "SF",
-   "move": -10,
+   "move": 2,
    "neutral": 0.7126,
    "acc": 0.7727,
    "snaps": 167
   },
   {
-   "rank": 31,
+   "rank": 29,
+   "team": "Chiefs",
+   "abbr": "KC",
+   "move": -1,
+   "neutral": 0.712,
+   "acc": 0.7851,
+   "snaps": 184
+  },
+  {
+   "rank": 30,
    "team": "Dolphins",
    "abbr": "MIA",
-   "move": 0,
-   "neutral": 0.7042,
-   "acc": 0.7716,
-   "snaps": 142
+   "move": 1,
+   "neutral": 0.6914,
+   "acc": 0.7717,
+   "snaps": 162
+  },
+  {
+   "rank": 31,
+   "team": "Titans",
+   "abbr": "TEN",
+   "move": -8,
+   "neutral": 0.6897,
+   "acc": 0.7748,
+   "snaps": 174
   },
   {
    "rank": 32,
    "team": "Bears",
    "abbr": "CHI",
    "move": 0,
-   "neutral": 0.6575,
-   "acc": 0.7505,
-   "snaps": 181
+   "neutral": 0.6791,
+   "acc": 0.7597,
+   "snaps": 215
   }
  ],
  "games": [
   {
-   "team": "Steelers",
-   "abbr": "PIT",
-   "opp": "Saints",
-   "acc": 0.902,
-   "plays": 51
-  },
-  {
-   "team": "Buccaneers",
-   "abbr": "TB",
-   "opp": "Panthers",
-   "acc": 0.9,
-   "plays": 50
-  },
-  {
-   "team": "Saints",
-   "abbr": "NO",
+   "team": "Browns",
+   "abbr": "CLE",
    "opp": "Steelers",
-   "acc": 0.8909,
-   "plays": 55
-  },
-  {
-   "team": "Cowboys",
-   "abbr": "DAL",
-   "opp": "Eagles",
-   "acc": 0.8852,
-   "plays": 61
-  },
-  {
-   "team": "Panthers",
-   "abbr": "CAR",
-   "opp": "Buccaneers",
-   "acc": 0.8667,
-   "plays": 45
-  },
-  {
-   "team": "Packers",
-   "abbr": "GB",
-   "opp": "Lions",
-   "acc": 0.8644,
-   "plays": 59
-  },
-  {
-   "team": "Raiders",
-   "abbr": "LV",
-   "opp": "Rams",
-   "acc": 0.8413,
-   "plays": 63
+   "acc": 0.9333,
+   "plays": 60
   },
   {
    "team": "Bengals",
    "abbr": "CIN",
-   "opp": "Ravens",
-   "acc": 0.8367,
-   "plays": 49
-  },
-  {
-   "team": "Browns",
-   "abbr": "CLE",
    "opp": "Titans",
-   "acc": 0.8281,
-   "plays": 64
-  },
-  {
-   "team": "Ravens",
-   "abbr": "BAL",
-   "opp": "Bengals",
-   "acc": 0.8254,
-   "plays": 63
-  },
-  {
-   "team": "Seahawks",
-   "abbr": "SEA",
-   "opp": "Chiefs",
-   "acc": 0.8254,
-   "plays": 63
+   "acc": 0.9231,
+   "plays": 65
   },
   {
    "team": "Colts",
    "abbr": "IND",
-   "opp": "Vikings",
-   "acc": 0.8246,
-   "plays": 57
-  },
-  {
-   "team": "Eagles",
-   "abbr": "PHI",
-   "opp": "Cowboys",
-   "acc": 0.8226,
-   "plays": 62
-  },
-  {
-   "team": "Giants",
-   "abbr": "NYG",
-   "opp": "Texans",
-   "acc": 0.8136,
-   "plays": 59
-  },
-  {
-   "team": "Lions",
-   "abbr": "DET",
-   "opp": "Packers",
-   "acc": 0.8125,
-   "plays": 64
-  },
-  {
-   "team": "Broncos",
-   "abbr": "DEN",
-   "opp": "Cardinals",
-   "acc": 0.8113,
+   "opp": "Jaguars",
+   "acc": 0.9057,
    "plays": 53
   },
   {
-   "team": "Texans",
-   "abbr": "HOU",
-   "opp": "Giants",
-   "acc": 0.8077,
-   "plays": 52
-  },
-  {
-   "team": "Patriots",
-   "abbr": "NE",
-   "opp": "Bears",
-   "acc": 0.7872,
-   "plays": 47
-  },
-  {
-   "team": "Dolphins",
-   "abbr": "MIA",
-   "opp": "Jets",
-   "acc": 0.7869,
-   "plays": 61
-  },
-  {
-   "team": "49ers",
-   "abbr": "SF",
-   "opp": "Falcons",
-   "acc": 0.7812,
-   "plays": 64
-  },
-  {
-   "team": "Jets",
-   "abbr": "NYJ",
-   "opp": "Dolphins",
-   "acc": 0.78,
-   "plays": 50
-  },
-  {
-   "team": "Cardinals",
-   "abbr": "ARI",
-   "opp": "Broncos",
-   "acc": 0.7733,
-   "plays": 75
-  },
-  {
-   "team": "Falcons",
-   "abbr": "ATL",
-   "opp": "49ers",
-   "acc": 0.7679,
-   "plays": 56
-  },
-  {
-   "team": "Titans",
-   "abbr": "TEN",
-   "opp": "Browns",
-   "acc": 0.7609,
-   "plays": 46
+   "team": "Commanders",
+   "abbr": "WAS",
+   "opp": "Eagles",
+   "acc": 0.8909,
+   "plays": 55
   },
   {
    "team": "Rams",
    "abbr": "LA",
-   "opp": "Raiders",
-   "acc": 0.7538,
-   "plays": 65
+   "opp": "Chargers",
+   "acc": 0.8868,
+   "plays": 53
   },
   {
-   "team": "Vikings",
-   "abbr": "MIN",
-   "opp": "Colts",
-   "acc": 0.7358,
-   "plays": 53
+   "team": "Buccaneers",
+   "abbr": "TB",
+   "opp": "Falcons",
+   "acc": 0.8704,
+   "plays": 54
+  },
+  {
+   "team": "Ravens",
+   "abbr": "BAL",
+   "opp": "Bills",
+   "acc": 0.8667,
+   "plays": 45
+  },
+  {
+   "team": "Broncos",
+   "abbr": "DEN",
+   "opp": "Chiefs",
+   "acc": 0.8367,
+   "plays": 49
+  },
+  {
+   "team": "Panthers",
+   "abbr": "CAR",
+   "opp": "Packers",
+   "acc": 0.8333,
+   "plays": 54
   },
   {
    "team": "Bears",
    "abbr": "CHI",
-   "opp": "Patriots",
-   "acc": 0.7231,
-   "plays": 65
+   "opp": "Seahawks",
+   "acc": 0.8281,
+   "plays": 64
+  },
+  {
+   "team": "Cardinals",
+   "abbr": "ARI",
+   "opp": "Cowboys",
+   "acc": 0.8267,
+   "plays": 75
+  },
+  {
+   "team": "Vikings",
+   "abbr": "MIN",
+   "opp": "Lions",
+   "acc": 0.825,
+   "plays": 40
+  },
+  {
+   "team": "Raiders",
+   "abbr": "LV",
+   "opp": "Jets",
+   "acc": 0.8246,
+   "plays": 57
+  },
+  {
+   "team": "Packers",
+   "abbr": "GB",
+   "opp": "Panthers",
+   "acc": 0.8167,
+   "plays": 60
+  },
+  {
+   "team": "Eagles",
+   "abbr": "PHI",
+   "opp": "Commanders",
+   "acc": 0.8033,
+   "plays": 61
+  },
+  {
+   "team": "Seahawks",
+   "abbr": "SEA",
+   "opp": "Bears",
+   "acc": 0.7885,
+   "plays": 52
   },
   {
    "team": "Chiefs",
    "abbr": "KC",
-   "opp": "Seahawks",
-   "acc": 0.7083,
-   "plays": 48
+   "opp": "Broncos",
+   "acc": 0.7719,
+   "plays": 57
+  },
+  {
+   "team": "Dolphins",
+   "abbr": "MIA",
+   "opp": "Patriots",
+   "acc": 0.7719,
+   "plays": 57
+  },
+  {
+   "team": "Falcons",
+   "abbr": "ATL",
+   "opp": "Buccaneers",
+   "acc": 0.76,
+   "plays": 50
+  },
+  {
+   "team": "Chargers",
+   "abbr": "LAC",
+   "opp": "Rams",
+   "acc": 0.7544,
+   "plays": 57
+  },
+  {
+   "team": "Lions",
+   "abbr": "DET",
+   "opp": "Vikings",
+   "acc": 0.7385,
+   "plays": 65
+  },
+  {
+   "team": "Jets",
+   "abbr": "NYJ",
+   "opp": "Raiders",
+   "acc": 0.7037,
+   "plays": 54
+  },
+  {
+   "team": "Cowboys",
+   "abbr": "DAL",
+   "opp": "Cardinals",
+   "acc": 0.7015,
+   "plays": 67
+  },
+  {
+   "team": "Bills",
+   "abbr": "BUF",
+   "opp": "Ravens",
+   "acc": 0.6806,
+   "plays": 72
+  },
+  {
+   "team": "Titans",
+   "abbr": "TEN",
+   "opp": "Bengals",
+   "acc": 0.6393,
+   "plays": 61
+  },
+  {
+   "team": "Patriots",
+   "abbr": "NE",
+   "opp": "Dolphins",
+   "acc": 0.6346,
+   "plays": 52
+  },
+  {
+   "team": "Steelers",
+   "abbr": "PIT",
+   "opp": "Browns",
+   "acc": 0.6275,
+   "plays": 51
+  },
+  {
+   "team": "Jaguars",
+   "abbr": "JAX",
+   "opp": "Colts",
+   "acc": 0.6,
+   "plays": 50
   }
  ]
 }
