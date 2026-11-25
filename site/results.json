@@ -421,7 +421,7 @@
  },
  "live": {
   "season": 2026,
-  "acc": 0.7821,
+  "acc": 0.7819,
   "acc_public": 0.7197,
   "plays": 19968,
   "through_week": 11,
@@ -488,7 +488,7 @@
    },
    {
     "week": 11,
-    "acc": 0.772,
+    "acc": 0.7701,
     "acc_public": 0.7136,
     "plays": 1592
    }
